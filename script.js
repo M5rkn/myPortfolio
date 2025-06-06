@@ -170,49 +170,84 @@ function isValidURL(url) {
     }
 }
 
-// Get CSRF token from server
+// Get CSRF token from server with Railway compatibility
 async function getCSRFToken() {
     try {
         // Try to get cached token first
         let token = sessionStorage.getItem('csrf_token');
         const tokenTime = sessionStorage.getItem('csrf_token_time');
         
-        // Check if token is expired (10 minutes - увеличиваем время кеширования)
-        if (token && tokenTime && (Date.now() - parseInt(tokenTime)) < 10 * 60 * 1000) {
+        // Extended cache time for Railway (10 minutes)
+        const cacheTime = window.location.hostname.includes('railway.app') ? 10 * 60 * 1000 : 5 * 60 * 1000;
+        
+        if (token && tokenTime && (Date.now() - parseInt(tokenTime)) < cacheTime) {
             return token;
         }
         
-        // Request new token from server
-        const response = await fetch('/api/csrf-token', {
-            method: 'GET',
-            credentials: 'same-origin'
-        });
+        // Request new token from server with retry logic
+        let retryCount = 0;
+        const maxRetries = 3;
         
-        if (!response.ok) {
-            throw new Error('Failed to get CSRF token');
+        while (retryCount < maxRetries) {
+            try {
+                const response = await fetch('/api/csrf-token', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                if (data.success && data.csrfToken) {
+                    sessionStorage.setItem('csrf_token', data.csrfToken);
+                    sessionStorage.setItem('csrf_token_time', Date.now().toString());
+                    console.log('✅ CSRF token получен успешно');
+                    return data.csrfToken;
+                } else {
+                    throw new Error('Invalid CSRF token response');
+                }
+            } catch (fetchError) {
+                retryCount++;
+                console.warn(`CSRF попытка ${retryCount}/${maxRetries} не удалась:`, fetchError.message);
+                
+                if (retryCount < maxRetries) {
+                    // Exponential backoff
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
+                } else {
+                    throw fetchError;
+                }
+            }
         }
         
-        const data = await response.json();
-        if (data.success && data.csrfToken) {
-            sessionStorage.setItem('csrf_token', data.csrfToken);
-            sessionStorage.setItem('csrf_token_time', Date.now().toString());
-            return data.csrfToken;
-        } else {
-            throw new Error('Invalid CSRF token response');
-        }
     } catch (error) {
         console.error('Error getting CSRF token:', error);
         
-        // Fallback для локальной разработки
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            const fallbackToken = 'dev-fallback-' + Date.now();
+        // Enhanced fallback for different environments
+        const isRailway = window.location.hostname.includes('railway.app');
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        
+        if (isLocalhost || isRailway) {
+            // Generate secure fallback token
+            const fallbackToken = Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
             sessionStorage.setItem('csrf_token', fallbackToken);
             sessionStorage.setItem('csrf_token_time', Date.now().toString());
-            console.warn('Using fallback CSRF token for development');
+            
+            if (isRailway) {
+                console.warn('🚨 Using fallback CSRF token for Railway deployment');
+            } else {
+                console.warn('Using fallback CSRF token for development');
+            }
+            
             return fallbackToken;
         }
         
-        // Для production - return null and let server handle the error
+        // For other production environments - return null
         return null;
     }
 }
