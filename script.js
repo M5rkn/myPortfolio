@@ -135,7 +135,7 @@ function showNotification(message, type = 'info') {
         padding: 1rem 1.5rem;
         border-radius: 10px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        z-index: 10000;
+        z-index: 20000;
         max-width: 300px;
         animation: slideIn 0.3s ease;
     `;
@@ -193,6 +193,105 @@ function showNotification(message, type = 'info') {
             setTimeout(() => notification.remove(), 300);
         }
     }, 5000);
+}
+
+// Modal notification system
+function showModalNotification(message, type = 'success') {
+    // Remove existing modal notification
+    const existingNotification = document.querySelector('.modal-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Get modal content container
+    const modalContent = document.querySelector('.modal-content');
+    if (!modalContent) return;
+    
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `modal-notification ${type}`;
+    notification.innerHTML = `
+        <div class="modal-notification-content">
+            <span class="modal-notification-message">${message}</span>
+            <button class="modal-notification-close">&times;</button>
+        </div>
+    `;
+    
+    // Add styles
+    notification.style.cssText = `
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)' : 
+                     type === 'error' ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' : 
+                     'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'};
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        z-index: 25000;
+        max-width: 250px;
+        font-size: 0.9rem;
+        animation: modalSlideIn 0.3s ease;
+    `;
+    
+    // Add modal notification styles
+    if (!document.querySelector('#modal-notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'modal-notification-styles';
+        style.textContent = `
+            @keyframes modalSlideIn {
+                from { transform: translateY(-20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            @keyframes modalSlideOut {
+                from { transform: translateY(0); opacity: 1; }
+                to { transform: translateY(-20px); opacity: 0; }
+            }
+            .modal-notification-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 0.75rem;
+            }
+            .modal-notification-close {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.2rem;
+                cursor: pointer;
+                padding: 0;
+                width: 16px;
+                height: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0.8;
+            }
+            .modal-notification-close:hover {
+                opacity: 1;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Add to modal
+    modalContent.appendChild(notification);
+    
+    // Close button functionality
+    const closeBtn = notification.querySelector('.modal-notification-close');
+    closeBtn.addEventListener('click', () => {
+        notification.style.animation = 'modalSlideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    });
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'modalSlideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 3000);
 }
 
 // Intersection Observer for animations
@@ -519,6 +618,41 @@ async function updateModalStats(projectId) {
 // Current project ID for likes
 let currentProjectId = null;
 
+// Gallery functionality
+let currentSlide = 0;
+let projectGalleries = {
+    'project-1': [
+        'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+        'linear-gradient(135deg, #667eea 30%, #764ba2 70%)'
+    ],
+    'project-2': [
+        'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+        'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)',
+        'linear-gradient(135deg, #f093fb 30%, #f5576c 70%)'
+    ],
+    'project-3': [
+        'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+        'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+        'linear-gradient(135deg, #4facfe 30%, #00f2fe 70%)'
+    ],
+    'project-4': [
+        'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+        'linear-gradient(135deg, #38f9d7 0%, #43e97b 100%)',
+        'linear-gradient(135deg, #43e97b 30%, #38f9d7 70%)'
+    ],
+    'project-5': [
+        'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+        'linear-gradient(135deg, #fee140 0%, #fa709a 100%)',
+        'linear-gradient(135deg, #fa709a 30%, #fee140 70%)'
+    ],
+    'project-6': [
+        'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+        'linear-gradient(135deg, #fed6e3 0%, #a8edea 100%)',
+        'linear-gradient(135deg, #a8edea 30%, #fed6e3 70%)'
+    ]
+};
+
 // Open modal
 function openProjectModal(projectId) {
     const project = projectData[projectId];
@@ -540,14 +674,16 @@ function openProjectModal(projectId) {
         project.features.map(feature => `<li>${feature}</li>`).join('') + 
         '</ul>';
     
-    // Update image
-    const modalImage = document.getElementById('modalImage');
-    modalImage.style.background = project.gradient;
+    // Initialize gallery
+    setupProjectGallery(projectId);
     
     // Reset like button state
     const likeBtn = document.getElementById('modalLikeBtn');
     likeBtn.classList.remove('liked');
     likeBtn.innerHTML = '<span class="like-icon">❤️</span> <span class="like-text">Нравится</span>';
+    
+    // Setup share button
+    setupShareButton(project);
     
     // Get stats
     updateModalStats(projectId);
@@ -584,12 +720,103 @@ async function incrementLikes() {
             // Update likes counter
             document.getElementById('modalLikes').textContent = data.likes;
             
-            // Show notification
-            showNotification('Спасибо за лайк! ❤️', 'success');
+            // Show modal notification
+            showModalNotification('Спасибо за лайк! ❤️', 'success');
         }
     } catch (error) {
         console.error('Ошибка при добавлении лайка:', error);
-        showNotification('Ошибка при добавлении лайка', 'error');
+        showModalNotification('Ошибка при добавлении лайка', 'error');
+    }
+}
+
+// Setup project gallery
+function setupProjectGallery(projectId) {
+    const modalImage = document.getElementById('modalImage');
+    const galleryNav = document.getElementById('modalGalleryNav');
+    const prevBtn = document.getElementById('galleryPrev');
+    const nextBtn = document.getElementById('galleryNext');
+    const currentSlideSpan = document.getElementById('currentSlide');
+    const totalSlidesSpan = document.getElementById('totalSlides');
+    
+    const gallery = projectGalleries[projectId] || [projectData[projectId]?.gradient];
+    currentSlide = 0;
+    
+    if (gallery.length > 1) {
+        galleryNav.style.display = 'flex';
+        totalSlidesSpan.textContent = gallery.length;
+        
+        function updateGallery() {
+            modalImage.style.background = gallery[currentSlide];
+            currentSlideSpan.textContent = currentSlide + 1;
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === gallery.length - 1;
+        }
+        
+        prevBtn.onclick = () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateGallery();
+            }
+        };
+        
+        nextBtn.onclick = () => {
+            if (currentSlide < gallery.length - 1) {
+                currentSlide++;
+                updateGallery();
+            }
+        };
+        
+        updateGallery();
+    } else {
+        galleryNav.style.display = 'none';
+        modalImage.style.background = gallery[0];
+    }
+}
+
+// Setup share button
+function setupShareButton(project) {
+    const shareBtn = document.getElementById('modalShareBtn');
+    
+    shareBtn.onclick = () => {
+        if (navigator.share) {
+            navigator.share({
+                title: project.title,
+                text: project.description,
+                url: window.location.href
+            }).then(() => {
+                showModalNotification('Проект успешно поделен!', 'success');
+            }).catch(() => {
+                fallbackShare(project);
+            });
+        } else {
+            fallbackShare(project);
+        }
+    };
+}
+
+// Fallback share functionality
+function fallbackShare(project) {
+    const shareData = {
+        title: project.title,
+        text: project.description,
+        url: window.location.href
+    };
+    
+    const shareText = `${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`;
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareText).then(() => {
+            showModalNotification('Ссылка скопирована в буфер обмена!', 'success');
+        });
+    } else {
+        // Create temporary textarea for copying
+        const textArea = document.createElement('textarea');
+        textArea.value = shareText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showModalNotification('Ссылка скопирована в буфер обмена!', 'success');
     }
 }
 
@@ -645,6 +872,36 @@ function addHoverAnimations() {
     });
 }
 
+// Service Worker registration
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('SW зарегистрирован: ', registration);
+            })
+            .catch((registrationError) => {
+                console.log('SW регистрация не удалась: ', registrationError);
+            });
+    });
+}
+
+// Lazy loading for images
+function lazyLoadImages() {
+    const images = document.querySelectorAll('img[data-src]');
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                imageObserver.unobserve(img);
+            }
+        });
+    });
+
+    images.forEach(img => imageObserver.observe(img));
+}
+
 // Dynamic copyright year
 document.addEventListener('DOMContentLoaded', () => {
     const footerText = document.querySelector('.footer p');
@@ -658,4 +915,166 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Add hover animations
     addHoverAnimations();
-}); 
+    
+    // Initialize lazy loading
+    lazyLoadImages();
+    
+    // Initialize chat and calculator
+    initializeChatWidget();
+    initializeCostCalculator();
+});
+
+// Chat Widget functionality
+function initializeChatWidget() {
+    const chatToggle = document.getElementById('chatToggle');
+    const chatWindow = document.getElementById('chatWindow');
+    const chatClose = document.getElementById('chatClose');
+    const chatInput = document.getElementById('chatInput');
+    const chatSend = document.getElementById('chatSend');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatNotification = document.getElementById('chatNotification');
+    
+    let chatOpen = false;
+    let botResponses = [
+        "Отличный вопрос! Расскажите подробнее о вашем проекте",
+        "Да, такое возможно реализовать. Нужно обсудить детали",
+        "🔥 Сейчас действуют стартовые цены! Воспользуйтесь калькулятором слева",
+        "Обычно на такой проект уходит 2-4 недели",
+        "Конечно! Все мои проекты адаптированы под мобильные устройства",
+        "Да, предоставляю техподдержку после сдачи проекта",
+        "Можете посмотреть примеры работ в разделе 'Работы'",
+        "Свяжитесь со мной через форму обратной связи для детального обсуждения",
+        "Я использую современные технологии: React, Node.js, MongoDB",
+        "Все проекты включают SEO оптимизацию и быструю загрузку",
+        "Предоставляю исходный код и документацию к проекту",
+        "💥 Специальные цены для первых клиентов: лендинг от 50€!",
+        "Качественная работа по доступным ценам для набора отзывов",
+        "Возможна интеграция с любыми внешними API и сервисами"
+    ];
+    
+    // Show notification after 5 seconds
+    setTimeout(() => {
+        chatNotification.style.display = 'block';
+    }, 5000);
+    
+    chatToggle.addEventListener('click', () => {
+        chatOpen = !chatOpen;
+        chatWindow.classList.toggle('active', chatOpen);
+        if (chatOpen) {
+            chatNotification.style.display = 'none';
+            chatInput.focus();
+        }
+    });
+    
+    chatClose.addEventListener('click', () => {
+        chatOpen = false;
+        chatWindow.classList.remove('active');
+    });
+    
+    function sendMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+        
+        // Add user message
+        addMessage(message, 'user');
+        chatInput.value = '';
+        
+        // Simulate bot response
+        setTimeout(() => {
+            const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+            addMessage(randomResponse, 'bot');
+        }, 1000 + Math.random() * 2000);
+    }
+    
+    function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}-message`;
+        
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('ru-RU', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        messageDiv.innerHTML = `
+            <div class="message-content">${text}</div>
+            <div class="message-time">${timeStr}</div>
+        `;
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    chatSend.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+}
+
+// Cost Calculator functionality
+function initializeCostCalculator() {
+    const calculatorToggle = document.getElementById('calculatorToggle');
+    const calculatorWindow = document.getElementById('calculatorWindow');
+    const calculatorClose = document.getElementById('calculatorClose');
+    const totalCostElement = document.getElementById('totalCost');
+    const requestQuoteBtn = document.getElementById('requestQuote');
+    
+    let calculatorOpen = false;
+    
+    calculatorToggle.addEventListener('click', () => {
+        calculatorOpen = !calculatorOpen;
+        calculatorWindow.classList.toggle('active', calculatorOpen);
+    });
+    
+    calculatorClose.addEventListener('click', () => {
+        calculatorOpen = false;
+        calculatorWindow.classList.remove('active');
+    });
+    
+    // Calculate cost
+    function calculateCost() {
+        let total = 0;
+        
+        // Get base project cost
+        const projectType = document.querySelector('input[name="projectType"]:checked');
+        if (projectType) {
+            total += parseInt(projectType.dataset.cost);
+        }
+        
+        // Add feature costs
+        const features = document.querySelectorAll('input[name="features"]:checked');
+        features.forEach(feature => {
+            total += parseInt(feature.dataset.cost);
+        });
+        
+        totalCostElement.textContent = total.toLocaleString('de-DE') + '€';
+    }
+    
+    // Add event listeners to all inputs
+    document.querySelectorAll('.calc-option input').forEach(input => {
+        input.addEventListener('change', calculateCost);
+    });
+    
+    requestQuoteBtn.addEventListener('click', () => {
+        const projectType = document.querySelector('input[name="projectType"]:checked');
+        const features = Array.from(document.querySelectorAll('input[name="features"]:checked'))
+            .map(f => f.value);
+        
+        if (!projectType) {
+            showModalNotification('Выберите тип проекта', 'error');
+            return;
+        }
+        
+        const cost = totalCostElement.textContent;
+        showModalNotification(`Заявка на ${cost} отправлена! Свяжемся в течение часа`, 'success');
+        
+        // Close calculator
+        calculatorOpen = false;
+        calculatorWindow.classList.remove('active');
+        
+        // Scroll to contact form
+        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+    });
+} 

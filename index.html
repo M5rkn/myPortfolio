@@ -3,7 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Портфолио - Творческие Работы</title>
+    <title>Портфолио - Современная веб-разработка | TechPortal</title>
+    <meta name="description" content="Профессиональная веб-разработка: лендинги, интернет-магазины, админ-панели. Node.js, React, MongoDB. Современный дизайн и быстрая разработка.">
+    <meta name="keywords" content="веб-разработка, создание сайтов, лендинги, интернет-магазины, Node.js, React, MongoDB, верстка, портфолио">
+    <meta name="author" content="TechPortal">
+    
+    <!-- OpenGraph метатеги -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Портфолио - Современная веб-разработка | TechPortal">
+    <meta property="og:description" content="Профессиональная веб-разработка: лендинги, интернет-магазины, админ-панели. Node.js, React, MongoDB. Современный дизайн и быстрая разработка.">
+    <meta property="og:image" content="/og-image.jpg">
+    <meta property="og:url" content="https://your-site.railway.app">
+    <meta property="og:site_name" content="TechPortal">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Портфолио - Современная веб-разработка | TechPortal">
+    <meta name="twitter:description" content="Профессиональная веб-разработка: лендинги, интернет-магазины, админ-панели. Node.js, React, MongoDB.">
+    <meta name="twitter:image" content="/og-image.jpg">
+    
+    <!-- Дополнительные метатеги -->
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <link rel="canonical" href="https://your-site.railway.app">
+    
+    <!-- PWA манифест -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TechPortal">
+    
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -20,8 +50,6 @@
             <div class="preloader-text">Загружаем портфолио...</div>
         </div>
     </div>
-
-
 
     <!-- Navigation -->
     <nav class="navbar">
@@ -321,7 +349,108 @@
                         <a href="#" class="btn btn-primary" id="modalDemo" target="_blank">Посмотреть демо</a>
                         <a href="#" class="btn btn-secondary" id="modalGithub" target="_blank">GitHub</a>
                         <button class="btn btn-like" id="modalLikeBtn" onclick="incrementLikes()"><span class="like-icon">❤️</span> <span class="like-text">Нравится</span></button>
+                        <button class="btn btn-share" id="modalShareBtn">📤 Поделиться</button>
                     </div>
+                    
+                    <!-- Gallery navigation -->
+                    <div class="modal-gallery-nav" id="modalGalleryNav" style="display: none;">
+                        <button class="gallery-btn gallery-prev" id="galleryPrev">‹</button>
+                        <span class="gallery-counter"><span id="currentSlide">1</span> / <span id="totalSlides">1</span></span>
+                        <button class="gallery-btn gallery-next" id="galleryNext">›</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Чат виджет -->
+    <div id="chatWidget" class="chat-widget">
+        <div class="chat-toggle" id="chatToggle">
+            <span class="chat-icon">💬</span>
+            <span class="notification-dot" id="chatNotification"></span>
+        </div>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h4>Онлайн консультация</h4>
+                <button class="chat-close" id="chatClose">&times;</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    <div class="message-content">
+                        Привет! Я помогу с вопросами по веб-разработке. Что вас интересует?
+                    </div>
+                    <div class="message-time">Сейчас</div>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Введите сообщение...">
+                <button id="chatSend" class="chat-send">📤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Калькулятор стоимости -->
+    <div id="costCalculator" class="cost-calculator">
+        <div class="calculator-toggle" id="calculatorToggle">
+            <span class="calculator-icon">💰</span>
+            <span class="calculator-text">Калькулятор</span>
+        </div>
+        <div class="calculator-window" id="calculatorWindow">
+            <div class="calculator-header">
+                <h4>Стартовые цены 🚀</h4>
+                <button class="calculator-close" id="calculatorClose">&times;</button>
+            </div>
+            <div class="calculator-content">
+                
+                <div class="calc-section">
+                    <h5>Тип проекта</h5>
+                    <div class="calc-options">
+                        <label class="calc-option">
+                            <input type="radio" name="projectType" value="landing" data-cost="50">
+                            <span>Лендинг (от 50€) 🔥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="radio" name="projectType" value="website" data-cost="120">
+                            <span>Корпоративный сайт (от 120€) 🔥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="radio" name="projectType" value="shop" data-cost="200">
+                            <span>Интернет-магазин (от 200€) 🔥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="radio" name="projectType" value="app" data-cost="300">
+                            <span>Веб-приложение (от 300€) 🔥</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="calc-section">
+                    <h5>Дополнительные опции</h5>
+                    <div class="calc-options">
+                        <label class="calc-option">
+                            <input type="checkbox" name="features" value="admin" data-cost="50">
+                            <span>Админ-панель (+50€) 💥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="checkbox" name="features" value="auth" data-cost="30">
+                            <span>Авторизация (+30€) 💥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="checkbox" name="features" value="api" data-cost="40">
+                            <span>API интеграция (+40€) 💥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="checkbox" name="features" value="seo" data-cost="25">
+                            <span>SEO оптимизация (+25€) 💥</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="calc-result">
+                    <div class="total-cost">
+                        Примерная стоимость: <span id="totalCost">0€</span>
+                    </div>
+                    <button class="btn btn-primary" id="requestQuote">Получить точную стоимость</button>
                 </div>
             </div>
         </div>
