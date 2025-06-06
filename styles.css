@@ -1026,10 +1026,11 @@ img.lazy.loaded {
     right: 0;
     width: 350px;
     height: 450px;
-    background: var(--bg-primary);
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
     border-radius: 15px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 2px solid #667eea;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     display: none;
     flex-direction: column;
     overflow: hidden;
@@ -1096,7 +1097,8 @@ img.lazy.loaded {
 }
 
 .bot-message .message-content {
-    background: var(--glass-bg);
+    background: rgba(102, 126, 234, 0.15);
+    border: 1px solid rgba(102, 126, 234, 0.3);
     color: var(--text-primary);
 }
 
@@ -1122,9 +1124,9 @@ img.lazy.loaded {
 .chat-input {
     flex: 1;
     padding: 0.75rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(102, 126, 234, 0.5);
     border-radius: 25px;
-    background: var(--glass-bg);
+    background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
     font-size: 0.9rem;
 }
@@ -1185,10 +1187,11 @@ img.lazy.loaded {
     bottom: 70px;
     left: 0;
     width: 400px;
-    background: var(--bg-primary);
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(20px);
     border-radius: 15px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 2px solid #667eea;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     display: none;
     max-height: 80vh;
     overflow-y: auto;
@@ -1231,6 +1234,17 @@ img.lazy.loaded {
     padding: 1.5rem;
 }
 
+.special-offer {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
 .calc-section {
     margin-bottom: 2rem;
 }
@@ -1255,11 +1269,13 @@ img.lazy.loaded {
     padding: 0.75rem;
     border-radius: 8px;
     transition: all 0.3s ease;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .calc-option:hover {
-    background: var(--glass-bg);
+    background: rgba(102, 126, 234, 0.2);
+    border-color: #667eea;
 }
 
 .calc-option input {
@@ -1274,7 +1290,8 @@ img.lazy.loaded {
 .calc-result {
     margin-top: 2rem;
     padding: 1.5rem;
-    background: var(--glass-bg);
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
     border-radius: 10px;
     text-align: center;
 }
@@ -1418,6 +1435,8 @@ img.lazy.loaded {
         width: calc(100vw - 20px);
         height: 350px;
         right: -5px;
+        background: rgba(5, 5, 5, 0.98) !important;
+        border: 2px solid #667eea !important;
     }
     
     .cost-calculator {
@@ -1437,6 +1456,21 @@ img.lazy.loaded {
     
     .calculator-text {
         display: none;
+    }
+    
+    /* Дополнительные стили для чата на мобильных */
+    .chat-input-container {
+        border-top: 2px solid rgba(102, 126, 234, 0.5) !important;
+        background: rgba(10, 10, 10, 0.9);
+    }
+    
+    .chat-messages {
+        background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .bot-message .message-content {
+        background: rgba(102, 126, 234, 0.25) !important;
+        border: 1px solid rgba(102, 126, 234, 0.5) !important;
     }
 }
 
