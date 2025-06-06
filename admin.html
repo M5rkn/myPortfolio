@@ -229,7 +229,10 @@
         <div class="contacts-section">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                 <h2 class="section-title">Заявки</h2>
-                <button class="refresh-btn" onclick="loadContacts()">Обновить</button>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="refresh-btn" onclick="loadContacts()">Обновить</button>
+                    <button class="refresh-btn" onclick="logout()" style="background: #f44336;">Выйти</button>
+                </div>
             </div>
             
             <div id="contactsList" class="loading">
@@ -241,10 +244,45 @@
     <script>
         let contacts = [];
 
+        // Check authorization on page load
+        function checkAuth() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = '/login';
+                return false;
+            }
+            return token;
+        }
+
+        // Get auth headers
+        function getAuthHeaders() {
+            const token = localStorage.getItem('adminToken');
+            return {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/login';
+        }
+
         async function loadContacts() {
+            const token = checkAuth();
+            if (!token) return;
             try {
-                const response = await fetch('/api/admin/contacts');
+                const response = await fetch('/api/admin/contacts', {
+                    headers: getAuthHeaders()
+                });
                 const data = await response.json();
+
+                if (response.status === 401) {
+                    // Unauthorized, redirect to login
+                    logout();
+                    return;
+                }
 
                 if (data.success) {
                     contacts = data.contacts;
@@ -307,7 +345,8 @@
         async function markAsRead(contactId) {
             try {
                 const response = await fetch(`/api/admin/contacts/${contactId}/read`, {
-                    method: 'PATCH'
+                    method: 'PATCH',
+                    headers: getAuthHeaders()
                 });
 
                 if (response.ok) {
@@ -331,7 +370,8 @@
 
             try {
                 const response = await fetch(`/api/admin/contacts/${contactId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
                 });
 
                 if (response.ok) {

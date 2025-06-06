@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const path = require('path');
 require('dotenv').config();
 
@@ -35,6 +37,8 @@ app.use(express.static('.'));
 
 // MongoDB connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // Измените в production!
 
 mongoose.connect(MONGODB_URI)
 .then(() => console.log('✅ MongoDB подключен'))
@@ -60,7 +64,72 @@ const projectViewSchema = new mongoose.Schema({
 
 const ProjectView = mongoose.model('ProjectView', projectViewSchema);
 
+// Auth middleware
+const authenticateAdmin = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1] || req.cookies?.adminToken;
+    
+    if (!token) {
+        return res.status(401).json({
+            success: false,
+            message: 'Требуется авторизация'
+        });
+    }
+    
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.admin = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({
+            success: false,
+            message: 'Недействительный токен'
+        });
+    }
+};
+
 // Routes
+
+// Admin login
+app.post('/api/admin/login', async (req, res) => {
+    try {
+        const { password } = req.body;
+        
+        if (!password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Пароль обязателен'
+            });
+        }
+        
+        // Simple password check (в production лучше использовать хеш)
+        if (password !== ADMIN_PASSWORD) {
+            return res.status(401).json({
+                success: false,
+                message: 'Неверный пароль'
+            });
+        }
+        
+        // Generate JWT token
+        const token = jwt.sign(
+            { admin: true, timestamp: Date.now() },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+        
+        res.json({
+            success: true,
+            message: 'Успешная авторизация',
+            token: token
+        });
+        
+    } catch (error) {
+        console.error('Ошибка авторизации:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Ошибка сервера'
+        });
+    }
+});
 
 // Submit contact form
 app.post('/api/contact', async (req, res) => {
@@ -108,7 +177,7 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // Get contact messages (admin)
-app.get('/api/admin/contacts', async (req, res) => {
+app.get('/api/admin/contacts', authenticateAdmin, async (req, res) => {
     try {
         const contacts = await Contact.find()
             .sort({ createdAt: -1 })
@@ -128,7 +197,7 @@ app.get('/api/admin/contacts', async (req, res) => {
 });
 
 // Mark contact as read
-app.patch('/api/admin/contacts/:id/read', async (req, res) => {
+app.patch('/api/admin/contacts/:id/read', authenticateAdmin, async (req, res) => {
     try {
         await Contact.findByIdAndUpdate(req.params.id, { isRead: true });
         res.json({ success: true });
@@ -138,7 +207,7 @@ app.patch('/api/admin/contacts/:id/read', async (req, res) => {
 });
 
 // Delete contact
-app.delete('/api/admin/contacts/:id', async (req, res) => {
+app.delete('/api/admin/contacts/:id', authenticateAdmin, async (req, res) => {
     try {
         await Contact.findByIdAndDelete(req.params.id);
         res.json({ success: true });
@@ -190,7 +259,12 @@ app.get('/api/projects/:id/views', async (req, res) => {
     }
 });
 
-// Admin panel route
+// Login page route
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// Admin panel route (now requires auth check on frontend)
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
