@@ -260,6 +260,17 @@ const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(64).toString('he
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || 
     bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'ChangeThisPassword123!', 12);
 
+// Debug info for Railway (remove in production)
+if (process.env.NODE_ENV === 'production') {
+    console.log('🔍 Railway Debug Info:');
+    console.log('- ADMIN_PASSWORD_HASH exists:', !!process.env.ADMIN_PASSWORD_HASH);
+    console.log('- Using fallback password:', !process.env.ADMIN_PASSWORD_HASH);
+    if (!process.env.ADMIN_PASSWORD_HASH) {
+        console.warn('⚠️ ADMIN_PASSWORD_HASH не настроен! Используется fallback.');
+        console.warn('⚠️ Запустите локально: node generate-admin-hash.js');
+    }
+}
+
 // MongoDB подключение с автопереподключением
 mongoose.connect(MONGODB_URI, {
     maxPoolSize: 10,
@@ -507,13 +518,22 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
         const isValidPassword = await new Promise((resolve) => {
             // Add random delay to prevent timing attacks
             setTimeout(() => {
-                resolve(bcrypt.compareSync(password, ADMIN_PASSWORD_HASH));
+                // Если нет хэша в env, проверяем против простого пароля
+                if (!process.env.ADMIN_PASSWORD_HASH && process.env.ADMIN_PASSWORD) {
+                    resolve(password === process.env.ADMIN_PASSWORD);
+                } else {
+                    resolve(bcrypt.compareSync(password, ADMIN_PASSWORD_HASH));
+                }
             }, Math.random() * 100 + 50);
         });
         
         if (!isValidPassword) {
-            // Log failed attempt
+            // Enhanced debug logging
             console.warn(`Failed login attempt from IP: ${clientIP}`);
+            console.warn(`Password length: ${password.length}`);
+            console.warn(`Has ADMIN_PASSWORD_HASH: ${!!process.env.ADMIN_PASSWORD_HASH}`);
+            console.warn(`Has ADMIN_PASSWORD: ${!!process.env.ADMIN_PASSWORD}`);
+            console.warn(`Using fallback: ${!process.env.ADMIN_PASSWORD_HASH && !process.env.ADMIN_PASSWORD}`);
             
             return res.status(401).json({
                 success: false,
