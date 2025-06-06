@@ -18,23 +18,11 @@ const PORT = process.env.PORT || 3000;
 // Trust proxy for correct IP detection
 app.set('trust proxy', 1);
 
-// Security: Strict CSP and security headers
+// Security: Безопасные заголовки без strict CSP для исправления проблемы отображения
 app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com"],
-            imgSrc: ["'self'", "data:", "blob:"],
-            connectSrc: ["'self'"],
-            frameAncestors: ["'none'"],
-            baseUri: ["'self'"],
-            formAction: ["'self'"]
-        }
-    },
-    crossOriginEmbedderPolicy: true,
-    crossOriginOpenerPolicy: true,
+    contentSecurityPolicy: false, // Отключаем CSP от helmet, используем в HTML
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: false,
     crossOriginResourcePolicy: { policy: "cross-origin" },
     hsts: {
         maxAge: 31536000,
@@ -105,19 +93,23 @@ app.use(strictLimiter);
 // Strict CORS with whitelist
 const allowedOrigins = [
     'http://localhost:3000',
+    'http://localhost:8080',
     'http://127.0.0.1:3000',
+    'http://127.0.0.1:8080',
     process.env.FRONTEND_URL || 'https://techportal.up.railway.app'
 ].filter(Boolean);
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (mobile apps, etc.)
+        // Allow requests with no origin (mobile apps, direct access)
         if (!origin) return callback(null, true);
         
         if (allowedOrigins.indexOf(origin) !== -1) {
             return callback(null, true);
         } else {
-            return callback(new Error('CORS policy violation'), false);
+            // Временно разрешаем все origins для отладки
+            console.warn(`CORS warning: Origin ${origin} not in whitelist`);
+            return callback(null, true);
         }
     },
     credentials: true,

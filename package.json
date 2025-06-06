@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "audit": "npm audit --audit-level moderate",
     "security-check": "npm audit && npm outdated",
-    "production": "NODE_ENV=production node server.js"
+    "production": "NODE_ENV=production PORT=8080 node server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
