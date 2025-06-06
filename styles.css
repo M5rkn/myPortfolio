@@ -705,6 +705,46 @@ body {
         0 0 0 2px rgba(102, 126, 234, 0.3);
 }
 
+/* Validation states */
+.form-group input.error-field,
+.form-group textarea.error-field {
+    border-color: #f5576c !important;
+    box-shadow: 0 0 10px rgba(245, 87, 108, 0.5) !important;
+    animation: shake 0.5s ease-in-out;
+}
+
+.form-group input.valid-field,
+.form-group textarea.valid-field {
+    border-color: #43e97b !important;
+    box-shadow: 0 0 5px rgba(67, 233, 123, 0.3) !important;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Character counter styling */
+.char-counter {
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    text-align: right;
+    transition: color 0.3s ease;
+}
+
+.char-counter.warning {
+    color: #f5a623 !important;
+}
+
+.char-counter.error {
+    color: #f5576c !important;
+}
+
+.char-counter.success {
+    color: #43e97b !important;
+}
+
 .form-group input::placeholder,
 .form-group textarea::placeholder {
     color: #666;

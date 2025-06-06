@@ -139,7 +139,7 @@ function validateInput(input, type = 'text') {
             return validNameChars.test(cleaned);
             
         case 'message':
-            return cleaned.length >= 1 && cleaned.length <= 1000;
+            return cleaned.length >= 10 && cleaned.length <= 1000;
             
         default:
             return cleaned.length > 0 && cleaned.length <= 255;
@@ -293,19 +293,37 @@ if (contactForm) {
         const email = formData.get('email');
         const message = formData.get('message');
         
-        // Enhanced validation
+        // Clear previous error styling
+        clearValidationErrors(this);
+        
+        // Enhanced validation with detailed error messages
+        if (!name || name.trim().length === 0) {
+            showFieldError(this.querySelector('#name'), '❌ Поле "Имя" обязательно для заполнения');
+            return;
+        }
+        
         if (!validateInput(name, 'name')) {
-            showNotification('Пожалуйста, введите корректное имя (2-50 символов)', 'error');
+            showFieldError(this.querySelector('#name'), '❌ Имя должно содержать от 2 до 50 символов и состоять только из букв');
+            return;
+        }
+        
+        if (!email || email.trim().length === 0) {
+            showFieldError(this.querySelector('#email'), '❌ Поле "Email" обязательно для заполнения');
             return;
         }
         
         if (!validateInput(email, 'email')) {
-            showNotification('Пожалуйста, введите корректный email', 'error');
+            showFieldError(this.querySelector('#email'), '❌ Пожалуйста, введите корректный email адрес');
+            return;
+        }
+        
+        if (!message || message.trim().length === 0) {
+            showFieldError(this.querySelector('#message'), '❌ Поле "Сообщение" обязательно для заполнения');
             return;
         }
         
         if (!validateInput(message, 'message')) {
-            showNotification('Сообщение должно содержать 10-1000 символов', 'error');
+            showFieldError(this.querySelector('#message'), '❌ Сообщение должно содержать от 10 до 1000 символов');
             return;
         }
         
@@ -339,10 +357,18 @@ if (contactForm) {
             const data = await response.json();
             
             if (data.success) {
-                showNotification(sanitizeHTML(data.message), 'success');
+                showNotification('✅ ' + sanitizeHTML(data.message), 'success');
                 this.reset();
+                clearValidationErrors(this);
+                
+                // Add success animation to form
+                this.style.transform = 'scale(1.02)';
+                this.style.transition = 'transform 0.3s ease';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 300);
             } else {
-                showNotification(sanitizeHTML(data.message) || 'Ошибка при отправке', 'error');
+                showNotification('❌ ' + (sanitizeHTML(data.message) || 'Ошибка при отправке'), 'error');
             }
         } catch (error) {
             console.error('Ошибка отправки:', error);
@@ -358,6 +384,119 @@ if (contactForm) {
 // Email validation
 function isValidEmail(email) {
     return validateInput(email, 'email');
+}
+
+// Field error highlighting
+function showFieldError(field, message) {
+    if (!field) return;
+    
+    // Add error styling to field
+    field.style.borderColor = '#f5576c';
+    field.style.boxShadow = '0 0 10px rgba(245, 87, 108, 0.5)';
+    field.classList.add('error-field');
+    
+    // Show notification
+    showNotification(message, 'error');
+    
+    // Focus on error field
+    field.focus();
+    
+    // Scroll to field if not visible
+    field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Clear validation errors
+function clearValidationErrors(form) {
+    if (!form) return;
+    
+    const fields = form.querySelectorAll('input, textarea');
+    fields.forEach(field => {
+        field.style.borderColor = '';
+        field.style.boxShadow = '';
+        field.classList.remove('error-field');
+    });
+    
+    // Remove any existing error messages
+    const errorMessages = form.querySelectorAll('.field-error-message');
+    errorMessages.forEach(msg => msg.remove());
+}
+
+// Real-time validation
+function addRealTimeValidation() {
+    const nameField = secureGetElementById('name');
+    const emailField = secureGetElementById('email');
+    const messageField = secureGetElementById('message');
+    
+    if (nameField) {
+        nameField.addEventListener('input', function() {
+            if (this.value.trim().length > 0) {
+                if (validateInput(this.value, 'name')) {
+                    this.style.borderColor = '#43e97b';
+                    this.style.boxShadow = '0 0 5px rgba(67, 233, 123, 0.3)';
+                    this.classList.remove('error-field');
+                } else {
+                    this.style.borderColor = '#f5576c';
+                    this.style.boxShadow = '0 0 5px rgba(245, 87, 108, 0.3)';
+                }
+            } else {
+                this.style.borderColor = '';
+                this.style.boxShadow = '';
+            }
+        });
+    }
+    
+    if (emailField) {
+        emailField.addEventListener('input', function() {
+            if (this.value.trim().length > 0) {
+                if (validateInput(this.value, 'email')) {
+                    this.style.borderColor = '#43e97b';
+                    this.style.boxShadow = '0 0 5px rgba(67, 233, 123, 0.3)';
+                    this.classList.remove('error-field');
+                } else {
+                    this.style.borderColor = '#f5576c';
+                    this.style.boxShadow = '0 0 5px rgba(245, 87, 108, 0.3)';
+                }
+            } else {
+                this.style.borderColor = '';
+                this.style.boxShadow = '';
+            }
+        });
+    }
+    
+    if (messageField) {
+        messageField.addEventListener('input', function() {
+            const length = this.value.trim().length;
+            const counter = this.parentNode.querySelector('.char-counter') || document.createElement('div');
+            
+            if (!this.parentNode.querySelector('.char-counter')) {
+                counter.className = 'char-counter';
+                counter.style.cssText = `
+                    font-size: 0.8rem;
+                    color: #666;
+                    margin-top: 0.5rem;
+                    text-align: right;
+                `;
+                this.parentNode.appendChild(counter);
+            }
+            
+            counter.textContent = `${length}/1000 символов`;
+            
+            if (length >= 10 && length <= 1000) {
+                this.style.borderColor = '#43e97b';
+                this.style.boxShadow = '0 0 5px rgba(67, 233, 123, 0.3)';
+                this.classList.remove('error-field');
+                counter.style.color = '#43e97b';
+            } else if (length > 0) {
+                this.style.borderColor = '#f5576c';
+                this.style.boxShadow = '0 0 5px rgba(245, 87, 108, 0.3)';
+                counter.style.color = '#f5576c';
+            } else {
+                this.style.borderColor = '';
+                this.style.boxShadow = '';
+                counter.style.color = '#666';
+            }
+        });
+    }
 }
 
 // Notification system
@@ -1520,11 +1659,19 @@ function initializeChatWidget() {
         const message = chatInput.value.trim();
         
         if (!message) {
+            // Add visual feedback for empty message
+            chatInput.style.borderColor = '#f5576c';
+            chatInput.style.boxShadow = '0 0 5px rgba(245, 87, 108, 0.5)';
+            setTimeout(() => {
+                chatInput.style.borderColor = '';
+                chatInput.style.boxShadow = '';
+            }, 1000);
             return;
         }
         
-        // Validate and sanitize message
-        if (!validateInput(message, 'message')) {
+        // Validate message length (minimum 1 symbol for chat, not 10 like in contact form)
+        if (message.length > 500) {
+            showModalNotification('❌ Сообщение слишком длинное (максимум 500 символов)', 'error');
             return;
         }
         
@@ -2398,6 +2545,9 @@ function initializeVisualEffects() {
     
     // Initial animation check
     handleScrollAnimations();
+    
+    // Initialize real-time form validation
+    addRealTimeValidation();
 }
 
 // All initialization moved to main DOMContentLoaded handler above 
