@@ -52,6 +52,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scroll-progress"></div>
+    
     <!-- Preloader -->
     <div id="preloader" class="preloader">
         <div class="preloader-content">
@@ -98,11 +101,12 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <div id="particles-js"></div>
         <div class="hero-container">
             <div class="hero-content">
                 <h1 class="hero-title">
-                    <span class="gradient-text">Создаю цифровые</span><br>
-                    <span class="hero-subtitle">впечатления</span>
+                    <span class="gradient-text glitch-text" data-text="Создаю цифровые">Создаю цифровые</span><br>
+                    <span class="hero-subtitle breathe">впечатления</span>
                 </h1>
                 <p class="hero-description">
                     Современный дизайн и разработка, которые превращают идеи в захватывающие цифровые решения
@@ -126,7 +130,7 @@
     <!-- Portfolio Section -->
     <section id="portfolio" class="portfolio">
         <div class="container">
-            <h2 class="section-title">Мои работы</h2>
+            <h2 class="section-title animate-on-scroll">Мои работы</h2>
             <p class="section-subtitle">Коллекция проектов, демонстрирующих мой опыт и креативность</p>
             
             <div class="portfolio-grid">
@@ -202,7 +206,7 @@
     <!-- Services Section -->
     <section id="services" class="services">
         <div class="container">
-            <h2 class="section-title">Что умею</h2>
+            <h2 class="section-title animate-on-scroll">Что умею</h2>
             <p class="section-subtitle">Полный спектр веб-разработки от идеи до готового проекта</p>
             
             <div class="services-grid">
@@ -250,7 +254,7 @@
         <div class="container">
             <div class="about-content">
                 <div class="about-text">
-                    <h2 class="section-title">О себе</h2>
+                    <h2 class="section-title animate-on-scroll">О себе</h2>
                     <p class="about-description">
                         Я создаю цифровые решения, которые объединяют современный дизайн и передовые технологии. 
                         Моя цель — превращать сложные идеи в интуитивно понятные и красивые пользовательские интерфейсы.
@@ -280,7 +284,7 @@
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
-            <h2 class="section-title">Давайте работать вместе</h2>
+            <h2 class="section-title animate-on-scroll">Давайте работать вместе</h2>
             <p class="section-subtitle">Готов обсудить ваш проект и воплотить идеи в жизнь</p>
             
             <div class="contact-content">
@@ -470,6 +474,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html> 

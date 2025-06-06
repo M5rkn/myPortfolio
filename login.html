@@ -363,7 +363,7 @@
             }
         }
 
-        // Verify token and redirect if valid
+            // Verify token and redirect if valid
         async function verifyTokenAndRedirect(token) {
             try {
                 const controller = new AbortController();
@@ -491,8 +491,8 @@
                 if (error.name === 'AbortError') {
                     showError('Превышено время ожидания');
                 } else {
-                    console.error('Ошибка входа:', error);
-                    showError('Ошибка подключения к серверу');
+                console.error('Ошибка входа:', error);
+                showError('Ошибка подключения к серверу');
                 }
             } finally {
                 // Restore button state
@@ -510,8 +510,8 @@
                 this.style.borderColor = isValid ? '#4CAF50' : '#f44336';
             } else {
                 this.style.borderColor = '#333';
-            }
-        });
+                    }
+                });
 
         // Initialize page
         window.addEventListener('load', async () => {
@@ -528,7 +528,7 @@
                 if (!verified) {
                     loginBtn.textContent = 'Войти';
                     loginBtn.disabled = false;
-                }
+        }
             }
             
             // Auto-focus password field if not checking token

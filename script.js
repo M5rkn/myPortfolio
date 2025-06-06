@@ -139,7 +139,7 @@ function validateInput(input, type = 'text') {
             return validNameChars.test(cleaned);
             
         case 'message':
-            return cleaned.length >= 10 && cleaned.length <= 1000;
+            return cleaned.length >= 1 && cleaned.length <= 1000;
             
         default:
             return cleaned.length > 0 && cleaned.length <= 255;
@@ -177,8 +177,8 @@ async function getCSRFToken() {
         let token = sessionStorage.getItem('csrf_token');
         const tokenTime = sessionStorage.getItem('csrf_token_time');
         
-        // Check if token is expired (5 minutes)
-        if (token && tokenTime && (Date.now() - parseInt(tokenTime)) < 5 * 60 * 1000) {
+        // Check if token is expired (10 minutes - увеличиваем время кеширования)
+        if (token && tokenTime && (Date.now() - parseInt(tokenTime)) < 10 * 60 * 1000) {
             return token;
         }
         
@@ -202,7 +202,17 @@ async function getCSRFToken() {
         }
     } catch (error) {
         console.error('Error getting CSRF token:', error);
-        // Fallback - return null and let server handle the error
+        
+        // Fallback для локальной разработки
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            const fallbackToken = 'dev-fallback-' + Date.now();
+            sessionStorage.setItem('csrf_token', fallbackToken);
+            sessionStorage.setItem('csrf_token_time', Date.now().toString());
+            console.warn('Using fallback CSRF token for development');
+            return fallbackToken;
+        }
+        
+        // Для production - return null and let server handle the error
         return null;
     }
 }
@@ -214,11 +224,11 @@ secureQuerySelectorAll('a[href^="#"]').forEach(anchor => {
         const href = this.getAttribute('href');
         if (href && href.match(/^#[a-zA-Z][a-zA-Z0-9_-]*$/)) {
             const target = secureQuerySelector(href);
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
             }
         }
     });
@@ -548,17 +558,7 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Observe elements for animations
-document.addEventListener('DOMContentLoaded', () => {
-    // Add initial styles for animation
-    const animatedElements = document.querySelectorAll('.portfolio-item, .skill-item, .contact-item');
-    animatedElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
-    });
-});
+// Observe elements for animations - moved to main DOMContentLoaded handler
 
 // Portfolio filter functionality (if needed in the future)
 function filterPortfolio(category) {
@@ -597,16 +597,7 @@ function typeWriter(element, text, speed = 100) {
     type();
 }
 
-// Initialize typed effect when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    const heroSubtitle = document.querySelector('.hero-subtitle');
-    if (heroSubtitle) {
-        const originalText = heroSubtitle.textContent;
-        setTimeout(() => {
-            typeWriter(heroSubtitle, originalText, 80);
-        }, 1000);
-    }
-});
+// Initialize typed effect when page loads - moved to main DOMContentLoaded handler
 
 // Parallax effect for hero section
 window.addEventListener('scroll', () => {
@@ -656,12 +647,20 @@ async function updateProjectViews() {
                 viewsElement.innerHTML = `👁 ${data.views}`;
             }
         } catch (error) {
-            console.error('Ошибка загрузки просмотров:', error);
+            if (error.message.includes('Rate limit')) {
+                console.warn('Rate limit для просмотров - попробуем позже');
+                // Не показываем ошибку пользователю для просмотров
+            } else {
+                console.error('Ошибка загрузки просмотров:', error);
+            }
         }
         
-        // Add click handler to increment views
-        item.addEventListener('click', async () => {
+        // Add click handler to increment views and open modal
+        item.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
             try {
+                // Increment views
                 const response = await fetch(`/api/projects/${projectId}/view`, {
                     method: 'POST'
                 });
@@ -674,8 +673,16 @@ async function updateProjectViews() {
                     }
                 }
             } catch (error) {
-                console.error('Ошибка обновления просмотров:', error);
+                if (error.message.includes('Rate limit')) {
+                    console.warn('Rate limit для обновления просмотров');
+                    // Продолжаем открывать модальное окно даже если не смогли обновить просмотры
+                } else {
+                    console.error('Ошибка обновления просмотров:', error);
+                }
             }
+            
+            // Open modal
+            openProjectModal(projectId);
         });
     });
 }
@@ -1016,8 +1023,12 @@ async function incrementLikes() {
             showModalNotification('Спасибо за лайк! ❤️', 'success');
         }
     } catch (error) {
-        console.error('Ошибка при добавлении лайка:', error);
-        showModalNotification('Ошибка при добавлении лайка', 'error');
+        if (error.message.includes('Rate limit')) {
+            showModalNotification('Слишком много запросов. Попробуйте через минуту', 'warning');
+        } else {
+            console.error('Ошибка при добавлении лайка:', error);
+            showModalNotification('Ошибка при добавлении лайка', 'error');
+        }
     }
 }
 
@@ -1151,7 +1162,7 @@ function fallbackCopy(text) {
         document.body.removeChild(textArea);
         
         if (successful) {
-            showModalNotification('Ссылка скопирована в буфер обмена!', 'success');
+        showModalNotification('Ссылка скопирована в буфер обмена!', 'success');
         } else {
             // Final fallback - show text for manual copy
             showShareModal(text);
@@ -1231,17 +1242,7 @@ function showShareModal(text) {
     showModalNotification('Выделите и скопируйте текст вручную', 'info');
 }
 
-// Add click handlers to portfolio items
-document.addEventListener('DOMContentLoaded', () => {
-    const portfolioItems = document.querySelectorAll('.portfolio-item');
-    portfolioItems.forEach((item, index) => {
-        const projectId = `project-${index + 1}`;
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            openProjectModal(projectId);
-        });
-    });
-});
+// Portfolio items click handlers are now in updateProjectViews function
 
 // Modal close handlers
 modalClose?.addEventListener('click', closeProjectModal);
@@ -1343,22 +1344,117 @@ function initializeChatWidget() {
     }
     
     let chatOpen = false;
-    let botResponses = [
-        "Отличный вопрос! Расскажите подробнее о вашем проекте",
-        "Да, такое возможно реализовать. Нужно обсудить детали",
-        "🔥 Сейчас действуют стартовые цены! Воспользуйтесь калькулятором слева",
-        "Обычно на такой проект уходит 2-4 недели",
-        "Конечно! Все мои проекты адаптированы под мобильные устройства",
-        "Да, предоставляю техподдержку после сдачи проекта",
-        "Можете посмотреть примеры работ в разделе 'Работы'",
-        "Свяжитесь со мной через форму обратной связи для детального обсуждения",
-        "Я использую современные технологии: React, Node.js, MongoDB",
-        "Все проекты включают SEO оптимизацию и быструю загрузку",
-        "Предоставляю исходный код и документацию к проекту",
-        "💥 Специальные цены для первых клиентов: лендинг от 50€!",
-        "Качественная работа по доступным ценам для набора отзывов",
-        "Возможна интеграция с любыми внешними API и сервисами"
-    ];
+    // Умные ответы на основе анализа сообщения
+    function getSmartResponse(message) {
+        const msg = message.toLowerCase();
+        
+        // Вопросы о стоимости
+        if (msg.includes('стоимость') || msg.includes('цена') || msg.includes('сколько стоит') || 
+            msg.includes('цену') || msg.includes('прайс') || msg.includes('бюджет')) {
+            
+            if (msg.includes('лендинг')) {
+                return "💰 Лендинг от 50€! Включает адаптивную верстку, анимации, SEO оптимизацию. Воспользуйтесь калькулятором слева для точного расчета.";
+            } else if (msg.includes('магазин') || msg.includes('интернет-магазин')) {
+                return "🛒 Интернет-магазин от 200€! Корзина, каталог, админ-панель, интеграция платежей. Полный функционал для онлайн торговли.";
+            } else if (msg.includes('сайт') || msg.includes('корпоративный')) {
+                return "🏢 Корпоративный сайт от 100€! Многостраничный сайт с CMS, формами обратной связи, SEO продвижением.";
+            } else if (msg.includes('приложение') || msg.includes('веб-приложение')) {
+                return "⚡ Веб-приложение от 300€! React/Node.js, база данных, авторизация, админ-панель. Полный стек разработки.";
+            } else {
+                return "💵 Цены: Лендинг от 50€, Корпоративный сайт от 100€, Интернет-магазин от 200€, Веб-приложение от 300€. Используйте калькулятор для точного расчета!";
+            }
+        }
+        
+        // Вопросы о времени разработки
+        if (msg.includes('время') || msg.includes('сроки') || msg.includes('как долго') || 
+            msg.includes('когда будет готов') || msg.includes('дедлайн') || msg.includes('как быстро')) {
+            
+            if (msg.includes('лендинг')) {
+                return "⏱️ Лендинг: 3-7 дней. Простой лендинг за 3 дня, сложный с анимациями за неделю.";
+            } else if (msg.includes('магазин')) {
+                return "⏱️ Интернет-магазин: 2-4 недели. Зависит от количества товаров и функций.";
+            } else if (msg.includes('сайт')) {
+                return "⏱️ Корпоративный сайт: 1-2 недели. Многостраничный сайт с CMS.";
+            } else {
+                return "⏱️ Сроки разработки: Лендинг 3-7 дней, Сайт 1-2 недели, Магазин 2-4 недели, Приложение 3-6 недель. Точные сроки зависят от сложности проекта.";
+            }
+        }
+        
+        // Вопросы о технологиях
+        if (msg.includes('технологии') || msg.includes('стек') || msg.includes('какие языки') || 
+            msg.includes('framework') || msg.includes('база данных') || msg.includes('cms')) {
+            return "🔧 Технологии: Frontend - HTML5, CSS3, JavaScript ES6+, React. Backend - Node.js, Express. База данных - MongoDB. CMS - WordPress. Все современно и надежно!";
+        }
+        
+        // Вопросы о портфолио/работах
+        if (msg.includes('работы') || msg.includes('портфолио') || msg.includes('примеры') || 
+            msg.includes('проекты') || msg.includes('что делал')) {
+            return "🎨 Портфолио: Интернет-магазины, лендинги, корпоративные сайты, веб-приложения. Посмотрите раздел 'Работы' выше - там все примеры с подробным описанием!";
+        }
+        
+        // Вопросы о мобильной версии
+        if (msg.includes('мобильн') || msg.includes('адаптив') || msg.includes('телефон') || 
+            msg.includes('планшет') || msg.includes('responsive')) {
+            return "📱 Все проекты адаптивные! Идеально работают на телефонах, планшетах, компьютерах. Тестирую на всех устройствах.";
+        }
+        
+        // Вопросы о поддержке
+        if (msg.includes('поддержка') || msg.includes('обслуживание') || msg.includes('после сдачи') || 
+            msg.includes('гарантия') || msg.includes('исправления')) {
+            return "🔧 Поддержка: 1 месяц бесплатных исправлений после сдачи проекта. Потом договариваемся о постоянной поддержке.";
+        }
+        
+        // Вопросы о SEO
+        if (msg.includes('seo') || msg.includes('сео') || msg.includes('продвижение') || 
+            msg.includes('поисковик') || msg.includes('google') || msg.includes('yandex')) {
+            return "🚀 SEO: Все сайты оптимизированы для поисковиков. Правильная структура, метатеги, быстрая загрузка, семантическая верстка.";
+        }
+        
+        // Вопросы о контактах
+        if (msg.includes('связаться') || msg.includes('контакт') || msg.includes('телефон') || 
+            msg.includes('email') || msg.includes('написать')) {
+            return "📞 Контакты: Email - markoilynickiy@gmail.com, Телефон - +491605479381, Telegram - @Marklill. Отвечаю быстро!";
+        }
+        
+        // Вопросы о домене/хостинге
+        if (msg.includes('домен') || msg.includes('хостинг') || msg.includes('сервер') || 
+            msg.includes('где разместить') || msg.includes('hosting')) {
+            return "🌐 Хостинг: Помогу с выбором и настройкой хостинга. Рекомендую Railway, Vercel, Netlify для проектов. Домены регистрируем отдельно.";
+        }
+        
+        // Вопросы о WordPress
+        if (msg.includes('wordpress') || msg.includes('cms') || msg.includes('админка')) {
+            return "⚙️ WordPress: Создаю кастомные темы, настраиваю админ-панель, ACF поля, плагины. Удобно для самостоятельного управления контентом.";
+        }
+        
+        // Приветствия
+        if (msg.includes('привет') || msg.includes('здравствуй') || msg.includes('добрый день') || 
+            msg.includes('hello') || msg.includes('hi')) {
+            return "👋 Привет! Я помогу с вопросами по веб-разработке. Расскажите о вашем проекте или спросите что интересует!";
+        }
+        
+        // Общие вопросы о возможностях
+        if (msg.includes('можете') || msg.includes('умеете') || msg.includes('делаете') || 
+            msg.includes('возможно ли') || msg.includes('реально ли')) {
+            return "✅ Делаю: лендинги, интернет-магазины, корпоративные сайты, веб-приложения, WordPress темы, интеграцию API. Почти все возможно!";
+        }
+        
+        // Благодарности
+        if (msg.includes('спасибо') || msg.includes('благодарю') || msg.includes('thanks')) {
+            return "😊 Пожалуйста! Всегда рад помочь. Есть еще вопросы?";
+        }
+        
+        // Fallback ответы для неопознанных сообщений
+        const fallbackResponses = [
+            "🤔 Интересный вопрос! Можете задать более конкретный вопрос о стоимости, сроках или технологиях?",
+            "💡 Расскажите подробнее о вашем проекте, и я дам точный ответ!",
+            "📋 Могу рассказать о ценах, сроках, технологиях или показать примеры работ. Что интересует?",
+            "🎯 Помогу с любыми вопросами по веб-разработке. Спросите о чем угодно!",
+            "💼 Готов обсудить ваш проект! Какой тип сайта вас интересует?"
+        ];
+        
+        return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+    }
     
     // Show notification after 5 seconds
     if (chatNotification) {
@@ -1387,7 +1483,10 @@ function initializeChatWidget() {
     
     function sendMessage() {
         const message = chatInput.value.trim();
-        if (!message) return;
+        
+        if (!message) {
+            return;
+        }
         
         // Validate and sanitize message
         if (!validateInput(message, 'message')) {
@@ -1398,10 +1497,10 @@ function initializeChatWidget() {
         addMessage(sanitizeHTML(message), 'user');
         chatInput.value = '';
         
-        // Simulate bot response
+        // Generate smart bot response
         setTimeout(() => {
-            const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
-            addMessage(randomResponse, 'bot');
+            const smartResponse = getSmartResponse(message);
+            addMessage(smartResponse, 'bot');
         }, 1000 + Math.random() * 2000);
     }
     
@@ -1433,7 +1532,9 @@ function initializeChatWidget() {
         }
     }
     
-    chatSend.addEventListener('click', sendMessage);
+    chatSend.addEventListener('click', () => {
+        sendMessage();
+    });
     chatInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             sendMessage();
@@ -1588,34 +1689,120 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize chat and calculator
     initializeChatWidget();
     initializeCostCalculator();
+    
+    // Initialize visual effects
+    setTimeout(initializeVisualEffects, 100); // Small delay for particles.js to load
+    
+    // Development helpers (только для localhost)
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // Добавляем функции в window для отладки
+        window.resetRateLimit = () => rateLimiter.reset();
+        window.rateLimitStats = () => {
+            console.log('Rate Limiter Stats:', rateLimiter.getStats());
+            return rateLimiter.getStats();
+        };
+        console.log('🛠️ Development helpers available: resetRateLimit(), rateLimitStats()');
+    }
+    
+    // Initialize typed effect for hero
+    const heroSubtitle = document.querySelector('.hero-subtitle');
+    if (heroSubtitle) {
+        const originalText = heroSubtitle.textContent;
+        setTimeout(() => {
+            typeWriter(heroSubtitle, originalText, 80);
+        }, 1000);
+    }
+    
+    // Add initial styles for animation
+    const animatedElements = document.querySelectorAll('.portfolio-item, .skill-item, .contact-item');
+    animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
+    
+    // Security event handlers
+    window.addEventListener('error', (e) => {
+        e.preventDefault();
+        console.error('Application error occurred');
+        return false;
+    });
+    
+    window.addEventListener('unhandledrejection', (e) => {
+        e.preventDefault();
+        console.error('Promise rejection occurred');
+    });
+    
+    window.addEventListener('beforeunload', () => {
+        sessionStorage.removeItem('temp_data');
+        
+        if ('caches' in window) {
+            caches.keys().then(cacheNames => {
+                cacheNames.forEach(cacheName => {
+                    if (cacheName.includes('api')) {
+                        caches.delete(cacheName);
+                    }
+                });
+            });
+        }
+    });
 });
 
 // Rate limiting для API calls
 const rateLimiter = {
     calls: new Map(),
-    limit: 10, // максимум вызовов в минуту
+    limit: 50, // увеличиваем лимит до 50 вызовов в минуту
     
     canMakeCall(endpoint) {
+        // Разные лимиты для разных типов запросов
+        let currentLimit = this.limit;
+        
+        if (endpoint.includes('/csrf-token')) {
+            currentLimit = 100; // CSRF токены можно запрашивать чаще
+        } else if (endpoint.includes('/like') || endpoint.includes('/view')) {
+            currentLimit = 30; // Лайки и просмотры - средний лимит
+        } else if (endpoint.includes('/contact')) {
+            currentLimit = 5; // Контактные формы - строгий лимит
+        }
+        
         const now = Date.now();
         const minute = Math.floor(now / 60000);
         const key = `${endpoint}_${minute}`;
         
         const count = this.calls.get(key) || 0;
-        if (count >= this.limit) {
+        if (count >= currentLimit) {
+            console.warn(`Rate limit exceeded for ${endpoint}: ${count}/${currentLimit}`);
             return false;
         }
         
         this.calls.set(key, count + 1);
         
-        // Очистка старых записей
-        this.calls.forEach((value, mapKey) => {
-            const keyMinute = parseInt(mapKey.split('_').pop());
-            if (minute - keyMinute > 1) {
-                this.calls.delete(mapKey);
-            }
-        });
+        // Очистка старых записей (оптимизировано)
+        if (this.calls.size > 100) { // Очищаем только если слишком много записей
+            this.calls.forEach((value, mapKey) => {
+                const keyMinute = parseInt(mapKey.split('_').pop());
+                if (minute - keyMinute > 2) { // Храним данные 2 минуты
+                    this.calls.delete(mapKey);
+                }
+            });
+        }
         
         return true;
+    },
+    
+    // Функция для сброса rate limiter (для отладки)
+    reset() {
+        this.calls.clear();
+        console.log('Rate limiter reset');
+    },
+    
+    // Получить статистику вызовов
+    getStats() {
+        return {
+            totalEntries: this.calls.size,
+            calls: Array.from(this.calls.entries())
+        };
     }
 };
 
@@ -1627,9 +1814,13 @@ function addRandomDelay() {
 
 // Secure API wrapper with timing attack protection
 async function secureApiCall(url, options = {}) {
-    // Check rate limiting
+    // Check rate limiting with retry logic
     if (!rateLimiter.canMakeCall(url)) {
-        throw new Error('Rate limit exceeded');
+        // Ждем и пробуем еще раз через короткое время
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (!rateLimiter.canMakeCall(url)) {
+            throw new Error('Rate limit exceeded - please try again in a moment');
+        }
     }
     
     // Get CSRF token
@@ -1659,40 +1850,7 @@ async function secureApiCall(url, options = {}) {
 }
 
 // Additional security measures
-document.addEventListener('DOMContentLoaded', () => {
-    // Prevent information leakage through error messages
-    window.addEventListener('error', (e) => {
-        e.preventDefault();
-        // Log error securely without exposing details
-        console.error('Application error occurred');
-        return false;
-    });
-    
-    // Prevent unhandled promise rejection information leakage
-    window.addEventListener('unhandledrejection', (e) => {
-        e.preventDefault();
-        console.error('Promise rejection occurred');
-    });
-    
-    // Clear browser data on page unload for privacy
-    window.addEventListener('beforeunload', () => {
-        // Clear any temporary sensitive data
-        sessionStorage.removeItem('temp_data');
-        
-        // Clear any cached API responses
-        if ('caches' in window) {
-            caches.keys().then(cacheNames => {
-                cacheNames.forEach(cacheName => {
-                    if (cacheName.includes('api')) {
-                        caches.delete(cacheName);
-                    }
-                });
-            });
-        }
-    });
-    
-    // ... existing security code ...
-});
+// Security event handlers - moved to main DOMContentLoaded handler
 
 // FINAL SECURITY HARDENING
 (function() {
@@ -1812,4 +1970,399 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     console.log('🔒 All security measures activated');
-})(); 
+})();
+
+// ========== PARTICLES.JS INITIALIZATION ==========
+function initParticles() {
+    if (typeof particlesJS !== 'undefined') {
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#667eea"
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#000000"
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: {
+                        enable: false,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 40,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#667eea",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 400,
+                        line_linked: {
+                            opacity: 1
+                        }
+                    },
+                    bubble: {
+                        distance: 400,
+                        size: 40,
+                        duration: 2,
+                        opacity: 8,
+                        speed: 3
+                    },
+                    repulse: {
+                        distance: 200,
+                        duration: 0.4
+                    },
+                    push: {
+                        particles_nb: 4
+                    },
+                    remove: {
+                        particles_nb: 2
+                    }
+                }
+            },
+            retina_detect: true
+        });
+    }
+}
+
+// ========== SCROLL PROGRESS BAR ==========
+function updateScrollProgress() {
+    const scrollProgress = secureGetElementById('scroll-progress');
+    if (scrollProgress) {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = (scrollTop / scrollHeight) * 100;
+        scrollProgress.style.width = progress + '%';
+    }
+}
+
+// ========== SCROLL-TRIGGERED ANIMATIONS ==========
+function handleScrollAnimations() {
+    const animatedElements = secureQuerySelectorAll('.animate-on-scroll');
+    
+    animatedElements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const elementVisible = 150;
+        
+        if (elementTop < window.innerHeight - elementVisible) {
+            element.classList.add('animate');
+        }
+    });
+}
+
+// ========== PARALLAX EFFECTS ==========
+function handleParallax() {
+    const parallaxElements = secureQuerySelectorAll('.parallax-element');
+    const scrolled = window.pageYOffset;
+    
+    parallaxElements.forEach(element => {
+        const speed = element.dataset.speed || 0.5;
+        const yPos = -(scrolled * speed);
+        element.style.transform = `translate3d(0, ${yPos}px, 0)`;
+    });
+}
+
+// ========== MAGNETIC BUTTON EFFECT ==========
+function initMagneticButtons() {
+    const magneticBtns = secureQuerySelectorAll('.btn, .portfolio-item, .service-item');
+    
+    magneticBtns.forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            btn.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = '';
+        });
+    });
+}
+
+// ========== 3D TILT EFFECT ==========
+function init3DTilt() {
+    const tiltElements = secureQuerySelectorAll('.portfolio-item, .service-item, .card');
+    
+    tiltElements.forEach(element => {
+        element.addEventListener('mousemove', (e) => {
+            const rect = element.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = (y - centerY) / 4;
+            const rotateY = (centerX - x) / 4;
+            
+            element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            element.style.transform = '';
+        });
+    });
+}
+
+// ========== SMOOTH SCROLLING WITH EASING ==========
+function initSmoothScroll() {
+    const links = secureQuerySelectorAll('a[href^="#"]');
+    
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            const targetElement = secureQuerySelector(targetId);
+            
+            if (targetElement) {
+                const offsetTop = targetElement.offsetTop - 80;
+                
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
+
+// ========== DYNAMIC SCROLL STYLING ==========
+function initDynamicScrollStyling() {
+    // Добавляем класс active-scroll к текущей секции
+    const sections = secureQuerySelectorAll('section[id]');
+    
+    function updateActiveSection() {
+        const scrollY = window.pageYOffset;
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 100;
+            const sectionHeight = section.offsetHeight;
+            const sectionId = section.getAttribute('id');
+            
+            if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                // Убираем класс у всех секций
+                sections.forEach(s => s.classList.remove('active-scroll'));
+                // Добавляем класс к активной секции
+                section.classList.add('active-scroll');
+                
+                // Обновляем цвет scroll progress bar
+                const progressBar = secureGetElementById('scroll-progress');
+                if (progressBar) {
+                    switch(sectionId) {
+                        case 'portfolio':
+                            progressBar.style.background = 'linear-gradient(90deg, #667eea, #764ba2)';
+                            break;
+                        case 'services':
+                            progressBar.style.background = 'linear-gradient(90deg, #43e97b, #38f9d7)';
+                            break;
+                        case 'about':
+                            progressBar.style.background = 'linear-gradient(90deg, #fa709a, #fee140)';
+                            break;
+                        case 'contact':
+                            progressBar.style.background = 'linear-gradient(90deg, #4facfe, #00f2fe)';
+                            break;
+                        default:
+                            progressBar.style.background = 'linear-gradient(90deg, #667eea, #764ba2)';
+                    }
+                }
+            }
+        });
+    }
+    
+    // Инициализация
+    updateActiveSection();
+    
+    // Обновление при скролле
+    window.addEventListener('scroll', updateActiveSection);
+}
+
+// ========== AUTO HIDE SCROLL ==========
+function initAutoHideScroll() {
+    // Добавляем auto-hide-scroll к определенным элементам
+    const autoHideElements = secureQuerySelectorAll('.chat-messages, .calculator-content, .modal-content');
+    
+    autoHideElements.forEach(element => {
+        element.classList.add('auto-hide-scroll');
+    });
+}
+
+// ========== CALCULATOR SCROLL ENHANCEMENT ==========
+function enhanceCalculatorScroll() {
+    // Добавляем специальные классы для красивого скролла
+    const calculatorWindow = secureGetElementById('calculator-window');
+    const calculatorContent = secureGetElementById('calculator-content');
+    
+    if (calculatorWindow) {
+        calculatorWindow.classList.add('scrollable-card');
+    }
+    
+    if (calculatorContent) {
+        calculatorContent.classList.add('scrollable-card');
+        
+        // Добавляем обработчик для динамического изменения цвета скролла
+        calculatorContent.addEventListener('scroll', () => {
+            const scrollPercentage = calculatorContent.scrollTop / 
+                (calculatorContent.scrollHeight - calculatorContent.clientHeight);
+            
+            // Меняем оттенок скролла в зависимости от позиции
+            const hue = 200 + (scrollPercentage * 60); // От голубого к фиолетовому
+            calculatorContent.style.setProperty('--scroll-color', `hsl(${hue}, 70%, 60%)`);
+        });
+    }
+    
+    // Добавляем rainbow эффект при активном использовании
+    const calcSections = secureQuerySelectorAll('.calc-section');
+    calcSections.forEach(section => {
+        section.addEventListener('mouseenter', () => {
+            section.classList.add('rainbow-scroll');
+        });
+        
+        section.addEventListener('mouseleave', () => {
+            setTimeout(() => {
+                section.classList.remove('rainbow-scroll');
+            }, 1000);
+        });
+    });
+}
+
+// ========== PORTFOLIO SCROLL ENHANCEMENT ==========
+function enhancePortfolioScroll() {
+    const portfolioGrid = secureQuerySelector('.portfolio-grid');
+    
+    if (portfolioGrid) {
+        // Добавляем scrollable-card класс
+        portfolioGrid.classList.add('scrollable-card');
+        
+        // Динамический скролл индикатор
+        portfolioGrid.addEventListener('scroll', () => {
+            const scrollPercentage = portfolioGrid.scrollTop / 
+                (portfolioGrid.scrollHeight - portfolioGrid.clientHeight);
+            
+            // Подсвечиваем карточки при прокрутке
+            const portfolioItems = secureQuerySelectorAll('.portfolio-item');
+            portfolioItems.forEach((item, index) => {
+                const itemTop = item.offsetTop - portfolioGrid.scrollTop;
+                const itemHeight = item.offsetHeight;
+                const containerHeight = portfolioGrid.clientHeight;
+                
+                if (itemTop >= 0 && itemTop <= containerHeight - itemHeight) {
+                    item.style.transform = 'scale(1.02)';
+                    item.style.filter = 'brightness(1.1)';
+                } else {
+                    item.style.transform = 'scale(1)';
+                    item.style.filter = 'brightness(1)';
+                }
+            });
+        });
+    }
+}
+
+// ========== SCROLL PERFORMANCE ==========
+function optimizeScrollPerformance() {
+    // Debounce функция для оптимизации скролла
+    let scrollTimeout;
+    
+    function debounceScroll(func, delay) {
+        return function(...args) {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+    
+    // Оптимизированные обработчики скролла
+    const optimizedScrollHandler = debounceScroll(() => {
+        updateScrollProgress();
+        handleScrollAnimations();
+        handleParallax();
+    }, 10);
+    
+    window.addEventListener('scroll', optimizedScrollHandler, { passive: true });
+}
+
+// ========== INITIALIZE ALL EFFECTS ==========
+function initializeVisualEffects() {
+    // Initialize particles
+    initParticles();
+    
+    // Initialize 3D effects
+    initMagneticButtons();
+    init3DTilt();
+    
+    // Initialize smooth scrolling
+    initSmoothScroll();
+    
+    // Initialize dynamic scroll styling
+    initDynamicScrollStyling();
+    
+    // Initialize auto-hide scroll
+    initAutoHideScroll();
+    
+    // Enhance calculator and portfolio scroll
+    enhanceCalculatorScroll();
+    enhancePortfolioScroll();
+    
+    // Optimize scroll performance
+    optimizeScrollPerformance();
+    
+    // Initial animation check
+    handleScrollAnimations();
+}
+
+// All initialization moved to main DOMContentLoaded handler above 

@@ -263,6 +263,16 @@ body {
     transition: 0.3s;
 }
 
+/* Particles.js container */
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
 /* Hero Section */
 .hero {
     min-height: 100vh;
@@ -271,6 +281,7 @@ body {
     position: relative;
     overflow: hidden;
     padding-top: 80px; /* Добавляем отступ для фиксированной навигации */
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
 }
 
 .hero-container {
@@ -442,13 +453,19 @@ body {
     position: relative;
     border-radius: 20px;
     overflow: hidden;
-    background: #1a1a1a;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border: 1px solid rgba(102, 126, 234, 0.1);
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    backdrop-filter: blur(10px);
 }
 
 .portfolio-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+    transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+    box-shadow: 
+        0 25px 50px rgba(102, 126, 234, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .portfolio-image {
@@ -531,18 +548,24 @@ body {
 }
 
 .service-item {
-    background: rgba(255, 255, 255, 0.02);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.06) 100%);
     padding: 2rem;
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+    border: 1px solid rgba(102, 126, 234, 0.15);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     text-align: center;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    backdrop-filter: blur(15px);
+    position: relative;
+    overflow: hidden;
 }
 
 .service-item:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+    transform: translateY(-8px) rotateX(5deg) scale(1.02);
+    box-shadow: 
+        0 20px 40px rgba(102, 126, 234, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .service-icon {
@@ -668,19 +691,33 @@ body {
     background: rgba(255, 255, 255, 0.05);
     color: #ffffff;
     font-size: 1rem;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
     border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 
+        0 10px 20px rgba(102, 126, 234, 0.2),
+        0 0 0 2px rgba(102, 126, 234, 0.3);
 }
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
     color: #666;
+}
+
+/* Ограничения для textarea */
+.form-group textarea {
+    resize: vertical; /* Только вертикальное изменение размера */
+    min-height: 120px; /* Минимальная высота */
+    max-height: 300px; /* Максимальная высота */
+    max-width: 100%; /* Не позволяем расширять по горизонтали */
+    font-family: inherit; /* Наследуем шрифт */
+    line-height: 1.5;
 }
 
 .contact-item {
@@ -709,11 +746,13 @@ body {
 .social-link {
     color: #b0b0b0;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .social-link:hover {
+    transform: translateY(-3px) rotateX(15deg) scale(1.1);
     color: #667eea;
+    text-shadow: 0 5px 10px rgba(102, 126, 234, 0.3);
 }
 
 /* Modal */
@@ -996,13 +1035,16 @@ img.lazy.loaded {
     justify-content: center;
     cursor: pointer;
     box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
+    transform-style: preserve-3d;
 }
 
 .chat-toggle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+    transform: scale(1.1) rotateY(15deg) rotateX(10deg);
+    box-shadow: 
+        0 15px 30px rgba(102, 126, 234, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .chat-icon {
@@ -1165,7 +1207,7 @@ img.lazy.loaded {
     border-radius: 25px;
     cursor: pointer;
     box-shadow: 0 4px 20px rgba(67, 233, 123, 0.3);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -1173,8 +1215,10 @@ img.lazy.loaded {
 }
 
 .calculator-toggle:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 25px rgba(67, 233, 123, 0.4);
+    transform: translateY(-3px) rotateX(10deg) scale(1.05);
+    box-shadow: 
+        0 15px 30px rgba(67, 233, 123, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .calculator-icon {
@@ -1716,6 +1760,14 @@ img.lazy.loaded {
         background: rgba(255, 255, 255, 0.05) !important;
         padding: 1rem 0.75rem;
     }
+    
+    /* Более строгие ограничения для textarea на мобильных */
+    .form-group textarea {
+        resize: none !important; /* Полностью отключаем изменение размера на мобильных */
+        max-height: 200px !important; /* Уменьшаем максимальную высоту */
+        min-height: 100px !important;
+        font-size: 16px; /* Предотвращаем зум на iOS */
+    }
 }
 
 /* Дополнительные стили для планшетов */
@@ -1729,6 +1781,12 @@ img.lazy.loaded {
         width: 380px;
         left: 10px;
     }
+    
+    /* Ограничения textarea для планшетов */
+    .form-group textarea {
+        max-height: 250px;
+        min-height: 110px;
+    }
 }
 
 /* Стили для больших экранов */
@@ -1740,4 +1798,727 @@ img.lazy.loaded {
     .calculator-window {
         width: 420px;
     }
-} 
+}
+
+/* ========== 3D ЭФФЕКТЫ И МИКРОИНТЕРАКЦИИ ========== */
+
+/* 3D Card Effects */
+.portfolio-item {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
+
+.portfolio-item:hover {
+    transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+    box-shadow: 
+        0 25px 50px rgba(102, 126, 234, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.service-item {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.service-item:hover {
+    transform: translateY(-8px) rotateX(5deg) scale(1.02);
+    box-shadow: 
+        0 20px 40px rgba(102, 126, 234, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* 3D Button Effects */
+.btn {
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    perspective: 300px;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:hover {
+    transform: translateY(-3px) rotateX(10deg);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn:active {
+    transform: translateY(-1px) rotateX(5deg);
+}
+
+/* Floating Action Buttons with 3D */
+.chat-toggle, .calculator-toggle {
+    transform-style: preserve-3d;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.chat-toggle:hover {
+    transform: scale(1.1) rotateY(15deg) rotateX(10deg);
+    box-shadow: 
+        0 15px 30px rgba(102, 126, 234, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.calculator-toggle:hover {
+    transform: translateY(-3px) rotateX(10deg) scale(1.05);
+    box-shadow: 
+        0 15px 30px rgba(67, 233, 123, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Micro-interactions for Forms */
+.form-group input, .form-group textarea {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 
+        0 10px 20px rgba(102, 126, 234, 0.2),
+        0 0 0 2px rgba(102, 126, 234, 0.3);
+}
+
+/* Interactive Navigation */
+.nav-link {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.nav-link:hover {
+    transform: translateY(-2px) rotateX(10deg);
+    text-shadow: 0 5px 10px rgba(102, 126, 234, 0.3);
+}
+
+/* Card Tilt Effect */
+.floating-cards .card {
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-style: preserve-3d;
+}
+
+.floating-cards .card:hover {
+    transform: translateY(-15px) rotateX(20deg) rotateY(10deg) scale(1.05);
+    box-shadow: 0 25px 50px rgba(102, 126, 234, 0.3);
+}
+
+/* Scroll Progress Indicator */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    z-index: 10000;
+    transition: width 0.1s ease;
+}
+
+/* Scroll-triggered animations */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px) rotateX(20deg);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.animate-on-scroll.animate {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+}
+
+/* Parallax Elements */
+.parallax-element {
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+}
+
+/* Interactive Social Links */
+.social-link {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.social-link:hover {
+    transform: translateY(-3px) rotateX(15deg) scale(1.1);
+    color: #667eea;
+    text-shadow: 0 5px 10px rgba(102, 126, 234, 0.3);
+}
+
+/* Text Glitch Effect */
+.glitch-text {
+    position: relative;
+    display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.glitch-text:hover::before {
+    animation: glitch1 0.3s ease-in-out;
+    color: #ff0040;
+    opacity: 0.8;
+    z-index: -1;
+}
+
+.glitch-text:hover::after {
+    animation: glitch2 0.3s ease-in-out;
+    color: #00ffff;
+    opacity: 0.8;
+    z-index: -2;
+}
+
+@keyframes glitch1 {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+}
+
+@keyframes glitch2 {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(2px, -2px); }
+    40% { transform: translate(2px, 2px); }
+    60% { transform: translate(-2px, -2px); }
+    80% { transform: translate(-2px, 2px); }
+}
+
+/* Breathing Animation */
+.breathe {
+    animation: breathe 4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* ========== КАСТОМНЫЙ СКРОЛЛ ========== */
+
+/* Основной скролл для webkit браузеров */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(135deg, #4f5fc9 0%, #5e3a7e 100%);
+}
+
+::-webkit-scrollbar-corner {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Тонкий скролл для модальных окон и небольших контейнеров */
+.modal-content::-webkit-scrollbar,
+.chat-messages::-webkit-scrollbar,
+.calculator-content::-webkit-scrollbar,
+.portfolio-grid::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track,
+.chat-messages::-webkit-scrollbar-track,
+.calculator-content::-webkit-scrollbar-track,
+.portfolio-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.modal-content::-webkit-scrollbar-thumb,
+.chat-messages::-webkit-scrollbar-thumb,
+.calculator-content::-webkit-scrollbar-thumb,
+.portfolio-grid::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+    border-radius: 8px;
+    border: 1px solid transparent;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover,
+.chat-messages::-webkit-scrollbar-thumb:hover,
+.calculator-content::-webkit-scrollbar-thumb:hover,
+.portfolio-grid::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0%, rgba(118, 75, 162, 1) 100%);
+    box-shadow: 0 0 8px rgba(102, 126, 234, 0.4);
+}
+
+/* Анимированный скролл для специальных элементов */
+.services-grid::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.services-grid::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #39d16b 0%, #2fe6c7 100%);
+    box-shadow: 0 0 10px rgba(67, 233, 123, 0.5);
+}
+
+/* Специальные стили скролла для калькулятора */
+.calculator-window {
+    --scroll-color: #4facfe;
+}
+
+.calculator-window::-webkit-scrollbar,
+.calculator-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.calculator-window::-webkit-scrollbar-track,
+.calculator-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    margin: 3px;
+    border: 1px solid rgba(79, 172, 254, 0.2);
+}
+
+.calculator-window::-webkit-scrollbar-thumb,
+.calculator-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(79, 172, 254, 0.3);
+}
+
+.calculator-window::-webkit-scrollbar-thumb:hover,
+.calculator-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #3d8bfe 0%, #00d4fe 100%);
+    box-shadow: 0 0 15px rgba(79, 172, 254, 0.8);
+    transform: scale(1.05);
+}
+
+.calculator-window::-webkit-scrollbar-thumb:active,
+.calculator-content::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(135deg, #2a7aff 0%, #00c8ff 100%);
+}
+
+/* Стили для секций калькулятора */
+.calc-section::-webkit-scrollbar {
+    width: 6px;
+}
+
+.calc-section::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    border: 1px solid rgba(79, 172, 254, 0.1);
+}
+
+.calc-section::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.8) 0%, rgba(0, 242, 254, 0.8) 100%);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 1px 3px rgba(79, 172, 254, 0.4);
+}
+
+.calc-section::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 1) 0%, rgba(0, 242, 254, 1) 100%);
+    box-shadow: 0 0 10px rgba(79, 172, 254, 0.7);
+}
+
+/* Стили для options в калькуляторе */
+.calc-options::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.calc-options::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.calc-options::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.6) 0%, rgba(0, 242, 254, 0.6) 100%);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.calc-options::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.9) 0%, rgba(0, 242, 254, 0.9) 100%);
+    box-shadow: 0 0 5px rgba(79, 172, 254, 0.5);
+}
+
+/* Дополнительные стили для всех элементов калькулятора */
+.cost-calculator *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.cost-calculator *::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.cost-calculator *::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cost-calculator *::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #3d8bfe 0%, #00d4fe 100%);
+    box-shadow: 0 0 8px rgba(79, 172, 254, 0.6);
+}
+
+/* Специальные стили для портфолио */
+.portfolio-grid {
+    overflow-y: auto;
+    max-height: 800px; /* Ограничиваем высоту для появления скролла */
+    padding-right: 10px; /* Место для скролла */
+}
+
+/* Мобильная адаптация скролла */
+@media (max-width: 768px) {
+    .portfolio-grid {
+        max-height: 600px;
+        padding-right: 5px;
+    }
+    
+    .portfolio-grid::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .calculator-window::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .calc-section::-webkit-scrollbar {
+        width: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .portfolio-grid {
+        max-height: 500px;
+        padding-right: 3px;
+    }
+    
+    .portfolio-grid::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .calculator-window::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .calc-section::-webkit-scrollbar,
+    .calc-options::-webkit-scrollbar {
+        width: 3px;
+    }
+}
+
+/* Firefox скролл стили */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #667eea rgba(0, 0, 0, 0.1);
+}
+
+.modal-content,
+.chat-messages,
+.calculator-content,
+.portfolio-grid {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(102, 126, 234, 0.8) rgba(255, 255, 255, 0.05);
+}
+
+/* Firefox специальные стили для калькулятора */
+.calculator-window,
+.calculator-content,
+.calc-section,
+.calc-options,
+.cost-calculator * {
+    scrollbar-width: thin;
+    scrollbar-color: #4facfe rgba(0, 0, 0, 0.3);
+}
+
+/* Стильный скролл для textarea */
+textarea::-webkit-scrollbar {
+    width: 6px;
+}
+
+textarea::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.6) 100%);
+    border-radius: 6px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+}
+
+/* Продвинутые эффекты для скролла */
+@supports (scrollbar-width: thin) {
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #667eea transparent;
+    }
+}
+
+/* Скролл с анимацией появления */
+body::-webkit-scrollbar-thumb {
+    opacity: 0.7;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+body:hover::-webkit-scrollbar-thumb {
+    opacity: 1;
+}
+
+/* Кастомный индикатор прокрутки для touch устройств */
+@media (hover: none) and (pointer: coarse) {
+    ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: rgba(102, 126, 234, 0.6);
+        border-radius: 4px;
+    }
+}
+
+/* Невидимый скролл для некоторых элементов с возможностью прокрутки */
+.invisible-scroll::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+.invisible-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* Плавная прокрутка для всего сайта */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Улучшенная производительность скролла */
+* {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Динамический цвет скролла в зависимости от секции */
+#portfolio::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+#services::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+#about::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+#contact::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* Скролл с пульсацией при активности */
+.active-scroll::-webkit-scrollbar-thumb {
+    animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    }
+    50% { 
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.7);
+    }
+}
+
+/* Скрытие скролла при неактивности */
+.auto-hide-scroll::-webkit-scrollbar {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.auto-hide-scroll:hover::-webkit-scrollbar {
+    opacity: 1;
+}
+
+/* Предотвращение горизонтального скролла */
+body {
+    overflow-x: hidden;
+}
+
+/* Стильный скролл для pre и code блоков */
+pre::-webkit-scrollbar,
+code::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+pre::-webkit-scrollbar-thumb,
+code::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 8px;
+}
+
+pre::-webkit-scrollbar-thumb:hover,
+code::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #e885f0 0%, #f04a60 100%);
+    box-shadow: 0 0 8px rgba(240, 147, 251, 0.5);
+}
+
+/* ========== ГЛЯНЦЕВЫЕ ЭФФЕКТЫ ДЛЯ КАРТОЧЕК ========== */
+
+/* Добавляем глянцевый блик для portfolio и service карточек */
+.portfolio-item::before,
+.service-item::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.05),
+        transparent
+    );
+    transform: rotate(45deg);
+    transition: all 0.6s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.portfolio-item:hover::before,
+.service-item:hover::before {
+    opacity: 1;
+    animation: glossyShine 1.5s ease-in-out;
+}
+
+@keyframes glossyShine {
+    0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+    }
+}
+
+/* Специальные эффекты для карточек с содержимым скролла */
+.scrollable-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 15px;
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+}
+
+.scrollable-card::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrollable-card::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+.scrollable-card::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scrollable-card::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0%, rgba(118, 75, 162, 1) 100%);
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.6);
+}
+
+/* Эффект радужного свечения для активных скроллов */
+.rainbow-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        135deg,
+        #667eea 0%,
+        #764ba2 25%, 
+        #43e97b 50%,
+        #38f9d7 75%,
+        #667eea 100%
+    );
+    background-size: 300% 300%;
+    animation: rainbowShift 3s ease-in-out infinite;
+}
+
+@keyframes rainbowShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Интерактивные эффекты для кнопок и элементов управления */
+.interactive-element {
+    position: relative;
+    overflow: hidden;
+}
+
+.interactive-element::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.interactive-element:hover::after {
+    width: 200px;
+    height: 200px;
+}

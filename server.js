@@ -58,7 +58,7 @@ const strictLimiter = rateLimit({
     max: 100, // Увеличено до 100 запросов за 15 минут
     message: {
         success: false,
-        message: 'Слишком много запросов, попробуйте позже'
+    message: 'Слишком много запросов, попробуйте позже'
     },
     standardHeaders: true,
     legacyHeaders: false,
@@ -516,7 +516,7 @@ app.post('/api/admin/logout', authenticateAdmin, (req, res) => {
 app.post('/api/contact', apiLimiter, validateCSRFToken, async (req, res) => {
     try {
         const { name, email, message } = req.body;
-        
+
         // Enhanced validation
         const errors = validateContactInput(name, email, message);
         if (errors.length > 0) {
@@ -567,16 +567,16 @@ app.post('/api/contact', apiLimiter, validateCSRFToken, async (req, res) => {
             message: validator.escape(message.trim()).slice(0, 1000),
             ipAddress: clientIP
         });
-        
+
         await contact.save();
         
         console.log(`New contact form submission from IP: ${clientIP}`);
-        
+
         res.json({
             success: true,
             message: 'Сообщение отправлено! Я свяжусь с вами в ближайшее время.'
         });
-        
+
     } catch (error) {
         handleError(res, error);
     }
@@ -591,14 +591,14 @@ app.get('/api/admin/contacts', authenticateAdmin, async (req, res) => {
         
         const [contacts, total] = await Promise.all([
             Contact.find()
-                .sort({ createdAt: -1 })
+            .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(limit)
                 .select('-__v') // Exclude mongoose version field
                 .lean(), // Faster queries
             Contact.countDocuments()
         ]);
-        
+
         res.json({
             success: true,
             contacts: contacts,
@@ -712,7 +712,7 @@ app.post('/api/projects/:id/view', apiLimiter, async (req, res) => {
             });
             await projectView.save();
         }
-        
+
         res.json({
             success: true,
             views: projectView.views
@@ -787,7 +787,7 @@ app.post('/api/projects/:id/like', apiLimiter, validateCSRFToken, async (req, re
             });
             await projectLike.save();
         }
-        
+
         res.json({
             success: true,
             likes: projectLike.likes
@@ -888,9 +888,9 @@ app.get('/sitemap.xml', (req, res) => {
             });
         }
         
-        const currentDate = new Date().toISOString().split('T')[0];
-        
-        const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+    const currentDate = new Date().toISOString().split('T')[0];
+    
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>${validator.escape(baseUrl)}/</loc>
@@ -923,10 +923,10 @@ app.get('/sitemap.xml', (req, res) => {
         <priority>0.5</priority>
     </url>
 </urlset>`;
-        
+
         res.setHeader('Content-Type', 'text/xml; charset=utf-8');
         res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours cache
-        res.send(sitemap);
+    res.send(sitemap);
     } catch (error) {
         handleError(res, error);
     }
@@ -944,18 +944,18 @@ app.get('/robots.txt', (req, res) => {
                 message: 'Invalid site URL configuration'
             });
         }
-        
-        const robots = `User-agent: *
+    
+    const robots = `User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /login
 Disallow: /api/
 
 Sitemap: ${validator.escape(baseUrl)}/sitemap.xml`;
-        
+
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours cache
-        res.send(robots);
+    res.send(robots);
     } catch (error) {
         handleError(res, error);
     }
@@ -1049,7 +1049,7 @@ app.use((err, req, res, next) => {
     // Убеждаемся что заголовки еще не отправлены
     if (!res.headersSent) {
         res.status(statusCode).json({
-            success: false,
+        success: false,
             message: message,
             ...(isDevelopment && { 
                 error: err.message,
