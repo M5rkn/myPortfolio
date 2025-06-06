@@ -1030,22 +1030,35 @@ process.on('unhandledRejection', (reason, promise) => {
     process.exit(1);
 });
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-    console.log('SIGTERM received, shutting down gracefully');
-    mongoose.connection.close(() => {
-        console.log('MongoDB connection closed');
-        process.exit(0);
+// Улучшенная обработка сигналов для контейнеров
+const gracefulShutdown = (signal) => {
+    console.log(`${signal} received, shutting down gracefully...`);
+    
+    // Останавливаем сервер
+    server.close((err) => {
+        if (err) {
+            console.error('Error during server shutdown:', err);
+        } else {
+            console.log('HTTP server closed');
+        }
+        
+        // Закрываем MongoDB соединение
+        mongoose.connection.close(() => {
+            console.log('MongoDB connection closed');
+            process.exit(0);
+        });
     });
-});
+    
+    // Принудительное завершение через 10 секунд
+    setTimeout(() => {
+        console.error('Could not close connections in time, forcefully shutting down');
+        process.exit(1);
+    }, 10000);
+};
 
-process.on('SIGINT', () => {
-    console.log('SIGINT received, shutting down gracefully');
-    mongoose.connection.close(() => {
-        console.log('MongoDB connection closed');
-        process.exit(0);
-    });
-});
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // Для nodemon
 
 // Start server with security logging
 const server = app.listen(PORT, () => {

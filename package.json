@@ -9,7 +9,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "audit": "npm audit --audit-level moderate",
     "security-check": "npm audit && npm outdated",
-    "production": "NODE_ENV=production PORT=8080 node server.js"
+    "production": "cross-env NODE_ENV=production PORT=8080 node server.js",
+    "prod": "NODE_ENV=production node server.js",
+    "build": "echo \"Build completed\"",
+    "postinstall": "echo \"Dependencies installed\""
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -25,6 +28,7 @@
     "validator": "^13.15.15"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "nodemon": "^3.0.2"
   },
   "engines": {
