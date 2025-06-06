@@ -8,6 +8,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Preloader -->
+    <div id="preloader" class="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">TechPortal</div>
+            <div class="preloader-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <div class="preloader-text">Загружаем портфолио...</div>
+        </div>
+    </div>
+
+
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -269,6 +284,48 @@
             <p>&copy; 2025 Портфолио. Все права защищены.</p>
         </div>
     </footer>
+
+    <!-- Modal for Project Details -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle">Название проекта</h2>
+                <div class="modal-tech" id="modalTech">React, Node.js</div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image" id="modalImage"></div>
+                <div class="modal-info">
+                    <div class="modal-description" id="modalDescription">
+                        Подробное описание проекта будет здесь...
+                    </div>
+                    <div class="modal-features" id="modalFeatures">
+                        <h4>Возможности:</h4>
+                        <ul>
+                            <li>Адаптивный дизайн</li>
+                            <li>Современные технологии</li>
+                            <li>SEO оптимизация</li>
+                        </ul>
+                    </div>
+                    <div class="modal-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="modalViews">0</span>
+                            <span class="stat-label">Просмотров</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="modalLikes">0</span>
+                            <span class="stat-label">Лайков</span>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <a href="#" class="btn btn-primary" id="modalDemo" target="_blank">Посмотреть демо</a>
+                        <a href="#" class="btn btn-secondary" id="modalGithub" target="_blank">GitHub</a>
+                        <button class="btn btn-like" id="modalLikeBtn">❤️ Нравится</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

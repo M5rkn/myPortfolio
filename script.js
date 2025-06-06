@@ -342,6 +342,270 @@ async function updateProjectViews() {
     });
 }
 
+// Removed theme toggle functionality - keeping only dark theme
+
+// Preloader functionality
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    setTimeout(() => {
+        preloader.classList.add('fade-out');
+        setTimeout(() => {
+            preloader.style.display = 'none';
+            // Start entrance animations
+            initEntranceAnimations();
+        }, 500);
+    }, 1000);
+});
+
+// Enhanced entrance animations
+function initEntranceAnimations() {
+    // Animate hero content
+    const heroContent = document.querySelector('.hero-content');
+    const heroVisual = document.querySelector('.hero-visual');
+    
+    if (heroContent) {
+        heroContent.style.animation = 'slideInLeft 0.8s ease forwards';
+    }
+    if (heroVisual) {
+        heroVisual.style.animation = 'slideInRight 0.8s ease 0.2s forwards';
+        heroVisual.style.opacity = '0';
+        setTimeout(() => {
+            heroVisual.style.opacity = '1';
+        }, 200);
+    }
+    
+    // Animate sections on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = 'slideInUp 0.6s ease forwards';
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all major sections
+    document.querySelectorAll('.portfolio, .services, .about, .contact').forEach(section => {
+        section.style.opacity = '0';
+        observer.observe(section);
+    });
+}
+
+// Project modal functionality
+const projectModal = document.getElementById('projectModal');
+const modalClose = document.querySelector('.modal-close');
+
+// Project data
+const projectData = {
+    'project-1': {
+        title: 'Интернет-магазин',
+        tech: 'Node.js, MongoDB, Express',
+        description: 'Полнофункциональный интернет-магазин с корзиной, авторизацией, админ-панелью и интеграцией платежей. Адаптивный дизайн и оптимизация для мобильных устройств.',
+        features: [
+            'Система авторизации и регистрации',
+            'Корзина и оформление заказов',
+            'Админ-панель для управления',
+            'Интеграция платежных систем',
+            'Поиск и фильтрация товаров'
+        ],
+        demo: '#',
+        github: '#',
+        gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    },
+    'project-2': {
+        title: 'Лендинг с анимациями',
+        tech: 'HTML, SCSS, JS, Parallax',
+        description: 'Современный лендинг с параллакс эффектами, плавными анимациями и адаптивным дизайном. Оптимизирован для высокой скорости загрузки.',
+        features: [
+            'Параллакс эффекты',
+            'Анимации при скролле',
+            'Адаптивная верстка',
+            'SEO оптимизация',
+            'Высокая скорость загрузки'
+        ],
+        demo: '#',
+        github: '#',
+        gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+    },
+    'project-3': {
+        title: 'Система авторизации',
+        tech: 'Node.js, JWT, MongoDB',
+        description: 'Безопасная система авторизации с JWT токенами, восстановлением пароля и ролевой моделью доступа.',
+        features: [
+            'JWT авторизация',
+            'Восстановление пароля',
+            'Ролевая модель',
+            'Защита от брутфорса',
+            'Email уведомления'
+        ],
+        demo: '#',
+        github: '#',
+        gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+    },
+    'project-4': {
+        title: 'Корпоративный блог',
+        tech: 'React, Node.js, админка',
+        description: 'Блог с возможностью создания статей, комментариев и админ-панелью для управления контентом.',
+        features: [
+            'Редактор статей',
+            'Система комментариев',
+            'Админ-панель',
+            'SEO оптимизация',
+            'Поиск по статьям'
+        ],
+        demo: '#',
+        github: '#',
+        gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+    },
+    'project-5': {
+        title: 'WordPress + Custom',
+        tech: 'WordPress, PHP, ACF',
+        description: 'Кастомная WordPress тема с дополнительной функциональностью и интеграцией ACF полей.',
+        features: [
+            'Кастомная тема',
+            'ACF интеграция',
+            'Плагины на заказ',
+            'SEO оптимизация',
+            'Админ-панель'
+        ],
+        demo: '#',
+        github: '#',
+        gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+    },
+    'project-6': {
+        title: 'PSD → верстка',
+        tech: 'Figma/PSD → HTML, CSS',
+        description: 'Превращение дизайн-макетов в адаптивные веб-страницы с идеальным соответствием оригиналу.',
+        features: [
+            'Pixel Perfect верстка',
+            'Адаптивный дизайн',
+            'Кроссбраузерность',
+            'Оптимизация кода',
+            'Быстрая загрузка'
+        ],
+        demo: '#',
+        github: '#',
+        gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'
+    }
+};
+
+// Open modal
+function openProjectModal(projectId) {
+    const project = projectData[projectId];
+    if (!project) return;
+    
+    // Update modal content
+    document.getElementById('modalTitle').textContent = project.title;
+    document.getElementById('modalTech').textContent = project.tech;
+    document.getElementById('modalDescription').textContent = project.description;
+    document.getElementById('modalDemo').href = project.demo;
+    document.getElementById('modalGithub').href = project.github;
+    
+    // Update features
+    const featuresContainer = document.getElementById('modalFeatures');
+    featuresContainer.innerHTML = '<h4>Возможности:</h4><ul>' + 
+        project.features.map(feature => `<li>${feature}</li>`).join('') + 
+        '</ul>';
+    
+    // Update image
+    const modalImage = document.getElementById('modalImage');
+    modalImage.style.background = project.gradient;
+    
+    // Get stats
+    updateModalStats(projectId);
+    
+    // Show modal
+    projectModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+// Close modal
+function closeProjectModal() {
+    projectModal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// Update modal stats
+async function updateModalStats(projectId) {
+    try {
+        const response = await fetch(`/api/projects/${projectId}/views`);
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('modalViews').textContent = data.views;
+        }
+    } catch (error) {
+        console.error('Error loading project stats:', error);
+    }
+}
+
+// Add click handlers to portfolio items
+document.addEventListener('DOMContentLoaded', () => {
+    const portfolioItems = document.querySelectorAll('.portfolio-item');
+    portfolioItems.forEach((item, index) => {
+        const projectId = `project-${index + 1}`;
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            openProjectModal(projectId);
+        });
+    });
+});
+
+// Modal close handlers
+modalClose?.addEventListener('click', closeProjectModal);
+projectModal?.addEventListener('click', (e) => {
+    if (e.target === projectModal) {
+        closeProjectModal();
+    }
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && projectModal.style.display === 'block') {
+        closeProjectModal();
+    }
+});
+
+// Like functionality
+document.getElementById('modalLikeBtn')?.addEventListener('click', function() {
+    this.classList.toggle('liked');
+    if (this.classList.contains('liked')) {
+        this.innerHTML = '❤️ Нравится!';
+        // Here you could save like to database
+    } else {
+        this.innerHTML = '❤️ Нравится';
+    }
+});
+
+// Enhanced animations for skills and services
+function addHoverAnimations() {
+    // Service items animation - более плавные эффекты
+    document.querySelectorAll('.service-item').forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            item.style.transform = 'translateY(-3px) scale(1.01)';
+        });
+        
+        item.addEventListener('mouseleave', () => {
+            item.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+    
+    // Skill items animation - убираем движение по X
+    document.querySelectorAll('.skill-item').forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            item.style.transform = 'scale(1.02)';
+        });
+        
+        item.addEventListener('mouseleave', () => {
+            item.style.transform = 'scale(1)';
+        });
+    });
+}
+
 // Dynamic copyright year
 document.addEventListener('DOMContentLoaded', () => {
     const footerText = document.querySelector('.footer p');
@@ -352,4 +616,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize project views
     updateProjectViews();
+    
+    // Add hover animations
+    addHoverAnimations();
 }); 
