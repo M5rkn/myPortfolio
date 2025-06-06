@@ -493,10 +493,39 @@ const projectData = {
     }
 };
 
+// Update modal stats
+async function updateModalStats(projectId) {
+    try {
+        const [viewsResponse, likesResponse] = await Promise.all([
+            fetch(`/api/projects/${projectId}/views`),
+            fetch(`/api/projects/${projectId}/likes`)
+        ]);
+        
+        const viewsData = await viewsResponse.json();
+        const likesData = await likesResponse.json();
+        
+        if (viewsData.success) {
+            document.getElementById('modalViews').textContent = viewsData.views;
+        }
+        
+        if (likesData.success) {
+            document.getElementById('modalLikes').textContent = likesData.likes;
+        }
+    } catch (error) {
+        console.error('Error loading project stats:', error);
+    }
+}
+
+// Current project ID for likes
+let currentProjectId = null;
+
 // Open modal
 function openProjectModal(projectId) {
     const project = projectData[projectId];
     if (!project) return;
+    
+    // Store current project ID
+    currentProjectId = projectId;
     
     // Update modal content
     document.getElementById('modalTitle').textContent = project.title;
@@ -515,6 +544,11 @@ function openProjectModal(projectId) {
     const modalImage = document.getElementById('modalImage');
     modalImage.style.background = project.gradient;
     
+    // Reset like button state
+    const likeBtn = document.getElementById('modalLikeBtn');
+    likeBtn.classList.remove('liked');
+    likeBtn.innerHTML = '<span class="like-icon">❤️</span> <span class="like-text">Нравится</span>';
+    
     // Get stats
     updateModalStats(projectId);
     
@@ -529,17 +563,33 @@ function closeProjectModal() {
     document.body.style.overflow = 'auto';
 }
 
-// Update modal stats
-async function updateModalStats(projectId) {
+// Increment likes function
+async function incrementLikes() {
+    if (!currentProjectId) return;
+    
+    const likeBtn = document.getElementById('modalLikeBtn');
+    
     try {
-        const response = await fetch(`/api/projects/${projectId}/views`);
+        const response = await fetch(`/api/projects/${currentProjectId}/like`, {
+            method: 'POST'
+        });
+        
         const data = await response.json();
         
         if (data.success) {
-            document.getElementById('modalViews').textContent = data.views;
+            // Update like button
+            likeBtn.classList.add('liked');
+            likeBtn.innerHTML = '<span class="like-icon">❤️</span> <span class="like-text">Нравится!</span>';
+            
+            // Update likes counter
+            document.getElementById('modalLikes').textContent = data.likes;
+            
+            // Show notification
+            showNotification('Спасибо за лайк! ❤️', 'success');
         }
     } catch (error) {
-        console.error('Error loading project stats:', error);
+        console.error('Ошибка при добавлении лайка:', error);
+        showNotification('Ошибка при добавлении лайка', 'error');
     }
 }
 
@@ -567,17 +617,6 @@ projectModal?.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && projectModal.style.display === 'block') {
         closeProjectModal();
-    }
-});
-
-// Like functionality
-document.getElementById('modalLikeBtn')?.addEventListener('click', function() {
-    this.classList.toggle('liked');
-    if (this.classList.contains('liked')) {
-        this.innerHTML = '❤️ Нравится!';
-        // Here you could save like to database
-    } else {
-        this.innerHTML = '❤️ Нравится';
     }
 });
 

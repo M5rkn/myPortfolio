@@ -64,6 +64,15 @@ const projectViewSchema = new mongoose.Schema({
 
 const ProjectView = mongoose.model('ProjectView', projectViewSchema);
 
+// Project likes schema
+const projectLikeSchema = new mongoose.Schema({
+    projectId: { type: String, required: true },
+    likes: { type: Number, default: 0 },
+    lastLiked: { type: Date, default: Date.now }
+});
+
+const ProjectLike = mongoose.model('ProjectLike', projectLikeSchema);
+
 // Auth middleware
 const authenticateAdmin = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1] || req.cookies?.adminToken;
@@ -256,6 +265,49 @@ app.get('/api/projects/:id/views', async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ success: false, views: 0 });
+    }
+});
+
+// Increment project likes
+app.post('/api/projects/:id/like', async (req, res) => {
+    try {
+        const projectId = req.params.id;
+        
+        let projectLike = await ProjectLike.findOne({ projectId });
+        
+        if (projectLike) {
+            projectLike.likes += 1;
+            projectLike.lastLiked = new Date();
+            await projectLike.save();
+        } else {
+            projectLike = new ProjectLike({
+                projectId,
+                likes: 1
+            });
+            await projectLike.save();
+        }
+
+        res.json({
+            success: true,
+            likes: projectLike.likes
+        });
+    } catch (error) {
+        console.error('Ошибка обновления лайков:', error);
+        res.status(500).json({ success: false });
+    }
+});
+
+// Get project likes
+app.get('/api/projects/:id/likes', async (req, res) => {
+    try {
+        const projectLike = await ProjectLike.findOne({ projectId: req.params.id });
+        
+        res.json({
+            success: true,
+            likes: projectLike ? projectLike.likes : 0
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, likes: 0 });
     }
 });
 
