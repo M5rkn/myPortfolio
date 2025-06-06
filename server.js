@@ -73,41 +73,6 @@ const projectLikeSchema = new mongoose.Schema({
 
 const ProjectLike = mongoose.model('ProjectLike', projectLikeSchema);
 
-// Order schema
-const orderSchema = new mongoose.Schema({
-    customer: {
-        name: { type: String, required: true, trim: true },
-        email: { type: String, required: true, trim: true },
-        phone: { type: String, trim: true },
-        message: { type: String, trim: true }
-    },
-    items: [{
-        id: Number,
-        projectType: {
-            value: String,
-            label: String,
-            cost: Number
-        },
-        features: [{
-            value: String,
-            label: String,
-            cost: Number
-        }],
-        totalCost: Number,
-        createdAt: String
-    }],
-    totalAmount: { type: Number, required: true },
-    status: { 
-        type: String, 
-        enum: ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'], 
-        default: 'pending' 
-    },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
-});
-
-const Order = mongoose.model('Order', orderSchema);
-
 // Auth middleware
 const authenticateAdmin = (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1] || req.cookies?.adminToken;
@@ -171,64 +136,6 @@ app.post('/api/admin/login', async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Ошибка сервера'
-        });
-    }
-});
-
-// Submit order
-app.post('/api/orders', async (req, res) => {
-    try {
-        const { customer, items, totalAmount } = req.body;
-
-        // Validation
-        if (!customer || !customer.name || !customer.email || !items || !totalAmount) {
-            return res.status(400).json({
-                success: false,
-                message: 'Все обязательные поля должны быть заполнены'
-            });
-        }
-
-        if (!Array.isArray(items) || items.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Корзина не может быть пустой'
-            });
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(customer.email)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Некорректный email адрес'
-            });
-        }
-
-        // Save to database
-        const order = new Order({
-            customer: {
-                name: customer.name.slice(0, 100),
-                email: customer.email.slice(0, 100),
-                phone: customer.phone ? customer.phone.slice(0, 20) : '',
-                message: customer.message ? customer.message.slice(0, 1000) : ''
-            },
-            items: items,
-            totalAmount: totalAmount
-        });
-
-        await order.save();
-
-        res.json({
-            success: true,
-            message: 'Заказ успешно оформлен! Мы свяжемся с вами в ближайшее время.',
-            orderId: order._id
-        });
-
-    } catch (error) {
-        console.error('Ошибка при сохранении заказа:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Ошибка сервера. Попробуйте позже.'
         });
     }
 });
@@ -312,60 +219,6 @@ app.patch('/api/admin/contacts/:id/read', authenticateAdmin, async (req, res) =>
 app.delete('/api/admin/contacts/:id', authenticateAdmin, async (req, res) => {
     try {
         await Contact.findByIdAndDelete(req.params.id);
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Ошибка сервера' });
-    }
-});
-
-// Get orders (admin)
-app.get('/api/admin/orders', authenticateAdmin, async (req, res) => {
-    try {
-        const orders = await Order.find()
-            .sort({ createdAt: -1 })
-            .limit(100);
-
-        res.json({
-            success: true,
-            orders: orders
-        });
-    } catch (error) {
-        console.error('Ошибка получения заказов:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Ошибка сервера'
-        });
-    }
-});
-
-// Update order status
-app.patch('/api/admin/orders/:id/status', authenticateAdmin, async (req, res) => {
-    try {
-        const { status } = req.body;
-        const validStatuses = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'];
-        
-        if (!validStatuses.includes(status)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Недопустимый статус заказа'
-            });
-        }
-
-        await Order.findByIdAndUpdate(req.params.id, { 
-            status: status,
-            updatedAt: new Date()
-        });
-        
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Ошибка сервера' });
-    }
-});
-
-// Delete order
-app.delete('/api/admin/orders/:id', authenticateAdmin, async (req, res) => {
-    try {
-        await Order.findByIdAndDelete(req.params.id);
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Ошибка сервера' });

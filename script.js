@@ -919,10 +919,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize lazy loading
     lazyLoadImages();
     
-    // Initialize chat, calculator and cart
+    // Initialize chat and calculator
     initializeChatWidget();
     initializeCostCalculator();
-    initializeCart();
 });
 
 // Chat Widget functionality
@@ -1020,7 +1019,7 @@ function initializeCostCalculator() {
     const calculatorWindow = document.getElementById('calculatorWindow');
     const calculatorClose = document.getElementById('calculatorClose');
     const totalCostElement = document.getElementById('totalCost');
-    const addToCartBtn = document.getElementById('addToCart');
+    const requestQuoteBtn = document.getElementById('requestQuote');
     
     let calculatorOpen = false;
     
@@ -1058,241 +1057,24 @@ function initializeCostCalculator() {
         input.addEventListener('change', calculateCost);
     });
     
-    addToCartBtn.addEventListener('click', () => {
+    requestQuoteBtn.addEventListener('click', () => {
         const projectType = document.querySelector('input[name="projectType"]:checked');
-        const features = Array.from(document.querySelectorAll('input[name="features"]:checked'));
+        const features = Array.from(document.querySelectorAll('input[name="features"]:checked'))
+            .map(f => f.value);
         
         if (!projectType) {
             showModalNotification('Выберите тип проекта', 'error');
             return;
         }
         
-        const cost = parseInt(totalCostElement.textContent.replace(/[€\s,]/g, ''));
-        const orderItem = {
-            id: Date.now(),
-            projectType: {
-                value: projectType.value,
-                label: projectType.nextElementSibling.textContent,
-                cost: parseInt(projectType.dataset.cost)
-            },
-            features: features.map(f => ({
-                value: f.value,
-                label: f.nextElementSibling.textContent,
-                cost: parseInt(f.dataset.cost)
-            })),
-            totalCost: cost,
-            createdAt: new Date().toISOString()
-        };
-        
-        addToCart(orderItem);
-        showModalNotification(`Услуга добавлена в корзину! (${cost}€)`, 'success');
+        const cost = totalCostElement.textContent;
+        showModalNotification(`Заявка на ${cost} отправлена! Свяжемся в течение часа`, 'success');
         
         // Close calculator
         calculatorOpen = false;
         calculatorWindow.classList.remove('active');
         
-        // Reset form
-        document.querySelectorAll('.calc-option input').forEach(input => input.checked = false);
-        totalCostElement.textContent = '0€';
+        // Scroll to contact form
+        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
     });
-}
-
-// Cart functionality
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-function addToCart(item) {
-    cart.push(item);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartBadge();
-}
-
-function removeFromCart(itemId) {
-    cart = cart.filter(item => item.id !== itemId);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartBadge();
-    renderCartItems();
-}
-
-function updateCartBadge() {
-    const cartBadge = document.getElementById('cartBadge');
-    if (cartBadge) {
-        cartBadge.textContent = cart.length;
-        cartBadge.style.display = cart.length > 0 ? 'block' : 'none';
-    }
-}
-
-function renderCartItems() {
-    const cartItems = document.getElementById('cartItems');
-    const cartTotal = document.getElementById('cartTotal');
-    
-    if (!cartItems) return;
-    
-    if (cart.length === 0) {
-        cartItems.innerHTML = '<div class="empty-cart">Корзина пуста</div>';
-        cartTotal.textContent = '0€';
-        return;
-    }
-    
-    const total = cart.reduce((sum, item) => sum + item.totalCost, 0);
-    
-    cartItems.innerHTML = cart.map(item => `
-        <div class="cart-item" data-id="${item.id}">
-            <div class="cart-item-header">
-                <h4>${item.projectType.label}</h4>
-                <button class="remove-item" onclick="removeFromCart(${item.id})">×</button>
-            </div>
-            <div class="cart-item-details">
-                <div class="base-service">
-                    <span>${item.projectType.label}</span>
-                    <span>${item.projectType.cost}€</span>
-                </div>
-                ${item.features.map(feature => `
-                    <div class="additional-service">
-                        <span>${feature.label}</span>
-                        <span>+${feature.cost}€</span>
-                    </div>
-                `).join('')}
-                <div class="item-total">
-                    <strong>Итого: ${item.totalCost}€</strong>
-                </div>
-            </div>
-        </div>
-    `).join('');
-    
-    cartTotal.textContent = total.toLocaleString('de-DE') + '€';
-}
-
-function initializeCart() {
-    const cartToggle = document.getElementById('cartToggle');
-    const cartWindow = document.getElementById('cartWindow');
-    const cartClose = document.getElementById('cartClose');
-    const checkoutBtn = document.getElementById('checkoutBtn');
-    
-    let cartOpen = false;
-    
-    cartToggle.addEventListener('click', () => {
-        cartOpen = !cartOpen;
-        cartWindow.classList.toggle('active', cartOpen);
-        renderCartItems();
-    });
-    
-    cartClose.addEventListener('click', () => {
-        cartOpen = false;
-        cartWindow.classList.remove('active');
-    });
-    
-    checkoutBtn.addEventListener('click', () => {
-        if (cart.length === 0) {
-            showModalNotification('Корзина пуста', 'error');
-            return;
-        }
-        
-        openCheckoutModal();
-    });
-    
-    updateCartBadge();
-}
-
-// Checkout functionality
-function openCheckoutModal() {
-    const checkoutModal = document.getElementById('checkoutModal');
-    const checkoutItems = document.getElementById('checkoutItems');
-    const checkoutTotal = document.getElementById('checkoutTotal');
-    
-    const total = cart.reduce((sum, item) => sum + item.totalCost, 0);
-    
-    checkoutItems.innerHTML = cart.map(item => `
-        <div class="checkout-item">
-            <h4>${item.projectType.label}</h4>
-            <div class="checkout-details">
-                ${item.features.length > 0 ? 
-                    '<div class="checkout-features">Дополнительно: ' + 
-                    item.features.map(f => f.label.replace(/\s*\(\+\d+€\)\s*💥?/g, '')).join(', ') + 
-                    '</div>' : ''
-                }
-                <div class="checkout-price">${item.totalCost}€</div>
-            </div>
-        </div>
-    `).join('');
-    
-    checkoutTotal.textContent = total.toLocaleString('de-DE') + '€';
-    checkoutModal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-}
-
-function closeCheckoutModal() {
-    const checkoutModal = document.getElementById('checkoutModal');
-    checkoutModal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-
-async function submitOrder() {
-    const customerName = document.getElementById('customerName').value;
-    const customerEmail = document.getElementById('customerEmail').value;
-    const customerPhone = document.getElementById('customerPhone').value;
-    const customerMessage = document.getElementById('customerMessage').value;
-    
-    if (!customerName || !customerEmail) {
-        showModalNotification('Заполните обязательные поля', 'error');
-        return;
-    }
-    
-    if (!isValidEmail(customerEmail)) {
-        showModalNotification('Введите корректный email', 'error');
-        return;
-    }
-    
-    const submitBtn = document.getElementById('submitOrderBtn');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'Отправляем...';
-    submitBtn.disabled = true;
-    
-    try {
-        const orderData = {
-            customer: {
-                name: customerName,
-                email: customerEmail,
-                phone: customerPhone,
-                message: customerMessage
-            },
-            items: cart,
-            totalAmount: cart.reduce((sum, item) => sum + item.totalCost, 0),
-            status: 'pending',
-            createdAt: new Date().toISOString()
-        };
-        
-        const response = await fetch('/api/orders', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(orderData)
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            showNotification('Заказ успешно отправлен! Свяжемся в ближайшее время', 'success');
-            
-            // Clear cart
-            cart = [];
-            localStorage.removeItem('cart');
-            updateCartBadge();
-            
-            // Close modals
-            closeCheckoutModal();
-            document.getElementById('cartWindow').classList.remove('active');
-            
-            // Reset form
-            document.getElementById('checkoutForm').reset();
-        } else {
-            showNotification(data.message || 'Ошибка при отправке заказа', 'error');
-        }
-    } catch (error) {
-        console.error('Ошибка отправки заказа:', error);
-        showNotification('Ошибка подключения. Попробуйте позже.', 'error');
-    } finally {
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-    }
 } 

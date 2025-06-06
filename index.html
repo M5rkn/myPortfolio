@@ -389,32 +389,6 @@
         </div>
     </div>
 
-    <!-- Корзина -->
-    <div id="cartWidget" class="cart-widget">
-        <div class="cart-toggle" id="cartToggle">
-            <span class="cart-icon">🛒</span>
-            <span class="cart-text">Корзина</span>
-            <span class="cart-badge" id="cartBadge">0</span>
-        </div>
-        <div class="cart-window" id="cartWindow">
-            <div class="cart-header">
-                <h4>Корзина заказов</h4>
-                <button class="cart-close" id="cartClose">&times;</button>
-            </div>
-            <div class="cart-content">
-                <div class="cart-items" id="cartItems">
-                    <div class="empty-cart">Корзина пуста</div>
-                </div>
-                <div class="cart-footer">
-                    <div class="cart-total">
-                        Итого: <span id="cartTotal">0€</span>
-                    </div>
-                    <button class="btn btn-primary" id="checkoutBtn">Оформить заказ</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Калькулятор стоимости -->
     <div id="costCalculator" class="cost-calculator">
         <div class="calculator-toggle" id="calculatorToggle">
@@ -476,48 +450,7 @@
                     <div class="total-cost">
                         Примерная стоимость: <span id="totalCost">0€</span>
                     </div>
-                    <button class="btn btn-primary" id="addToCart">Заказать</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модальное окно оформления заказа -->
-    <div id="checkoutModal" class="modal">
-        <div class="modal-content checkout-modal">
-            <span class="modal-close" onclick="closeCheckoutModal()">&times;</span>
-            <div class="modal-header">
-                <h2>Оформление заказа</h2>
-            </div>
-            <div class="checkout-modal-body">
-                <div class="checkout-items-section">
-                    <h3>Ваш заказ:</h3>
-                    <div id="checkoutItems" class="checkout-items"></div>
-                    <div class="checkout-total-section">
-                        <strong>Итого к оплате: <span id="checkoutTotal">0€</span></strong>
-                    </div>
-                </div>
-                
-                <div class="checkout-form-section">
-                    <h3>Контактные данные:</h3>
-                    <form id="checkoutForm">
-                        <div class="form-group">
-                            <input type="text" id="customerName" name="customerName" placeholder="Ваше имя *" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" id="customerEmail" name="customerEmail" placeholder="Email *" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="tel" id="customerPhone" name="customerPhone" placeholder="Телефон">
-                        </div>
-                        <div class="form-group">
-                            <textarea id="customerMessage" name="customerMessage" placeholder="Дополнительные пожелания к заказу" rows="3"></textarea>
-                        </div>
-                        <div class="checkout-actions">
-                            <button type="button" class="btn btn-secondary" onclick="closeCheckoutModal()">Отмена</button>
-                            <button type="button" class="btn btn-primary" id="submitOrderBtn" onclick="submitOrder()">Подтвердить заказ</button>
-                        </div>
-                    </form>
+                    <button class="btn btn-primary" id="requestQuote">Получить точную стоимость</button>
                 </div>
             </div>
         </div>
