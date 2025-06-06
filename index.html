@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'nonce-main-script-2025'; style-src 'self' 'nonce-main-style-2025' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), autoplay=()">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
+    
     <title>Портфолио - Современная веб-разработка | TechPortal</title>
     <meta name="description" content="Профессиональная веб-разработка: лендинги, интернет-магазины, админ-панели. Node.js, React, MongoDB. Современный дизайн и быстрая разработка.">
     <meta name="keywords" content="веб-разработка, создание сайтов, лендинги, интернет-магазины, Node.js, React, MongoDB, верстка, портфолио">
@@ -13,7 +23,7 @@
     <meta property="og:title" content="Портфолио - Современная веб-разработка | TechPortal">
     <meta property="og:description" content="Профессиональная веб-разработка: лендинги, интернет-магазины, админ-панели. Node.js, React, MongoDB. Современный дизайн и быстрая разработка.">
     <meta property="og:image" content="/og-image.jpg">
-    <meta property="og:url" content="https://your-site.railway.app">
+    <meta property="og:url" content="https://techportal.up.railway.app">
     <meta property="og:site_name" content="TechPortal">
     
     <!-- Twitter Card -->
@@ -25,7 +35,7 @@
     <!-- Дополнительные метатеги -->
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
-    <link rel="canonical" href="https://your-site.railway.app">
+    <link rel="canonical" href="https://techportal.up.railway.app">
     
     <!-- PWA манифест -->
     <link rel="manifest" href="/manifest.json">
@@ -34,7 +44,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="TechPortal">
     
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" nonce="main-style-2025">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -271,15 +281,15 @@
             
             <div class="contact-content">
                 <div class="contact-form">
-                    <form id="contactForm">
+                    <form id="contactForm" novalidate>
                         <div class="form-group">
-                            <input type="text" id="name" name="name" placeholder="Ваше имя" required>
+                            <input type="text" id="name" name="name" placeholder="Ваше имя" required minlength="2" maxlength="50" autocomplete="name">
                         </div>
                         <div class="form-group">
-                            <input type="email" id="email" name="email" placeholder="Email" required>
+                            <input type="email" id="email" name="email" placeholder="Email" required maxlength="254" autocomplete="email">
                         </div>
                         <div class="form-group">
-                            <textarea id="message" name="message" placeholder="Расскажите о вашем проекте" rows="5" required></textarea>
+                            <textarea id="message" name="message" placeholder="Расскажите о вашем проекте" rows="5" required minlength="10" maxlength="1000"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Отправить сообщение</button>
                     </form>
@@ -296,9 +306,9 @@
                     <div class="contact-item">
                         <h4>Социальные сети</h4>
                         <div class="social-links">
-                            <a href="https://github.com/M5rkn" class="social-link">GitHub</a>
-                            <a href="https://www.instagram.com/m5rkn/" class="social-link">Instagram</a>
-                            <a href="https://t.me/Marklill" class="social-link">Telegram</a>
+                            <a href="https://github.com/M5rkn" class="social-link" rel="noopener noreferrer" target="_blank">GitHub</a>
+                            <a href="https://www.instagram.com/m5rkn/" class="social-link" rel="noopener noreferrer" target="_blank">Instagram</a>
+                            <a href="https://t.me/Marklill" class="social-link" rel="noopener noreferrer" target="_blank">Telegram</a>
                         </div>
                     </div>
                 </div>
@@ -346,9 +356,9 @@
                         </div>
                     </div>
                     <div class="modal-actions">
-                        <a href="#" class="btn btn-primary" id="modalDemo" target="_blank">Посмотреть демо</a>
-                        <a href="#" class="btn btn-secondary" id="modalGithub" target="_blank">GitHub</a>
-                        <button class="btn btn-like" id="modalLikeBtn" onclick="incrementLikes()"><span class="like-icon">❤️</span> <span class="like-text">Нравится</span></button>
+                        <a href="#" class="btn btn-primary" id="modalDemo" target="_blank" rel="noopener noreferrer">Посмотреть демо</a>
+                        <a href="#" class="btn btn-secondary" id="modalGithub" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        <button class="btn btn-like" id="modalLikeBtn"><span class="like-icon">❤️</span> <span class="like-text">Нравится</span></button>
                         <button class="btn btn-share" id="modalShareBtn">📤 Поделиться</button>
                     </div>
                     
@@ -383,7 +393,7 @@
                 </div>
             </div>
             <div class="chat-input-container">
-                <input type="text" id="chatInput" class="chat-input" placeholder="Введите сообщение...">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Введите сообщение..." maxlength="500">
                 <button id="chatSend" class="chat-send">📤</button>
             </div>
         </div>
@@ -456,6 +466,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js" nonce="main-script-2025"></script>
 </body>
 </html> 
