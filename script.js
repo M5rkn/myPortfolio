@@ -170,20 +170,41 @@ function isValidURL(url) {
     }
 }
 
-// Secure CSRF token generation
-function generateCSRFToken() {
-    return crypto.randomUUID ? crypto.randomUUID() : 
-           Date.now().toString(36) + Math.random().toString(36);
-}
-
-// Get or create CSRF token
-function getCSRFToken() {
-    let token = sessionStorage.getItem('csrf_token');
-    if (!token) {
-        token = generateCSRFToken();
-        sessionStorage.setItem('csrf_token', token);
+// Get CSRF token from server
+async function getCSRFToken() {
+    try {
+        // Try to get cached token first
+        let token = sessionStorage.getItem('csrf_token');
+        const tokenTime = sessionStorage.getItem('csrf_token_time');
+        
+        // Check if token is expired (5 minutes)
+        if (token && tokenTime && (Date.now() - parseInt(tokenTime)) < 5 * 60 * 1000) {
+            return token;
+        }
+        
+        // Request new token from server
+        const response = await fetch('/api/csrf-token', {
+            method: 'GET',
+            credentials: 'same-origin'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to get CSRF token');
+        }
+        
+        const data = await response.json();
+        if (data.success && data.csrfToken) {
+            sessionStorage.setItem('csrf_token', data.csrfToken);
+            sessionStorage.setItem('csrf_token_time', Date.now().toString());
+            return data.csrfToken;
+        } else {
+            throw new Error('Invalid CSRF token response');
+        }
+    } catch (error) {
+        console.error('Error getting CSRF token:', error);
+        // Fallback - return null and let server handle the error
+        return null;
     }
-    return token;
 }
 
 // Smooth scrolling for navigation links
@@ -250,12 +271,18 @@ if (contactForm) {
         submitBtn.disabled = true;
         
         try {
+            // Get CSRF token from server
+            const csrfToken = await getCSRFToken();
+            if (!csrfToken) {
+                throw new Error('Failed to get CSRF token');
+            }
+            
             // Send to backend with CSRF protection
             const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-Token': getCSRFToken()
+                    'X-CSRF-Token': csrfToken
                 },
                 body: JSON.stringify({ 
                     name: sanitizeHTML(name), 
@@ -947,11 +974,17 @@ async function incrementLikes() {
     const likeBtn = document.getElementById('modalLikeBtn');
     
     try {
+        // Get CSRF token from server
+        const csrfToken = await getCSRFToken();
+        if (!csrfToken) {
+            throw new Error('Failed to get CSRF token');
+        }
+        
         const response = await fetch(`/api/projects/${encodeURIComponent(currentProjectId)}/like`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-Token': getCSRFToken()
+                'X-CSRF-Token': csrfToken
             }
         });
         
@@ -1449,12 +1482,15 @@ async function secureApiCall(url, options = {}) {
         throw new Error('Rate limit exceeded');
     }
     
+    // Get CSRF token
+    const csrfToken = await getCSRFToken();
+    
     // Add security headers
     const secureOptions = {
         ...options,
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-Token': getCSRFToken(),
+            'X-CSRF-Token': csrfToken,
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache',
             ...options.headers
@@ -1565,12 +1601,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const inputs = form.querySelectorAll('input[name="csrf_token"], input[name="_token"]');
             
             if (inputs.length === 0) {
-                // Add CSRF token if missing
-                const csrfInput = secureGlobals.document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = 'csrf_token';
-                csrfInput.value = getCSRFToken();
-                form.appendChild(csrfInput);
+                // CSRF token will be handled by fetch requests with headers
+                // Legacy form CSRF protection is handled separately
+                console.log('Form CSRF protection via headers');
             }
         });
     });
