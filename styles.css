@@ -27,11 +27,15 @@ body {
 .navbar {
     position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     width: 100%;
     background: rgba(10, 10, 10, 0.95);
     backdrop-filter: blur(20px);
     z-index: 1000;
     transition: all 0.3s ease;
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 .nav-container {
@@ -106,6 +110,7 @@ body {
     align-items: center;
     position: relative;
     overflow: hidden;
+    padding-top: 80px; /* Добавляем отступ для фиксированной навигации */
 }
 
 .hero-container {
@@ -447,6 +452,34 @@ body {
     border-radius: 20px;
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Если добавите фото, раскомментируйте эту строку: */
+/* .about-image { background-image: url('avatar.jpg'); } */
+
+.about-image::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    opacity: 0.3;
+}
+
+.about-image::after {
+    content: '👨‍💻';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    opacity: 0.7;
 }
 
 /* Contact Section */
