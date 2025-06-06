@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Marklill</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .contacts-section {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #667eea;
+        }
+
+        .contact-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .contact-item.unread {
+            border-left: 4px solid #667eea;
+        }
+
+        .contact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .contact-name {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .contact-email {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+        }
+
+        .contact-date {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .contact-message {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .contact-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-read {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #b0b0b0;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 3rem;
+            color: #b0b0b0;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .contact-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Админ-панель</h1>
+            <p>Управление заявками портфолио</p>
+        </div>
+
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalContacts">-</div>
+                <div>Всего заявок</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="unreadContacts">-</div>
+                <div>Непрочитанных</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayContacts">-</div>
+                <div>Сегодня</div>
+            </div>
+        </div>
+
+        <div class="contacts-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 class="section-title">Заявки</h2>
+                <button class="refresh-btn" onclick="loadContacts()">Обновить</button>
+            </div>
+            
+            <div id="contactsList" class="loading">
+                Загрузка заявок...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let contacts = [];
+
+        async function loadContacts() {
+            try {
+                const response = await fetch('/api/admin/contacts');
+                const data = await response.json();
+
+                if (data.success) {
+                    contacts = data.contacts;
+                    updateStats();
+                    renderContacts();
+                } else {
+                    document.getElementById('contactsList').innerHTML = 
+                        '<div class="empty">Ошибка загрузки заявок</div>';
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                document.getElementById('contactsList').innerHTML = 
+                    '<div class="empty">Ошибка подключения к серверу</div>';
+            }
+        }
+
+        function updateStats() {
+            const total = contacts.length;
+            const unread = contacts.filter(c => !c.isRead).length;
+            const today = contacts.filter(c => {
+                const today = new Date().toDateString();
+                const contactDate = new Date(c.createdAt).toDateString();
+                return today === contactDate;
+            }).length;
+
+            document.getElementById('totalContacts').textContent = total;
+            document.getElementById('unreadContacts').textContent = unread;
+            document.getElementById('todayContacts').textContent = today;
+        }
+
+        function renderContacts() {
+            const container = document.getElementById('contactsList');
+
+            if (contacts.length === 0) {
+                container.innerHTML = '<div class="empty">Заявок пока нет</div>';
+                return;
+            }
+
+            container.innerHTML = contacts.map(contact => `
+                <div class="contact-item ${!contact.isRead ? 'unread' : ''}" id="contact-${contact._id}">
+                    <div class="contact-header">
+                        <div class="contact-info">
+                            <div class="contact-name">${escapeHtml(contact.name)}</div>
+                            <div class="contact-email">${escapeHtml(contact.email)}</div>
+                        </div>
+                        <div class="contact-date">${formatDate(contact.createdAt)}</div>
+                    </div>
+                    <div class="contact-message">${escapeHtml(contact.message)}</div>
+                    <div class="contact-actions">
+                        ${!contact.isRead ? 
+                            `<button class="btn btn-read" onclick="markAsRead('${contact._id}')">Отметить прочитанным</button>` : 
+                            '<span style="color: #4CAF50; font-size: 0.85rem;">✓ Прочитано</span>'
+                        }
+                        <button class="btn btn-delete" onclick="deleteContact('${contact._id}')">Удалить</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function markAsRead(contactId) {
+            try {
+                const response = await fetch(`/api/admin/contacts/${contactId}/read`, {
+                    method: 'PATCH'
+                });
+
+                if (response.ok) {
+                    // Update local data
+                    const contact = contacts.find(c => c._id === contactId);
+                    if (contact) {
+                        contact.isRead = true;
+                        updateStats();
+                        renderContacts();
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка отметки как прочитанное:', error);
+            }
+        }
+
+        async function deleteContact(contactId) {
+            if (!confirm('Вы уверены, что хотите удалить эту заявку?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/contacts/${contactId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    // Remove from local data
+                    contacts = contacts.filter(c => c._id !== contactId);
+                    updateStats();
+                    renderContacts();
+                }
+            } catch (error) {
+                console.error('Ошибка удаления:', error);
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('ru-RU', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load contacts on page load
+        window.addEventListener('load', loadContacts);
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadContacts, 30000);
+    </script>
+</body>
+</html> 

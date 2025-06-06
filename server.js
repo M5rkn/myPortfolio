@@ -1,0 +1,232 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const path = require('path');
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Security middleware
+app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
+}));
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: 'Слишком много запросов, попробуйте позже'
+});
+app.use(limiter);
+
+// CORS
+app.use(cors());
+
+// Body parsing middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files
+app.use(express.static('.'));
+
+// MongoDB connection
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio';
+
+mongoose.connect(MONGODB_URI)
+.then(() => console.log('✅ MongoDB подключен'))
+.catch(err => console.error('❌ Ошибка подключения MongoDB:', err));
+
+// Contact form schema
+const contactSchema = new mongoose.Schema({
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, trim: true },
+    message: { type: String, required: true, trim: true },
+    createdAt: { type: Date, default: Date.now },
+    isRead: { type: Boolean, default: false }
+});
+
+const Contact = mongoose.model('Contact', contactSchema);
+
+// Project views schema
+const projectViewSchema = new mongoose.Schema({
+    projectId: { type: String, required: true },
+    views: { type: Number, default: 0 },
+    lastViewed: { type: Date, default: Date.now }
+});
+
+const ProjectView = mongoose.model('ProjectView', projectViewSchema);
+
+// Routes
+
+// Submit contact form
+app.post('/api/contact', async (req, res) => {
+    try {
+        const { name, email, message } = req.body;
+
+        // Validation
+        if (!name || !email || !message) {
+            return res.status(400).json({
+                success: false,
+                message: 'Все поля обязательны для заполнения'
+            });
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Некорректный email адрес'
+            });
+        }
+
+        // Save to database
+        const contact = new Contact({
+            name: name.slice(0, 100),
+            email: email.slice(0, 100),
+            message: message.slice(0, 1000)
+        });
+
+        await contact.save();
+
+        res.json({
+            success: true,
+            message: 'Сообщение отправлено! Я свяжусь с вами в ближайшее время.'
+        });
+
+    } catch (error) {
+        console.error('Ошибка при сохранении заявки:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Ошибка сервера. Попробуйте позже.'
+        });
+    }
+});
+
+// Get contact messages (admin)
+app.get('/api/admin/contacts', async (req, res) => {
+    try {
+        const contacts = await Contact.find()
+            .sort({ createdAt: -1 })
+            .limit(50);
+
+        res.json({
+            success: true,
+            contacts: contacts
+        });
+    } catch (error) {
+        console.error('Ошибка получения заявок:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Ошибка сервера'
+        });
+    }
+});
+
+// Mark contact as read
+app.patch('/api/admin/contacts/:id/read', async (req, res) => {
+    try {
+        await Contact.findByIdAndUpdate(req.params.id, { isRead: true });
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Ошибка сервера' });
+    }
+});
+
+// Delete contact
+app.delete('/api/admin/contacts/:id', async (req, res) => {
+    try {
+        await Contact.findByIdAndDelete(req.params.id);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Ошибка сервера' });
+    }
+});
+
+// Project views API
+app.post('/api/projects/:id/view', async (req, res) => {
+    try {
+        const projectId = req.params.id;
+        
+        let projectView = await ProjectView.findOne({ projectId });
+        
+        if (projectView) {
+            projectView.views += 1;
+            projectView.lastViewed = new Date();
+            await projectView.save();
+        } else {
+            projectView = new ProjectView({
+                projectId,
+                views: 1
+            });
+            await projectView.save();
+        }
+
+        res.json({
+            success: true,
+            views: projectView.views
+        });
+    } catch (error) {
+        console.error('Ошибка обновления просмотров:', error);
+        res.status(500).json({ success: false });
+    }
+});
+
+// Get project views
+app.get('/api/projects/:id/views', async (req, res) => {
+    try {
+        const projectView = await ProjectView.findOne({ projectId: req.params.id });
+        
+        res.json({
+            success: true,
+            views: projectView ? projectView.views : 0
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, views: 0 });
+    }
+});
+
+// Admin panel route
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+// Health check
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+    });
+});
+
+// Serve main page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+    res.status(404).json({
+        success: false,
+        message: 'Страница не найдена'
+    });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        success: false,
+        message: 'Внутренняя ошибка сервера'
+    });
+});
+
+app.listen(PORT, () => {
+    console.log(`🚀 Сервер запущен на порту ${PORT}`);
+    console.log(`📱 Открыть: http://localhost:${PORT}`);
+}); 
