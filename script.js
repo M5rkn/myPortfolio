@@ -947,6 +947,9 @@ function openProjectModal(projectId) {
     likeBtn.classList.remove('liked');
     likeBtn.innerHTML = '<span class="like-icon">❤️</span> <span class="like-text">Нравится</span>';
     
+    // Setup like button click handler
+    likeBtn.onclick = () => incrementLikes();
+    
     // Setup share button
     setupShareButton(project);
     
@@ -1093,10 +1096,12 @@ function fallbackShare(project) {
     
     const shareText = `${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`;
     
-    if (navigator.clipboard && window.isSecureContext) {
+    // Try modern clipboard API first
+    if (navigator.clipboard) {
         navigator.clipboard.writeText(shareText).then(() => {
             showModalNotification('Ссылка скопирована в буфер обмена!', 'success');
-        }).catch(() => {
+        }).catch((error) => {
+            console.log('Clipboard API failed:', error);
             fallbackCopy(shareText);
         });
     } else {
@@ -1110,22 +1115,120 @@ function fallbackCopy(text) {
         // Create temporary textarea for copying
         const textArea = document.createElement('textarea');
         textArea.value = text;
-        textArea.style.cssText = 'position: fixed; left: -9999px; opacity: 0;';
+        
+        // Make textarea invisible but still focusable
+        textArea.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 2em;
+            height: 2em;
+            padding: 0;
+            border: none;
+            outline: none;
+            box-shadow: none;
+            background: transparent;
+            opacity: 0;
+            z-index: -1000;
+        `;
+        
         document.body.appendChild(textArea);
+        
+        // Select and copy
         textArea.focus();
         textArea.select();
+        textArea.setSelectionRange(0, textArea.value.length);
         
-        const successful = document.execCommand('copy');
+        let successful = false;
+        
+        try {
+            successful = document.execCommand('copy');
+        } catch (execError) {
+            console.log('execCommand failed:', execError);
+            successful = false;
+        }
+        
         document.body.removeChild(textArea);
         
         if (successful) {
             showModalNotification('Ссылка скопирована в буфер обмена!', 'success');
         } else {
-            showModalNotification('Не удалось скопировать ссылку', 'error');
+            // Final fallback - show text for manual copy
+            showShareModal(text);
         }
     } catch (error) {
-        showModalNotification('Копирование не поддерживается', 'error');
+        console.log('fallbackCopy error:', error);
+        showShareModal(text);
     }
+}
+
+// Show modal with text to copy manually
+function showShareModal(text) {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 20000;
+    `;
+    
+    const content = document.createElement('div');
+    content.style.cssText = `
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80%;
+        overflow-y: auto;
+    `;
+    
+    content.innerHTML = `
+        <h3 style="margin-top: 0; color: #333;">Скопируйте ссылку</h3>
+        <textarea readonly style="
+            width: 100%;
+            height: 150px;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            resize: none;
+        ">${text}</textarea>
+        <div style="margin-top: 1rem; text-align: right;">
+            <button style="
+                background: #667eea;
+                color: white;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                border-radius: 5px;
+                cursor: pointer;
+                font-family: inherit;
+            ">Закрыть</button>
+        </div>
+    `;
+    
+    const closeBtn = content.querySelector('button');
+    const textarea = content.querySelector('textarea');
+    
+    closeBtn.onclick = () => document.body.removeChild(modal);
+    modal.onclick = (e) => {
+        if (e.target === modal) document.body.removeChild(modal);
+    };
+    
+    // Auto-select text
+    textarea.focus();
+    textarea.select();
+    
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+    
+    showModalNotification('Выделите и скопируйте текст вручную', 'info');
 }
 
 // Add click handlers to portfolio items
@@ -1222,6 +1325,23 @@ function initializeChatWidget() {
     const chatMessages = document.getElementById('chatMessages');
     const chatNotification = document.getElementById('chatNotification');
     
+    // Debug: check if elements exist (remove in production)
+    // console.log('Chat elements:', {
+    //     toggle: !!chatToggle,
+    //     window: !!chatWindow,
+    //     close: !!chatClose,
+    //     input: !!chatInput,
+    //     send: !!chatSend,
+    //     messages: !!chatMessages,
+    //     notification: !!chatNotification
+    // });
+    
+    // Exit if essential elements are not found
+    if (!chatToggle || !chatWindow || !chatInput || !chatSend) {
+        console.error('Chat widget: Essential elements not found');
+        return;
+    }
+    
     let chatOpen = false;
     let botResponses = [
         "Отличный вопрос! Расскажите подробнее о вашем проекте",
@@ -1235,29 +1355,35 @@ function initializeChatWidget() {
         "Я использую современные технологии: React, Node.js, MongoDB",
         "Все проекты включают SEO оптимизацию и быструю загрузку",
         "Предоставляю исходный код и документацию к проекту",
-        "💥 Специальные цены для первых клиентов: лендинг от 55€!",
+        "💥 Специальные цены для первых клиентов: лендинг от 50€!",
         "Качественная работа по доступным ценам для набора отзывов",
         "Возможна интеграция с любыми внешними API и сервисами"
     ];
     
     // Show notification after 5 seconds
-    setTimeout(() => {
-        chatNotification.style.display = 'block';
-    }, 5000);
+    if (chatNotification) {
+        setTimeout(() => {
+            chatNotification.style.display = 'block';
+        }, 5000);
+    }
     
     chatToggle.addEventListener('click', () => {
         chatOpen = !chatOpen;
         chatWindow.classList.toggle('active', chatOpen);
         if (chatOpen) {
-            chatNotification.style.display = 'none';
+            if (chatNotification) {
+                chatNotification.style.display = 'none';
+            }
             chatInput.focus();
         }
     });
     
-    chatClose.addEventListener('click', () => {
-        chatOpen = false;
-        chatWindow.classList.remove('active');
-    });
+    if (chatClose) {
+        chatClose.addEventListener('click', () => {
+            chatOpen = false;
+            chatWindow.classList.remove('active');
+        });
+    }
     
     function sendMessage() {
         const message = chatInput.value.trim();
@@ -1301,8 +1427,10 @@ function initializeChatWidget() {
         messageDiv.appendChild(contentDiv);
         messageDiv.appendChild(timeDiv);
         
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        if (chatMessages) {
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
     }
     
     chatSend.addEventListener('click', sendMessage);
@@ -1321,6 +1449,21 @@ function initializeCostCalculator() {
     const totalCostElement = document.getElementById('totalCost');
     const requestQuoteBtn = document.getElementById('requestQuote');
     
+    // Debug: check if elements exist (remove in production)
+    // console.log('Calculator elements:', {
+    //     toggle: !!calculatorToggle,
+    //     window: !!calculatorWindow,
+    //     close: !!calculatorClose,
+    //     totalCost: !!totalCostElement,
+    //     requestQuote: !!requestQuoteBtn
+    // });
+    
+    // Exit if essential elements are not found
+    if (!calculatorToggle || !calculatorWindow || !totalCostElement) {
+        console.error('Cost calculator: Essential elements not found');
+        return;
+    }
+    
     let calculatorOpen = false;
     
     calculatorToggle.addEventListener('click', () => {
@@ -1328,10 +1471,12 @@ function initializeCostCalculator() {
         calculatorWindow.classList.toggle('active', calculatorOpen);
     });
     
-    calculatorClose.addEventListener('click', () => {
-        calculatorOpen = false;
-        calculatorWindow.classList.remove('active');
-    });
+    if (calculatorClose) {
+        calculatorClose.addEventListener('click', () => {
+            calculatorOpen = false;
+            calculatorWindow.classList.remove('active');
+        });
+    }
     
     // Calculate cost
     function calculateCost() {
@@ -1357,26 +1502,31 @@ function initializeCostCalculator() {
         input.addEventListener('change', calculateCost);
     });
     
-    requestQuoteBtn.addEventListener('click', () => {
-        const projectType = document.querySelector('input[name="projectType"]:checked');
-        const features = Array.from(document.querySelectorAll('input[name="features"]:checked'))
-            .map(f => f.value);
-        
-        if (!projectType) {
-            showModalNotification('Выберите тип проекта', 'error');
-            return;
-        }
-        
-        const cost = totalCostElement.textContent;
-        showModalNotification(`Заявка на ${cost} отправлена! Свяжемся в течение часа`, 'success');
-        
-        // Close calculator
-        calculatorOpen = false;
-        calculatorWindow.classList.remove('active');
-        
-        // Scroll to contact form
-        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-    });
+    if (requestQuoteBtn) {
+        requestQuoteBtn.addEventListener('click', () => {
+            const projectType = document.querySelector('input[name="projectType"]:checked');
+            const features = Array.from(document.querySelectorAll('input[name="features"]:checked'))
+                .map(f => f.value);
+            
+            if (!projectType) {
+                showModalNotification('Выберите тип проекта', 'error');
+                return;
+            }
+            
+            const cost = totalCostElement.textContent;
+            showModalNotification(`Заявка на ${cost} отправлена! Свяжемся в течение часа`, 'success');
+            
+            // Close calculator
+            calculatorOpen = false;
+            calculatorWindow.classList.remove('active');
+            
+            // Scroll to contact form
+            const contactSection = document.getElementById('contact');
+            if (contactSection) {
+                contactSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    }
 }
 
 // Security enhancements
