@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'nonce-login-script-2025'; style-src 'self' 'nonce-login-style-2025'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
@@ -14,7 +14,7 @@
     <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
     
     <title>Вход в админ-панель - TechPortal</title>
-    <style nonce="login-style-2025">
+    <style>
         * {
             margin: 0;
             padding: 0;
@@ -220,7 +220,7 @@
         </div>
     </div>
 
-    <script nonce="login-script-2025">
+    <script>
         // Security constants
         const SECURITY_CONFIG = {
             maxAttempts: 3,
