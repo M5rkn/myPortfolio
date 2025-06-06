@@ -52,10 +52,10 @@ app.use((req, res, next) => {
 // Compression
 app.use(compression());
 
-// Strict Rate limiting
+// Более разумные лимиты для нормальной работы
 const strictLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 20, // Much stricter: 20 requests per windowMs
+    max: 100, // Увеличено до 100 запросов за 15 минут
     message: {
         success: false,
         message: 'Слишком много запросов, попробуйте позже'
@@ -64,14 +64,14 @@ const strictLimiter = rateLimit({
     legacyHeaders: false,
     skip: (req) => {
         // Skip rate limiting for static files
-        return req.url.match(/\.(css|js|png|jpg|jpeg|gif|ico|woff|woff2)$/);
+        return req.url.match(/\.(css|js|png|jpg|jpeg|gif|ico|woff|woff2|svg|webp)$/);
     }
 });
 
-// API specific rate limiting (even stricter)
+// API specific rate limiting (более мягкий)
 const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 5, // Only 5 API calls per 15 minutes
+    max: 30, // Увеличено до 30 API вызовов за 15 минут
     message: {
         success: false,
         message: 'API rate limit exceeded'
@@ -213,15 +213,40 @@ const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(64).toString('he
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || 
     bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'ChangeThisPassword123!', 12);
 
+// MongoDB подключение с автопереподключением
 mongoose.connect(MONGODB_URI, {
     maxPoolSize: 10,
     serverSelectionTimeoutMS: 5000,
     socketTimeoutMS: 45000,
+    bufferCommands: false,
+    bufferMaxEntries: 0,
+    retryWrites: true,
+    retryReads: true
 })
 .then(() => console.log('✅ MongoDB подключен'))
 .catch(err => {
     console.error('❌ Ошибка подключения MongoDB:', err.message);
-    process.exit(1);
+    // Не завершаем процесс, попробуем переподключиться
+    console.log('🔄 Попытка переподключения через 5 секунд...');
+    setTimeout(() => {
+        mongoose.connect(MONGODB_URI).catch(() => {
+            console.error('❌ Критическая ошибка MongoDB, завершение приложения');
+            process.exit(1);
+        });
+    }, 5000);
+});
+
+// Обработка отключения MongoDB
+mongoose.connection.on('disconnected', () => {
+    console.warn('⚠️ MongoDB отключен, пытаемся переподключиться...');
+});
+
+mongoose.connection.on('reconnected', () => {
+    console.log('✅ MongoDB переподключен');
+});
+
+mongoose.connection.on('error', (err) => {
+    console.error('❌ Ошибка MongoDB:', err.message);
 });
 
 // Enhanced contact form schema with validation
@@ -383,6 +408,11 @@ const getClientIP = (req) => {
            '127.0.0.1';
 };
 
+// Middleware для отлова async ошибок
+const asyncHandler = (fn) => (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+};
+
 // Routes
 
 // CSRF Token endpoint (must be called before any POST requests)
@@ -404,7 +434,7 @@ app.get('/api/csrf-token', (req, res) => {
 });
 
 // Admin login with enhanced security
-app.post('/api/admin/login', loginLimiter, validateCSRFToken, async (req, res) => {
+app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
     try {
         const { password } = req.body;
         
@@ -462,7 +492,7 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, async (req, res) =
     } catch (error) {
         handleError(res, error);
     }
-});
+}));
 
 // Admin logout (blacklist token)
 app.post('/api/admin/logout', authenticateAdmin, (req, res) => {
@@ -970,69 +1000,231 @@ app.use('*', (req, res) => {
     });
 });
 
-// Enhanced error handler with security
+// Улучшенный обработчик ошибок
 app.use((err, req, res, next) => {
     const clientIP = getClientIP(req);
-    console.error(`Server error from IP ${clientIP}:`, err.message);
+    const timestamp = new Date().toISOString();
     
-    // Check for potential attacks
+    // Подробное логирование ошибки
+    console.error(`🚨 [${timestamp}] Server error from IP ${clientIP}:`);
+    console.error('Error name:', err.name);
+    console.error('Error message:', err.message);
+    console.error('Error stack:', err.stack);
+    console.error('Request URL:', req.url);
+    console.error('Request method:', req.method);
+    
+    // Проверка на потенциальные атаки
     if (err.message.includes('CORS') || 
         err.message.includes('injection') || 
-        err.message.includes('attack')) {
-        console.error(`SECURITY ALERT: Potential attack from IP: ${clientIP}`);
+        err.message.includes('attack') ||
+        err.message.includes('malicious')) {
+        console.error(`🔴 SECURITY ALERT: Potential attack from IP: ${clientIP}`);
     }
     
-    // Don't leak error details in production
+    // Специальная обработка разных типов ошибок
+    let statusCode = 500;
+    let message = 'Внутренняя ошибка сервера';
+    
+    if (err.name === 'ValidationError') {
+        statusCode = 400;
+        message = 'Ошибка валидации данных';
+    } else if (err.name === 'CastError') {
+        statusCode = 400;
+        message = 'Некорректный формат данных';
+    } else if (err.code === 11000) {
+        statusCode = 409;
+        message = 'Конфликт данных';
+    } else if (err.name === 'JsonWebTokenError') {
+        statusCode = 401;
+        message = 'Недействительный токен';
+    } else if (err.name === 'TokenExpiredError') {
+        statusCode = 401;
+        message = 'Токен истек';
+    } else if (err.name === 'MongoNetworkError') {
+        statusCode = 503;
+        message = 'Сервис временно недоступен';
+    }
+    
+    // Не раскрываем детали ошибки в production
     const isDevelopment = process.env.NODE_ENV === 'development';
     
-    res.status(500).json({
-        success: false,
-        message: 'Внутренняя ошибка сервера',
-        ...(isDevelopment && { error: err.message })
-    });
+    // Убеждаемся что заголовки еще не отправлены
+    if (!res.headersSent) {
+        res.status(statusCode).json({
+            success: false,
+            message: message,
+            ...(isDevelopment && { 
+                error: err.message,
+                stack: err.stack 
+            })
+        });
+    }
 });
 
-// Security monitoring and cleanup intervals
-setInterval(() => {
-    // Clean up CSRF tokens older than 1 hour
-    const oneHourAgo = Date.now() - (60 * 60 * 1000);
-    csrfTokens.forEach(token => {
-        // Remove old tokens (simplified cleanup)
-        if (csrfTokens.size > 1000) {
-            csrfTokens.clear();
+// Мониторинг ресурсов и очистка памяти
+const memoryCleanupInterval = setInterval(() => {
+    try {
+        // Проверяем использование памяти
+        const memUsage = process.memoryUsage();
+        const memUsageMB = {
+            rss: Math.round(memUsage.rss / 1024 / 1024),
+            heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024),
+            heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024),
+            external: Math.round(memUsage.external / 1024 / 1024)
+        };
+        
+        console.log(`📊 Память: RSS:${memUsageMB.rss}MB, Heap:${memUsageMB.heapUsed}/${memUsageMB.heapTotal}MB, External:${memUsageMB.external}MB`);
+        
+        // Предупреждение при высоком использовании памяти
+        if (memUsageMB.heapUsed > 400) {
+            console.warn(`⚠️ Высокое использование памяти: ${memUsageMB.heapUsed}MB`);
         }
-    });
-    
-    // Clean up JWT blacklist if too large
-    if (tokenBlacklist.size > 10000) {
-        tokenBlacklist.clear();
-        console.log('JWT blacklist cleaned up for memory management');
+        
+        // Очистка CSRF токенов
+        if (csrfTokens.size > 500) {
+            const tokensArray = Array.from(csrfTokens);
+            const tokensToKeep = tokensArray.slice(-100); // Оставляем последние 100
+            csrfTokens.clear();
+            tokensToKeep.forEach(token => csrfTokens.add(token));
+            console.log(`🧹 Очищены CSRF токены, оставлено: ${csrfTokens.size}`);
+        }
+        
+        // Очистка JWT blacklist
+        if (tokenBlacklist.size > 1000) {
+            tokenBlacklist.clear();
+            console.log('🧹 JWT blacklist очищен для управления памятью');
+        }
+        
+        // Принудительная сборка мусора если доступна
+        if (global.gc && memUsageMB.heapUsed > 300) {
+            global.gc();
+            console.log('🗑️ Принудительная сборка мусора выполнена');
+        }
+        
+    } catch (error) {
+        console.error('Ошибка при очистке памяти:', error.message);
     }
-}, 60 * 60 * 1000); // Every hour
+}, 10 * 60 * 1000); // Каждые 10 минут
 
-// Process security events
+// Улучшенная обработка критических ошибок
 process.on('uncaughtException', (error) => {
-    console.error('CRITICAL: Uncaught Exception:', error.message);
+    console.error('🚨 CRITICAL: Uncaught Exception:', error.message);
+    console.error('Stack:', error.stack);
     
     // Log security-related errors
     if (error.message.includes('attack') || 
         error.message.includes('injection') || 
         error.message.includes('malicious')) {
-        console.error('SECURITY ALERT: Potential attack detected');
+        console.error('🔴 SECURITY ALERT: Potential attack detected');
     }
     
-    // Graceful shutdown
-    process.exit(1);
+    // Попытка graceful shutdown с таймаутом
+    console.log('🔄 Attempting graceful shutdown...');
+    
+    const shutdownTimeout = setTimeout(() => {
+        console.error('❌ Принудительное завершение процесса');
+        process.exit(1);
+    }, 10000); // 10 секунд на graceful shutdown
+    
+    // Закрываем сервер
+    if (server && server.listening) {
+        server.close(() => {
+            console.log('🔴 HTTP server closed');
+            mongoose.connection.close(() => {
+                console.log('🔴 MongoDB connection closed');
+                clearTimeout(shutdownTimeout);
+                process.exit(1);
+            });
+        });
+    } else {
+        clearTimeout(shutdownTimeout);
+        process.exit(1);
+    }
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-    console.error('CRITICAL: Unhandled Promise Rejection:', reason);
-    process.exit(1);
+    console.error('🚨 CRITICAL: Unhandled Promise Rejection:');
+    console.error('Reason:', reason);
+    console.error('Promise:', promise);
+    
+    // Не завершаем процесс сразу, логируем и продолжаем
+    if (reason && reason.code === 'ECONNRESET') {
+        console.log('💡 Сетевая ошибка, продолжаем работу');
+        return;
+    }
+    
+    if (reason && reason.name === 'MongoNetworkError') {
+        console.log('💡 MongoDB сетевая ошибка, автопереподключение активно');
+        return;
+    }
+    
+    // Для других критических ошибок - graceful restart
+    console.log('🔄 Scheduling graceful restart in 5 seconds...');
+    setTimeout(() => {
+        process.exit(1);
+    }, 5000);
 });
+
+// Отслеживание предупреждений
+process.on('warning', (warning) => {
+    if (warning.name === 'MaxListenersExceededWarning') {
+        console.warn('⚠️ Memory leak warning:', warning.message);
+    } else {
+        console.warn('⚠️ Process warning:', warning.message);
+    }
+});
+
+// Мониторинг здоровья приложения
+let healthCheckFails = 0;
+const healthMonitor = setInterval(() => {
+    try {
+        // Проверяем подключение к MongoDB
+        if (mongoose.connection.readyState !== 1) {
+            healthCheckFails++;
+            console.warn(`⚠️ MongoDB не подключен (fails: ${healthCheckFails})`);
+            
+            if (healthCheckFails > 5) {
+                console.error('❌ Слишком много неудачных проверок здоровья, перезапуск...');
+                process.exit(1);
+            }
+        } else {
+            healthCheckFails = 0; // Сброс счетчика при успешной проверке
+        }
+        
+        // Проверяем использование памяти
+        const memUsage = process.memoryUsage();
+        const heapUsedMB = Math.round(memUsage.heapUsed / 1024 / 1024);
+        
+        if (heapUsedMB > 500) { // Критический уровень памяти
+            console.error(`🚨 Критическое использование памяти: ${heapUsedMB}MB`);
+            
+            // Принудительная очистка
+            if (global.gc) {
+                global.gc();
+                console.log('🗑️ Экстренная сборка мусора выполнена');
+            }
+            
+            // Если память все еще высокая - перезапуск
+            const newMemUsage = Math.round(process.memoryUsage().heapUsed / 1024 / 1024);
+            if (newMemUsage > 450) {
+                console.error('💥 Память не освобождена, перезапуск приложения');
+                process.exit(1);
+            }
+        }
+        
+    } catch (error) {
+        console.error('❌ Ошибка health check:', error.message);
+        healthCheckFails++;
+    }
+}, 30000); // Каждые 30 секунд
 
 // Улучшенная обработка сигналов для контейнеров
 const gracefulShutdown = (signal) => {
     console.log(`${signal} received, shutting down gracefully...`);
+    
+    // Очищаем все интервалы
+    clearInterval(memoryCleanupInterval);
+    clearInterval(healthMonitor);
     
     // Останавливаем сервер
     server.close((err) => {
@@ -1045,15 +1237,20 @@ const gracefulShutdown = (signal) => {
         // Закрываем MongoDB соединение
         mongoose.connection.close(() => {
             console.log('MongoDB connection closed');
+            
+            // Финальная очистка
+            csrfTokens.clear();
+            tokenBlacklist.clear();
+            
             process.exit(0);
         });
     });
     
-    // Принудительное завершение через 10 секунд
+    // Принудительное завершение через 15 секунд (увеличено)
     setTimeout(() => {
         console.error('Could not close connections in time, forcefully shutting down');
         process.exit(1);
-    }, 10000);
+    }, 15000);
 };
 
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
