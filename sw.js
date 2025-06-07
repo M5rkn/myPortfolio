@@ -7,9 +7,11 @@ const ALLOWED_ORIGINS = [
 
 const urlsToCache = [
     '/',
-    '/styles.css',
-    '/script.js',
-    '/manifest.json'
+    '/css/index.css',
+    '/js/app.js',
+    '/manifest.json',
+    '/favicon.svg',
+    '/icon-192.svg'
 ];
 
 // Secure URL validation

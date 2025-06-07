@@ -1160,6 +1160,102 @@ app.get('/api/projects/:id/likes', async (req, res) => {
     }
 });
 
+// Portfolio general views tracking
+app.post('/api/portfolio/views', apiLimiter, async (req, res) => {
+    try {
+        const { page, timestamp } = req.body || {};
+        
+        // Basic validation
+        if (!page || !timestamp) {
+            return res.status(400).json({
+                success: false,
+                message: 'Отсутствуют обязательные поля'
+            });
+        }
+        
+        // Rate limiting per IP for portfolio views
+        const clientIP = getClientIP(req);
+        
+        // Simple page view tracking (you can extend this for analytics)
+        const pageViewData = {
+            page: validator.escape(page),
+            ip: clientIP,
+            timestamp: new Date(),
+            userAgent: req.get('User-Agent') || 'Unknown'
+        };
+        
+        // Log page view (in production, save to analytics DB)
+        console.log('📊 Portfolio page view:', pageViewData);
+        
+        res.json({
+            success: true,
+            message: 'Просмотр записан'
+        });
+        
+    } catch (error) {
+        handleError(res, error);
+    }
+});
+
+// Get portfolio project stats (views + likes)
+app.get('/api/portfolio/:id/stats', async (req, res) => {
+    try {
+        const projectId = req.params.id;
+        
+        // Validate project ID
+        if (!projectId || !/^project-[1-6]$/.test(projectId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Недействительный ID проекта'
+            });
+        }
+        
+        // Get both views and likes in parallel
+        const [projectView, projectLike] = await Promise.all([
+            ProjectView.findOne({ projectId }).lean(),
+            ProjectLike.findOne({ projectId }).lean()
+        ]);
+        
+        // Cache headers
+        res.setHeader('Cache-Control', 'public, max-age=300'); // 5 minutes cache
+        
+        res.json({
+            success: true,
+            views: projectView ? Math.max(0, projectView.views) : 0,
+            likes: projectLike ? Math.max(0, projectLike.likes) : 0
+        });
+        
+    } catch (error) {
+        handleError(res, error);
+    }
+});
+
+// Update portfolio like API
+app.post('/api/portfolio/like', apiLimiter, validateCSRFToken, async (req, res) => {
+    try {
+        const { projectId } = req.body || {};
+        
+        // Validate project ID
+        if (!projectId || !/^project-[1-6]$/.test(projectId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Недействительный ID проекта'
+            });
+        }
+        
+        // Forward to existing like endpoint
+        req.params.id = projectId;
+        return app._router.handle({ 
+            ...req, 
+            method: 'POST',
+            url: `/api/projects/${projectId}/like`
+        }, res);
+        
+    } catch (error) {
+        handleError(res, error);
+    }
+});
+
 // Secure login page route
 app.get('/login', (req, res) => {
     try {
