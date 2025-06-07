@@ -2812,3 +2812,98 @@ code::-webkit-scrollbar-thumb:hover {
         border: 3px solid #667eea !important;
     }
 }
+
+/* ========== PERFORMANCE OPTIMIZATIONS ========== */
+
+/* GPU acceleration for smooth animations */
+.hero-content,
+.portfolio-item,
+.service-item,
+.btn,
+.option-card,
+.form-select,
+.chat-toggle,
+.calculator-toggle {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Optimize hover states */
+.portfolio-item:hover,
+.service-item:hover,
+.btn:hover,
+.option-card:hover {
+    will-change: transform, box-shadow, opacity;
+}
+
+/* Remove will-change after animations */
+.portfolio-item:not(:hover),
+.service-item:not(:hover),
+.btn:not(:hover),
+.option-card:not(:hover) {
+    will-change: auto;
+}
+
+/* Optimize heavy animations */
+.particles-js-canvas-el {
+    will-change: transform;
+    position: absolute;
+    z-index: -1;
+}
+
+/* Reduce repaints */
+.preloader {
+    contain: layout style paint;
+}
+
+.modal {
+    contain: layout style;
+}
+
+/* Optimize scroll performance */
+.navbar {
+    contain: layout style;
+}
+
+/* Critical loading optimization */
+.hero {
+    contain: layout;
+}
+
+/* Font loading optimization */
+@font-face {
+    font-family: 'Inter';
+    font-display: swap;
+}
+
+/* Memory optimization */
+.hero-visual .card {
+    transform: translate3d(0, 0, 0);
+}
+
+/* Prevent layout shifts */
+.portfolio-image,
+.service-icon {
+    aspect-ratio: 1;
+}
+
+/* Optimize animations on mobile */
+@media (max-width: 768px) {
+    .floating-cards {
+        animation: none !important;
+    }
+    
+    .hero-visual {
+        display: none;
+    }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

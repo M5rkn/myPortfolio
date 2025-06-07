@@ -49,6 +49,8 @@
     <meta name="apple-mobile-web-app-title" content="TechPortal">
     
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -477,7 +479,25 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        // Lazy loading для particles.js
+        function loadParticles() {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js';
+            script.onload = () => {
+                // Инициализируем particles только после загрузки
+                if (typeof particlesJS !== 'undefined') {
+                    initParticles();
+                }
+            };
+            document.head.appendChild(script);
+        }
+        
+        // Загружаем particles с задержкой после основного контента
+        window.addEventListener('load', () => {
+            setTimeout(loadParticles, 1000);
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 </html> 

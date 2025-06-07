@@ -8,6 +8,8 @@
     
     <!-- Стили -->
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     
@@ -797,8 +799,28 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
+        // Lazy loading для jsPDF
+        let jsPDFLoaded = false;
+        
+        function loadJsPDF() {
+            return new Promise((resolve, reject) => {
+                if (jsPDFLoaded) {
+                    resolve();
+                    return;
+                }
+                
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                script.onload = () => {
+                    jsPDFLoaded = true;
+                    resolve();
+                };
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+        
         // Единая система ценообразования
         const PRICING_CONFIG = {
             // Базовые цены проектов
@@ -1260,9 +1282,23 @@
         }
         
         // Export functions
-        function downloadPDF() {
-            if (typeof window.jspdf === 'undefined') {
-                alert('PDF библиотека не загружена. Попробуйте скопировать текст или обновить страницу.');
+        async function downloadPDF() {
+            // Показываем индикатор загрузки
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '⏳ Загружаем PDF...';
+            btn.disabled = true;
+            
+            try {
+                await loadJsPDF();
+                
+                if (typeof window.jspdf === 'undefined') {
+                    throw new Error('jsPDF не загружен');
+                }
+            } catch (error) {
+                alert('Ошибка загрузки PDF библиотеки. Попробуйте скопировать текст.');
+                btn.textContent = originalText;
+                btn.disabled = false;
                 return;
             }
             
@@ -1356,6 +1392,10 @@
             
             // Save PDF
             doc.save(`TZ_${formData.projectName.replace(/[^a-zа-я0-9]/gi, '_')}.pdf`);
+            
+            // Восстанавливаем кнопку
+            btn.textContent = originalText;
+            btn.disabled = false;
         }
         
         function copyToClipboard() {
