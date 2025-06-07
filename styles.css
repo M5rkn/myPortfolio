@@ -462,10 +462,10 @@ body {
 }
 
 .portfolio-item:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
     box-shadow: 
-        0 15px 30px rgba(102, 126, 234, 0.2),
-        0 0 0 1px rgba(255, 255, 255, 0.05);
+        0 25px 50px rgba(102, 126, 234, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .portfolio-image {
@@ -542,40 +542,43 @@ body {
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 350px));
     gap: 1.5rem;
-    margin-top: 3rem;
+    margin-top: 4rem;
+    justify-content: center;
 }
 
 .service-item {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.06) 100%);
     padding: 1.5rem;
-    border-radius: 15px;
+    border-radius: 16px;
     border: 1px solid rgba(102, 126, 234, 0.15);
     transition: all 0.3s ease;
     text-align: center;
     backdrop-filter: blur(15px);
     position: relative;
     overflow: hidden;
+    max-width: 350px;
+    height: auto;
 }
 
 .service-item:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px) scale(1.01);
     box-shadow: 
-        0 10px 25px rgba(102, 126, 234, 0.15),
+        0 8px 25px rgba(102, 126, 234, 0.15),
         0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .service-icon {
-    font-size: 2.5rem;
+    font-size: 3rem;
     margin-bottom: 1rem;
     display: block;
 }
 
 .service-item h3 {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: 600;
-    margin-bottom: 0.8rem;
+    margin-bottom: 1rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -1467,20 +1470,6 @@ img.lazy.loaded {
     
     .services-grid {
         grid-template-columns: 1fr;
-        gap: 1rem;
-        margin-top: 2rem;
-    }
-    
-    .service-item {
-        padding: 1.2rem;
-    }
-    
-    .service-icon {
-        font-size: 2rem;
-    }
-    
-    .service-item h3 {
-        font-size: 1.2rem;
     }
     
     .about-content,
@@ -1871,19 +1860,34 @@ img.lazy.loaded {
     .calculator-window {
         width: 420px;
     }
+    
+    /* Ограничиваем размеры карточек услуг на больших экранах */
+    .services-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
+        max-width: 1000px;
+        margin: 4rem auto 0;
+    }
+    
+    .service-item {
+        max-width: 320px;
+    }
 }
 
 /* ========== 3D ЭФФЕКТЫ И МИКРОИНТЕРАКЦИИ ========== */
 
-/* 3D Card Effects */
+/* 3D Card Effects - более мягкие */
 .portfolio-item {
-    perspective: 1000px;
-    transform-style: preserve-3d;
+    transition: all 0.3s ease;
 }
 
-/* Дублированные стили portfolio-item:hover удалены - основные стили выше */
+.portfolio-item:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 
+        0 12px 25px rgba(102, 126, 234, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+}
 
-/* Дублирующиеся стили service-item удалены - основные стили выше */
+/* Дублирующиеся стили service-item удалены - используются основные выше */
 
 /* 3D Button Effects */
 .btn {
@@ -1909,12 +1913,12 @@ img.lazy.loaded {
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    transform: translateY(-3px) rotateX(10deg);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
 }
 
 .btn:active {
-    transform: translateY(0px);
+    transform: translateY(-1px) rotateX(5deg);
 }
 
 /* Floating Action Buttons with 3D */
@@ -1928,17 +1932,17 @@ img.lazy.loaded {
 
 .chat-toggle:hover,
 .chat-toggle:active {
-    transform: scale(1.05);
+    transform: scale(1.1) rotateY(15deg) rotateX(10deg);
     box-shadow: 
-        0 10px 20px rgba(102, 126, 234, 0.3),
+        0 15px 30px rgba(102, 126, 234, 0.4),
         0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .calculator-toggle:hover,
 .calculator-toggle:active {
-    transform: translateY(-2px) scale(1.03);
+    transform: translateY(-3px) rotateX(10deg) scale(1.05);
     box-shadow: 
-        0 10px 20px rgba(67, 233, 123, 0.3),
+        0 15px 30px rgba(67, 233, 123, 0.4),
         0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
@@ -1967,15 +1971,14 @@ img.lazy.loaded {
     text-shadow: 0 5px 10px rgba(102, 126, 234, 0.3);
 }
 
-/* Card Tilt Effect */
+/* Card Tilt Effect - более мягкий */
 .floating-cards .card {
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    transform-style: preserve-3d;
+    transition: all 0.3s ease;
 }
 
 .floating-cards .card:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 12px 25px rgba(102, 126, 234, 0.2);
 }
 
 /* Scroll Progress Indicator */
