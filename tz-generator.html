@@ -150,7 +150,7 @@
             color: var(--text-primary);
         }
         
-        .form-input, .form-textarea, .form-select {
+        .form-input, .form-textarea {
             width: 100%;
             padding: 0.75rem;
             border: 2px solid var(--border-color);
@@ -162,11 +162,82 @@
             color: var(--text-primary);
         }
         
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(42, 42, 42, 0.9) 100%);
+            color: var(--text-primary);
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: 
+                linear-gradient(45deg, transparent 50%, var(--accent-primary) 50%),
+                linear-gradient(135deg, var(--accent-primary) 50%, transparent 50%),
+                linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(42, 42, 42, 0.9) 100%);
+            background-position: 
+                calc(100% - 20px) calc(1em + 2px),
+                calc(100% - 15px) calc(1em + 2px),
+                100% 0;
+            background-size: 
+                5px 5px,
+                5px 5px,
+                100% 100%;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+        
+        .form-select:hover {
+            border-color: var(--accent-primary);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .form-input:focus, .form-textarea:focus {
             outline: none;
             border-color: var(--accent-primary);
             box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
             background: rgba(26, 26, 26, 1);
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+            background-image: 
+                linear-gradient(45deg, transparent 50%, #ffffff 50%),
+                linear-gradient(135deg, #ffffff 50%, transparent 50%),
+                linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+            background-position: 
+                calc(100% - 20px) calc(1em + 2px),
+                calc(100% - 15px) calc(1em + 2px),
+                100% 0;
+            background-size: 
+                5px 5px,
+                5px 5px,
+                100% 100%;
+            background-repeat: no-repeat;
+        }
+        
+        /* Стилизация опций select */
+        .form-select option {
+            background: rgba(26, 26, 26, 0.95);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border: none;
+        }
+        
+        .form-select option:hover,
+        .form-select option:checked {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
         }
         
         .form-input::placeholder, .form-textarea::placeholder {
@@ -329,6 +400,116 @@
             flex-wrap: wrap;
         }
         
+        /* Дополнительные эффекты для select */
+        .form-group {
+            position: relative;
+        }
+        
+        .form-group::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            border-radius: 1px;
+        }
+        
+        .form-group:focus-within::after {
+            transform: scaleX(1);
+        }
+        
+        /* Анимация загрузки для select при изменении */
+        .form-select.loading {
+            position: relative;
+            pointer-events: none;
+        }
+        
+        .form-select.loading::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--accent-primary);
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translateY(-50%);
+        }
+        
+        @keyframes spin {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+        
+        /* Пульсирующий эффект при фокусе */
+        .form-group.focused {
+            position: relative;
+        }
+        
+        .form-group.focused::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 12px;
+            opacity: 0.3;
+            animation: pulse 2s infinite;
+            z-index: -1;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: scale(1.02);
+                opacity: 0.1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+        }
+        
+        /* Улучшенный градиент для select в активном состоянии */
+        .form-select:active {
+            transform: scale(0.98);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+        }
+        
+        /* Гладкий переход между состояниями */
+        .form-select, .form-input, .form-textarea {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Эффект свечения при валидации */
+        .form-input.valid, .form-textarea.valid, .form-select.valid {
+            border-color: #4ade80;
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+        }
+        
+        .form-input.invalid, .form-textarea.invalid, .form-select.invalid {
+            border-color: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
         @media (max-width: 768px) {
             .tz-title {
                 font-size: 2rem;
@@ -350,6 +531,11 @@
             .export-buttons {
                 flex-direction: column;
                 align-items: center;
+            }
+            
+            .form-select {
+                padding: 1rem 2.5rem 1rem 1rem;
+                font-size: 1.1rem;
             }
         }
         
@@ -460,11 +646,11 @@
                     <h2 class="step-title">2. Расскажите о своем проекте</h2>
                     <div class="form-group">
                         <label class="form-label">Название проекта *</label>
-                        <input type="text" class="form-input" id="projectName" placeholder="Например: Интернет-магазин одежды">
+                        <input type="text" class="form-input" id="projectName" placeholder="Например: Интернет-магазин одежды" required minlength="3">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Описание проекта *</label>
-                        <textarea class="form-textarea" id="projectDescription" placeholder="Опишите что должен делать сайт, какие задачи решать, кто ваша аудитория..."></textarea>
+                        <textarea class="form-textarea" id="projectDescription" placeholder="Опишите что должен делать сайт, какие задачи решать, кто ваша аудитория..." required minlength="10"></textarea>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Ссылки на конкурентов (необязательно)</label>
@@ -675,7 +861,92 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateProgress();
             updateFunctionalityBasedOnType();
+            initializeFormEffects();
         });
+        
+        // Улучшенные эффекты для форм
+        function initializeFormEffects() {
+            // Анимация для select элементов
+            const selects = document.querySelectorAll('.form-select');
+            selects.forEach(select => {
+                select.addEventListener('change', function() {
+                    // Добавляем эффект загрузки
+                    this.classList.add('loading');
+                    setTimeout(() => {
+                        this.classList.remove('loading');
+                    }, 500);
+                    
+                    // Эффект "пульсации" при выборе
+                    this.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+                
+                // Звуковая обратная связь (визуальная)
+                select.addEventListener('focus', function() {
+                    this.style.boxShadow = '0 0 30px rgba(102, 126, 234, 0.6)';
+                });
+                
+                select.addEventListener('blur', function() {
+                    this.style.boxShadow = '';
+                });
+            });
+            
+            // Анимация для inputs и textarea
+            const inputs = document.querySelectorAll('.form-input, .form-textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                });
+                
+                // Эффект печати с валидацией
+                input.addEventListener('input', function() {
+                    this.style.borderColor = 'var(--accent-primary)';
+                    clearTimeout(this.timer);
+                    this.timer = setTimeout(() => {
+                        this.style.borderColor = '';
+                        validateField(this);
+                    }, 300);
+                });
+            });
+        }
+        
+        // Валидация полей в реальном времени
+        function validateField(field) {
+            field.classList.remove('valid', 'invalid');
+            
+            if (field.hasAttribute('required')) {
+                if (field.value.trim() === '') {
+                    field.classList.add('invalid');
+                    return false;
+                }
+            }
+            
+            // Специфичная валидация
+            if (field.type === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (field.value && !emailRegex.test(field.value)) {
+                    field.classList.add('invalid');
+                    return false;
+                }
+            }
+            
+            if (field.minLength && field.value.length > 0 && field.value.length < field.minLength) {
+                field.classList.add('invalid');
+                return false;
+            }
+            
+            if (field.value.trim() !== '') {
+                field.classList.add('valid');
+            }
+            
+            return true;
+        }
         
         // Step navigation
         function nextStep() {
