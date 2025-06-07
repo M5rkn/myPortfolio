@@ -2520,8 +2520,8 @@ function optimizeScrollPerformance() {
 
 // ========== INITIALIZE ALL EFFECTS ==========
 function initializeVisualEffects() {
-    // Initialize particles
-    initParticles();
+    // Initialize particles - теперь lazy loading в index.html
+    // initParticles(); - убрано, чтобы избежать дублирования
     
     // Initialize 3D effects
     initMagneticButtons();

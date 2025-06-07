@@ -2767,31 +2767,7 @@ code::-webkit-scrollbar-thumb:hover {
     }
 }
 
-/* Улучшение производительности для мобильных */
-@media (max-width: 768px) {
-    * {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-    
-    .hero-visual,
-    .floating-cards,
-    #particles-js {
-        display: none !important;
-    }
-    
-    .portfolio-item,
-    .service-item {
-        transform: none !important;
-        transition: none !important;
-    }
-    
-    .portfolio-item:hover,
-    .service-item:hover {
-        transform: scale(1.02) !important;
-        transition: transform 0.2s ease !important;
-    }
-}
+/* Улучшение производительности для мобильных - объединено с существующими правилами */
 
 /* Высококонтрастный режим для доступности */
 @media (prefers-contrast: high) {
@@ -2816,9 +2792,6 @@ code::-webkit-scrollbar-thumb:hover {
 /* ========== PERFORMANCE OPTIMIZATIONS ========== */
 
 /* GPU acceleration for smooth animations */
-.hero-content,
-.portfolio-item,
-.service-item,
 .btn,
 .option-card,
 .form-select,
@@ -2826,6 +2799,16 @@ code::-webkit-scrollbar-thumb:hover {
 .calculator-toggle {
     will-change: transform;
     transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Отдельная оптимизация для портфолио без трансформации по умолчанию */
+.portfolio-item,
+.service-item {
+    backface-visibility: hidden;
+}
+
+.hero-content {
     backface-visibility: hidden;
 }
 
@@ -2868,7 +2851,7 @@ code::-webkit-scrollbar-thumb:hover {
 
 /* Critical loading optimization */
 .hero {
-    contain: layout;
+    /* contain: layout; - удалено, сломало layout */
 }
 
 /* Font loading optimization */
@@ -2883,21 +2866,15 @@ code::-webkit-scrollbar-thumb:hover {
 }
 
 /* Prevent layout shifts */
-.portfolio-image,
+.portfolio-image {
+    /* aspect-ratio: 1; - удалено, сломало пропорции портфолио */
+}
+
 .service-icon {
     aspect-ratio: 1;
 }
 
-/* Optimize animations on mobile */
-@media (max-width: 768px) {
-    .floating-cards {
-        animation: none !important;
-    }
-    
-    .hero-visual {
-        display: none;
-    }
-}
+/* Optimize animations on mobile - объединено с существующими правилами выше */
 
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
