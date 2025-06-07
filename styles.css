@@ -542,10 +542,12 @@ body {
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 350px));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     margin-top: 4rem;
-    justify-content: center;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .service-item {
@@ -1469,7 +1471,8 @@ img.lazy.loaded {
     }
     
     .services-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
     }
     
     .about-content,
@@ -1511,6 +1514,12 @@ img.lazy.loaded {
     .btn {
         padding: 0.8rem 1.5rem;
         font-size: 0.9rem;
+    }
+    
+    /* Services grid для мобильных - одна колонка */
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
     
     /* Chat and Calculator mobile styles */
@@ -1849,6 +1858,12 @@ img.lazy.loaded {
         max-height: 250px;
         min-height: 110px;
     }
+    
+    /* Services grid для планшетов - 2 колонки */
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.2rem;
+    }
 }
 
 /* Стили для больших экранов */
@@ -1863,7 +1878,7 @@ img.lazy.loaded {
     
     /* Ограничиваем размеры карточек услуг на больших экранах */
     .services-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
+        grid-template-columns: repeat(3, 1fr);
         max-width: 1000px;
         margin: 4rem auto 0;
     }
@@ -2850,13 +2865,8 @@ code::-webkit-scrollbar-thumb:hover {
 
 /* Critical loading optimization */
 .hero {
-    /* contain: layout; - удалено, сломало layout */
-}
-
-/* Font loading optimization */
-@font-face {
-    font-family: 'Inter';
-    font-display: swap;
+    contain: paint style;
+    will-change: transform;
 }
 
 /* Memory optimization */
@@ -2866,7 +2876,10 @@ code::-webkit-scrollbar-thumb:hover {
 
 /* Prevent layout shifts */
 .portfolio-image {
-    /* aspect-ratio: 1; - удалено, сломало пропорции портфолио */
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
 }
 
 .service-icon {
