@@ -285,6 +285,37 @@
             <div id="telegramResult" style="display: none; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;"></div>
         </div>
 
+        <!-- Email Section -->
+        <div class="contacts-section" style="margin-bottom: 2rem;">
+            <h2 class="section-title">📧 Email Service</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="stat-card">
+                    <div class="stat-number" id="emailStatus">-</div>
+                    <div>Статус Email</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="emailFrom">-</div>
+                    <div>От кого</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="smtpHost">-</div>
+                    <div>SMTP сервер</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                <button class="refresh-btn" onclick="checkEmailStatus()" style="margin-bottom: 0;">
+                    📧 Проверить статус
+                </button>
+                <button class="refresh-btn" onclick="showTestEmailModal()" style="margin-bottom: 0; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    🧪 Тестовое письмо
+                </button>
+            </div>
+            
+            <div id="emailResult" style="display: none; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;"></div>
+        </div>
+
         <div class="contacts-section">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                 <h2 class="section-title">Заявки</h2>
@@ -527,6 +558,359 @@
             }, 5000);
         }
 
+        // Email functions
+        async function checkEmailStatus() {
+            const token = checkAuth();
+            if (!token) return;
+            
+            try {
+                const response = await fetch('/api/admin/email/status', {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const email = data.email;
+                    
+                    // Update status indicators
+                    document.getElementById('emailStatus').textContent = email.enabled ? '✅ Активен' : '❌ Отключен';
+                    document.getElementById('emailFrom').textContent = email.fromEmail || 'Не настроен';
+                    document.getElementById('smtpHost').textContent = email.smtpHost || 'Не настроен';
+                    
+                    showEmailResult(email.enabled ? 'Email сервис активен и готов к работе' : 'Email сервис не настроен', email.enabled ? 'success' : 'error');
+                } else {
+                    showEmailResult('Ошибка получения статуса Email', 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showEmailResult('Ошибка подключения к серверу', 'error');
+            }
+        }
+
+        function showTestEmailModal() {
+            const existingModal = document.querySelector('.test-email-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'test-email-modal';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 50000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                background: #1a1a1a;
+                padding: 2rem;
+                border-radius: 15px;
+                max-width: 400px;
+                width: 90%;
+                border: 1px solid #333;
+            `;
+            
+            const title = document.createElement('h3');
+            title.textContent = 'Отправить тестовое письмо';
+            title.style.cssText = 'color: white; margin-bottom: 1rem; text-align: center;';
+            
+            const emailInput = document.createElement('input');
+            emailInput.type = 'email';
+            emailInput.placeholder = 'Введите email адрес';
+            emailInput.style.cssText = `
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid #333;
+                border-radius: 8px;
+                background: #2a2a2a;
+                color: white;
+                margin-bottom: 1rem;
+                box-sizing: border-box;
+            `;
+            
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.style.cssText = 'display: flex; gap: 1rem; justify-content: center;';
+            
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Отмена';
+            cancelBtn.className = 'btn';
+            cancelBtn.style.cssText = 'background: #666; color: white;';
+            
+            const sendBtn = document.createElement('button');
+            sendBtn.textContent = 'Отправить';
+            sendBtn.className = 'btn';
+            sendBtn.style.cssText = 'background: #43e97b; color: white;';
+            
+            cancelBtn.addEventListener('click', () => overlay.remove());
+            
+            sendBtn.addEventListener('click', async () => {
+                const email = emailInput.value.trim();
+                if (!email) {
+                    alert('Введите email адрес');
+                    return;
+                }
+                
+                sendBtn.disabled = true;
+                sendBtn.textContent = 'Отправляем...';
+                
+                try {
+                    const response = await fetch('/api/admin/email/test', {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({ email })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showEmailResult('Тестовое письмо успешно отправлено!', 'success');
+                        overlay.remove();
+                    } else {
+                        showEmailResult(data.message || 'Ошибка отправки тестового письма', 'error');
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    showEmailResult('Ошибка подключения к серверу', 'error');
+                } finally {
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Отправить';
+                }
+            });
+            
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.remove();
+            });
+            
+            buttonsContainer.appendChild(cancelBtn);
+            buttonsContainer.appendChild(sendBtn);
+            modal.appendChild(title);
+            modal.appendChild(emailInput);
+            modal.appendChild(buttonsContainer);
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            emailInput.focus();
+        }
+
+        function showEmailResult(message, type) {
+            const resultEl = document.getElementById('emailResult');
+            resultEl.textContent = sanitizeText(message);
+            resultEl.style.display = 'block';
+            
+            if (type === 'success') {
+                resultEl.style.background = 'rgba(76, 175, 80, 0.1)';
+                resultEl.style.color = '#4CAF50';
+                resultEl.style.border = '1px solid rgba(76, 175, 80, 0.3)';
+            } else {
+                resultEl.style.background = 'rgba(244, 67, 54, 0.1)';
+                resultEl.style.color = '#f44336';
+                resultEl.style.border = '1px solid rgba(244, 67, 54, 0.3)';
+            }
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                resultEl.style.display = 'none';
+            }, 5000);
+        }
+
+        // Reply modal
+        function showReplyModal(contact) {
+            const existingModal = document.querySelector('.reply-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'reply-modal';
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 50000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 1rem;
+            `;
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                background: #1a1a1a;
+                padding: 2rem;
+                border-radius: 15px;
+                max-width: 600px;
+                width: 100%;
+                max-height: 80vh;
+                overflow-y: auto;
+                border: 1px solid #333;
+            `;
+            
+            const title = document.createElement('h3');
+            title.textContent = `Ответить: ${contact.name}`;
+            title.style.cssText = 'color: white; margin-bottom: 1rem;';
+            
+            const emailInfo = document.createElement('p');
+            emailInfo.textContent = `Email: ${contact.email}`;
+            emailInfo.style.cssText = 'color: #b0b0b0; margin-bottom: 1rem; font-size: 0.9rem;';
+            
+            const originalMessage = document.createElement('div');
+            originalMessage.style.cssText = `
+                background: #2a2a2a;
+                padding: 1rem;
+                border-radius: 8px;
+                margin-bottom: 1rem;
+                border-left: 4px solid #667eea;
+            `;
+            originalMessage.innerHTML = `
+                <strong style="color: #667eea;">Исходное сообщение:</strong><br>
+                <span style="color: #b0b0b0; font-size: 0.85rem;">${formatDate(contact.createdAt)}</span><br><br>
+                ${sanitizeText(contact.message).replace(/\n/g, '<br>')}
+            `;
+            
+            const subjectInput = document.createElement('input');
+            subjectInput.type = 'text';
+            subjectInput.placeholder = 'Тема письма';
+            subjectInput.value = `Re: Сообщение от ${contact.name}`;
+            subjectInput.style.cssText = `
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid #333;
+                border-radius: 8px;
+                background: #2a2a2a;
+                color: white;
+                margin-bottom: 1rem;
+                box-sizing: border-box;
+            `;
+            
+            const messageTextarea = document.createElement('textarea');
+            messageTextarea.placeholder = 'Ваш ответ...';
+            messageTextarea.rows = 8;
+            messageTextarea.style.cssText = `
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid #333;
+                border-radius: 8px;
+                background: #2a2a2a;
+                color: white;
+                margin-bottom: 1rem;
+                box-sizing: border-box;
+                resize: vertical;
+                font-family: inherit;
+            `;
+            
+            const charCounter = document.createElement('div');
+            charCounter.style.cssText = 'color: #888; font-size: 0.8rem; margin-bottom: 1rem; text-align: right;';
+            
+            messageTextarea.addEventListener('input', () => {
+                const length = messageTextarea.value.length;
+                charCounter.textContent = `${length}/5000 символов`;
+                charCounter.style.color = length > 4500 ? '#f44336' : '#888';
+            });
+            
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.style.cssText = 'display: flex; gap: 1rem; justify-content: flex-end;';
+            
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Отмена';
+            cancelBtn.className = 'btn';
+            cancelBtn.style.cssText = 'background: #666; color: white;';
+            
+            const sendBtn = document.createElement('button');
+            sendBtn.textContent = 'Отправить ответ';
+            sendBtn.className = 'btn';
+            sendBtn.style.cssText = 'background: #2196F3; color: white;';
+            
+            cancelBtn.addEventListener('click', () => overlay.remove());
+            
+            sendBtn.addEventListener('click', async () => {
+                const subject = subjectInput.value.trim();
+                const message = messageTextarea.value.trim();
+                
+                if (!subject || !message) {
+                    alert('Заполните тему и сообщение');
+                    return;
+                }
+                
+                if (message.length > 5000) {
+                    alert('Сообщение слишком длинное (максимум 5000 символов)');
+                    return;
+                }
+                
+                sendBtn.disabled = true;
+                sendBtn.textContent = 'Отправляем...';
+                
+                try {
+                    const response = await fetch(`/api/admin/contacts/${contact._id}/reply`, {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({ subject, message })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showEmailResult('Ответ успешно отправлен!', 'success');
+                        overlay.remove();
+                        
+                        // Обновляем список контактов
+                        loadContacts();
+                    } else {
+                        alert(data.message || 'Ошибка отправки ответа');
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    alert('Ошибка подключения к серверу');
+                } finally {
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Отправить ответ';
+                }
+            });
+            
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.remove();
+            });
+            
+            const escapeHandler = (e) => {
+                if (e.key === 'Escape') {
+                    document.removeEventListener('keydown', escapeHandler);
+                    overlay.remove();
+                }
+            };
+            document.addEventListener('keydown', escapeHandler);
+            
+            buttonsContainer.appendChild(cancelBtn);
+            buttonsContainer.appendChild(sendBtn);
+            modal.appendChild(title);
+            modal.appendChild(emailInfo);
+            modal.appendChild(originalMessage);
+            modal.appendChild(subjectInput);
+            modal.appendChild(messageTextarea);
+            modal.appendChild(charCounter);
+            modal.appendChild(buttonsContainer);
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            messageTextarea.focus();
+            messageTextarea.dispatchEvent(new Event('input')); // Trigger char counter
+        }
+
         // Show error message
         function showError(message) {
             const errorEl = document.getElementById('errorMessage');
@@ -663,6 +1047,14 @@
                     actionsDiv.appendChild(readSpan);
                 }
                 
+                const replyBtn = document.createElement('button');
+                replyBtn.className = 'btn';
+                replyBtn.style.cssText = 'background: #2196F3; color: white;';
+                replyBtn.textContent = 'Ответить';
+                replyBtn.setAttribute('data-action', 'reply');
+                replyBtn.setAttribute('data-contact-id', contact._id);
+                actionsDiv.appendChild(replyBtn);
+                
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'btn btn-delete';
                 deleteBtn.textContent = 'Удалить';
@@ -777,6 +1169,11 @@
                     target.disabled = true;
                     target.textContent = 'Обновляем...';
                     await markAsRead(contactId);
+                } else if (action === 'reply') {
+                    const contact = contacts.find(c => c._id === contactId);
+                    if (contact) {
+                        showReplyModal(contact);
+                    }
                 } else if (action === 'delete') {
                     target.disabled = true;
                     const originalText = target.textContent;
@@ -931,8 +1328,11 @@
         window.addEventListener('load', async () => {
             await initCSRF();
             loadContacts();
-            // Load Telegram status on page load
-            setTimeout(checkTelegramStatus, 1000);
+            // Load status on page load
+            setTimeout(() => {
+                checkTelegramStatus();
+                checkEmailStatus();
+            }, 1000);
         });
 
         // Auto-refresh every 30 seconds with security checks

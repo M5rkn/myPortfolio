@@ -15,6 +15,9 @@ require('dotenv').config();
 // Telegram integration
 const telegramService = require('./telegramService');
 
+// Email integration
+const emailService = require('./emailService');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -865,6 +868,149 @@ app.post('/api/admin/telegram/stats', authenticateAdmin, async (req, res) => {
     }
 });
 
+// Send reply to contact
+app.post('/api/admin/contacts/:id/reply', authenticateAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { subject, message } = req.body;
+        
+        // Validate MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Недействительный ID контакта'
+            });
+        }
+        
+        // Validate input
+        if (!subject || !message) {
+            return res.status(400).json({
+                success: false,
+                message: 'Тема и сообщение обязательны'
+            });
+        }
+        
+        if (subject.length > 200 || message.length > 5000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Тема или сообщение слишком длинные'
+            });
+        }
+        
+        // Find contact
+        const contact = await Contact.findById(id);
+        if (!contact) {
+            return res.status(404).json({
+                success: false,
+                message: 'Контакт не найден'
+            });
+        }
+        
+        // Check if email service is available
+        if (!emailService.isAvailable()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email сервис не настроен. Проверьте SMTP настройки.'
+            });
+        }
+        
+        // Send email reply
+        await emailService.sendReply(
+            contact.email,
+            subject,
+            message,
+            contact
+        );
+        
+        // Mark contact as read
+        contact.isRead = true;
+        await contact.save();
+        
+        // Send notification to Telegram
+        if (telegramService.isAvailable()) {
+            const notificationMessage = `
+📧 *Отправлен ответ клиенту*
+
+👤 *Клиент:* ${telegramService.escapeMarkdown(contact.name)}
+📧 *Email:* ${telegramService.escapeMarkdown(contact.email)}
+📝 *Тема:* ${telegramService.escapeMarkdown(subject)}
+💬 *Ответ:* ${telegramService.escapeMarkdown(message.substring(0, 200))}${message.length > 200 ? '...' : ''}
+
+🕐 *Время отправки:* ${new Date().toLocaleString('ru-RU')}
+            `;
+            
+            telegramService.bot.sendMessage(
+                telegramService.adminChatId, 
+                notificationMessage, 
+                { parse_mode: 'Markdown' }
+            ).catch(err => console.error('Ошибка Telegram уведомления:', err.message));
+        }
+        
+        res.json({
+            success: true,
+            message: 'Ответ успешно отправлен'
+        });
+        
+    } catch (error) {
+        console.error('Ошибка отправки ответа:', error.message);
+        
+        if (error.message.includes('Invalid login')) {
+            return res.status(400).json({
+                success: false,
+                message: 'Ошибка аутентификации SMTP. Проверьте логин и пароль.'
+            });
+        }
+        
+        handleError(res, error, 'Ошибка отправки ответа клиенту');
+    }
+});
+
+// Email service status
+app.get('/api/admin/email/status', authenticateAdmin, async (req, res) => {
+    try {
+        const config = emailService.getConfig();
+        
+        res.json({
+            success: true,
+            email: config
+        });
+    } catch (error) {
+        handleError(res, error);
+    }
+});
+
+// Send test email
+app.post('/api/admin/email/test', authenticateAdmin, async (req, res) => {
+    try {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email адрес обязателен'
+            });
+        }
+        
+        if (!emailService.isAvailable()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email сервис не настроен'
+            });
+        }
+        
+        await emailService.sendTestEmail(email);
+        
+        res.json({
+            success: true,
+            message: 'Тестовое письмо отправлено'
+        });
+        
+    } catch (error) {
+        console.error('Ошибка отправки тестового письма:', error.message);
+        handleError(res, error, 'Ошибка отправки тестового письма');
+    }
+});
+
 // Project views API with enhanced validation
 app.post('/api/projects/:id/view', apiLimiter, async (req, res) => {
     try {
@@ -1484,12 +1630,18 @@ const server = app.listen(PORT, () => {
         }, 5000); // Wait 5 seconds after server start
     }
     
-    // Log Telegram integration status
+    // Log integration status
     setTimeout(() => {
         if (telegramService.isAvailable()) {
             console.log('✅ Telegram Bot интеграция активна');
         } else {
             console.log('ℹ️  Telegram интеграция отключена (настройте TELEGRAM_BOT_TOKEN и TELEGRAM_ADMIN_CHAT_ID)');
+        }
+        
+        if (emailService.isAvailable()) {
+            console.log('✅ Email сервис активен');
+        } else {
+            console.log('ℹ️  Email сервис отключен (настройте SMTP параметры)');
         }
     }, 2000);
 });
