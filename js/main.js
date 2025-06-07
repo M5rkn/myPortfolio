@@ -56,9 +56,41 @@ function initializeVisualEffects() {
     }
 }
 
+// Wait for all modules to load
+function waitForModules() {
+    return new Promise((resolve) => {
+        const checkModules = () => {
+            const requiredModules = [
+                'SecurityModule',
+                'UtilsModule', 
+                'NavigationModule',
+                'FormsModule',
+                'PortfolioModule',
+                'WidgetsModule',
+                'AnimationsModule',
+                'ScrollModule'
+            ];
+            
+            const loadedModules = requiredModules.filter(module => window[module]);
+            console.log(`📦 Modules loaded: ${loadedModules.length}/${requiredModules.length}`);
+            
+            if (loadedModules.length === requiredModules.length) {
+                resolve();
+            } else {
+                setTimeout(checkModules, 50);
+            }
+        };
+        checkModules();
+    });
+}
+
 // Main DOMContentLoaded handler
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 TechPortal Application Starting...');
+    
+    // Wait for all modules to load
+    await waitForModules();
+    console.log('✅ All modules loaded successfully');
     
     // Start performance monitoring
     if (window.UtilsModule?.performance) {
@@ -176,18 +208,22 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 
-// Handle window resize
-window.addEventListener('resize', UtilsModule?.debounce(() => {
-    // Update device type on resize
-    const deviceType = UtilsModule?.getDeviceType();
-    document.body.className = document.body.className.replace(/device-\w+/g, '');
-    document.body.classList.add(`device-${deviceType}`);
-    
-    // Refresh particles.js on significant resize
-    if (window.pJSDom && window.pJSDom[0]) {
-        window.pJSDom[0].pJS.fn.vendors.resize();
+// Handle window resize (add after modules are loaded)
+setTimeout(() => {
+    if (window.UtilsModule?.debounce) {
+        window.addEventListener('resize', UtilsModule.debounce(() => {
+            // Update device type on resize
+            const deviceType = UtilsModule.getDeviceType();
+            document.body.className = document.body.className.replace(/device-\w+/g, '');
+            document.body.classList.add(`device-${deviceType}`);
+            
+            // Refresh particles.js on significant resize
+            if (window.pJSDom && window.pJSDom[0]) {
+                window.pJSDom[0].pJS.fn.vendors.resize();
+            }
+        }, 250));
     }
-}, 250) || (() => {}));
+}, 1000);
 
 // Handle orientation change for mobile
 window.addEventListener('orientationchange', () => {

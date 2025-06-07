@@ -416,4 +416,9 @@ window.SecurityModule = {
     addRandomDelay,
     secureApiCall,
     initSecurity
-}; 
+};
+
+// Export secure DOM utilities globally
+window.secureGetElementById = secureGetElementById;
+window.secureQuerySelector = secureQuerySelector;
+window.secureQuerySelectorAll = secureQuerySelectorAll; 
