@@ -547,16 +547,6 @@ app.post('/api/contact-simple', async (req, res) => {
     res.json({ success: true, message: 'Simple endpoint working' });
 });
 
-// Catch-all для всех POST на /api/contact*
-app.all('/api/contact*', (req, res) => {
-    console.log(`🚨 Catch-all triggered: ${req.method} ${req.url}`);
-    res.json({ 
-        success: false, 
-        message: `Method ${req.method} caught by catch-all`,
-        url: req.url
-    });
-});
-
 // Admin login with enhanced security
 app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
     try {
@@ -1737,6 +1727,16 @@ const gracefulShutdown = (signal) => {
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // Для nodemon
+
+// Catch-all для отладки (в самом конце)
+app.all('/api/contact*', (req, res) => {
+    console.log(`🚨 Catch-all triggered: ${req.method} ${req.url}`);
+    res.json({ 
+        success: false, 
+        message: `Method ${req.method} caught by catch-all`,
+        url: req.url
+    });
+});
 
 // Start server with security logging
 const server = app.listen(PORT, () => {
