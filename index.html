@@ -479,25 +479,25 @@
         </div>
     </div>
 
-    <!-- Particles.js for background effects -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    
-    <!-- Modular JavaScript Architecture -->
-    <!-- 1. Security and utilities modules -->
-    <script src="js/security.js" defer></script>
-    <script src="js/utils.js" defer></script>
-    
-    <!-- 2. Core functionality modules -->
-    <script src="js/navigation.js" defer></script>
-    <script src="js/forms.js" defer></script>
-    <script src="js/portfolio.js" defer></script>
-    
-    <!-- 3. Interactive widgets -->
-    <script src="js/widgets.js" defer></script>
-    <script src="js/animations.js" defer></script>
-    <script src="js/scroll.js" defer></script>
-    
-    <!-- 4. Main application initialization -->
-    <script src="js/main.js" defer></script>
+    <script>
+        // Lazy loading для particles.js
+        function loadParticles() {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js';
+            script.onload = () => {
+                // Инициализируем particles только после загрузки
+                if (typeof particlesJS !== 'undefined') {
+                    initParticles();
+                }
+            };
+            document.head.appendChild(script);
+        }
+        
+        // Загружаем particles с задержкой после основного контента
+        window.addEventListener('load', () => {
+            setTimeout(loadParticles, 1000);
+        });
+    </script>
+    <script src="script.js"></script>
 </body>
 </html> 
