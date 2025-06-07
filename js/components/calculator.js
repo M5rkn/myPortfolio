@@ -3,9 +3,9 @@
 
 // Initialize cost calculator
 function initializeCostCalculator() {
-    const calculatorToggle = secureGetElementById('calculator-toggle');
-    const calculatorWindow = secureGetElementById('calculator-window');
-    const calculatorClose = secureGetElementById('calculator-close');
+    const calculatorToggle = secureGetElementById('calculatorToggle');
+    const calculatorWindow = secureGetElementById('calculatorWindow');
+    const calculatorClose = secureGetElementById('calculatorClose');
     
     if (!calculatorToggle || !calculatorWindow) {
         console.warn('Calculator elements not found');
@@ -33,23 +33,22 @@ function initializeCostCalculator() {
 
 // Initialize calculation logic
 function initializeCalculationLogic() {
-    const inputs = secureQuerySelectorAll('.calc-input');
-    const calculateBtn = secureGetElementById('calculate-btn');
-    
-    // Add event listeners to all inputs
-    inputs.forEach(input => {
+    // Add event listeners to project type inputs
+    const projectTypeInputs = document.querySelectorAll('input[name="projectType"]');
+    projectTypeInputs.forEach(input => {
         input.addEventListener('change', calculateCost);
-        input.addEventListener('input', () => {
-            // Real-time calculation for range inputs
-            if (input.type === 'range') {
-                calculateCost();
-            }
-        });
     });
     
-    // Calculate button
-    if (calculateBtn) {
-        calculateBtn.addEventListener('click', calculateCost);
+    // Add event listeners to feature checkboxes
+    const featureInputs = document.querySelectorAll('input[name="features"]');
+    featureInputs.forEach(input => {
+        input.addEventListener('change', calculateCost);
+    });
+    
+    // Add event listener to quote button
+    const quoteButton = secureGetElementById('requestQuote');
+    if (quoteButton) {
+        quoteButton.addEventListener('click', handleQuoteRequest);
     }
     
     // Initial calculation
@@ -59,90 +58,31 @@ function initializeCalculationLogic() {
 // Main calculation function
 function calculateCost() {
     try {
-        // Base prices
-        const basePrices = {
-            'landing': 15000,
-            'corporate': 30000,
-            'ecommerce': 50000,
-            'webapp': 80000,
-            'custom': 100000
-        };
+        let totalCost = 0;
         
-        // Get form values
-        const projectType = secureQuerySelector('input[name="project-type"]:checked')?.value || 'landing';
-        const pages = parseInt(secureGetElementById('pages-count')?.value) || 1;
-        const features = secureQuerySelectorAll('input[name="features"]:checked');
-        const timeline = secureGetElementById('timeline')?.value || 'standard';
-        const design = secureGetElementById('design-complexity')?.value || 'simple';
-        
-        // Calculate base cost
-        let totalCost = basePrices[projectType] || basePrices.landing;
-        
-        // Pages multiplier (beyond base pages)
-        const basePages = projectType === 'landing' ? 1 : projectType === 'corporate' ? 5 : 10;
-        if (pages > basePages) {
-            const additionalPages = pages - basePages;
-            const pagePrice = projectType === 'webapp' ? 5000 : 2000;
-            totalCost += additionalPages * pagePrice;
+        // Get selected project type
+        const projectTypeInput = document.querySelector('input[name="projectType"]:checked');
+        if (projectTypeInput) {
+            totalCost += parseInt(projectTypeInput.dataset.cost) || 0;
         }
         
-        // Features cost
-        const featurePrices = {
-            'responsive': 0, // Included by default
-            'cms': 15000,
-            'ecommerce': 25000,
-            'auth': 20000,
-            'api': 30000,
-            'analytics': 5000,
-            'seo': 10000,
-            'multilingual': 15000,
-            'payment': 20000,
-            'chat': 8000,
-            'booking': 25000,
-            'crm': 40000
-        };
-        
-        features.forEach(feature => {
-            const featureValue = feature.value;
-            if (featurePrices[featureValue]) {
-                totalCost += featurePrices[featureValue];
-            }
+        // Add feature costs
+        const featureInputs = document.querySelectorAll('input[name="features"]:checked');
+        featureInputs.forEach(input => {
+            totalCost += parseInt(input.dataset.cost) || 0;
         });
         
-        // Timeline multiplier
-        const timelineMultipliers = {
-            'urgent': 1.5,     // +50% за срочность
-            'fast': 1.2,       // +20% за быструю разработку
-            'standard': 1.0,   // Обычная цена
-            'extended': 0.9    // -10% за длительные сроки
-        };
-        
-        totalCost *= timelineMultipliers[timeline] || 1.0;
-        
-        // Design complexity multiplier
-        const designMultipliers = {
-            'simple': 1.0,
-            'moderate': 1.3,
-            'complex': 1.6,
-            'premium': 2.0
-        };
-        
-        totalCost *= designMultipliers[design] || 1.0;
-        
-        // Update UI
-        updateCalculatorResults(totalCost, {
-            projectType,
-            pages,
-            features: Array.from(features).map(f => f.value),
-            timeline,
-            design
-        });
+        // Update display
+        const totalCostElement = secureGetElementById('totalCost');
+        if (totalCostElement) {
+            totalCostElement.textContent = `${totalCost}€`;
+        }
         
         return totalCost;
         
     } catch (error) {
         console.error('Calculation error:', error);
-        const resultElement = secureGetElementById('calc-result');
+        const resultElement = secureGetElementById('totalCost');
         if (resultElement) {
             resultElement.textContent = 'Ошибка расчета';
         }
@@ -150,31 +90,61 @@ function calculateCost() {
     }
 }
 
-// Update calculator results display
-function updateCalculatorResults(totalCost, params) {
-    // Main result
-    const resultElement = secureGetElementById('calc-result');
-    const detailsElement = secureGetElementById('calc-details');
+// Handle quote request
+function handleQuoteRequest() {
+    const projectTypeInput = document.querySelector('input[name="projectType"]:checked');
+    const featureInputs = document.querySelectorAll('input[name="features"]:checked');
+    const totalCostElement = secureGetElementById('totalCost');
     
-    if (resultElement) {
-        // Format price with animation
-        animatePrice(resultElement, totalCost);
+    if (!projectTypeInput) {
+        window.FormsModule.showNotification('Выберите тип проекта', 'error');
+        return;
     }
     
-    if (detailsElement) {
-        // Generate breakdown
-        const breakdown = generateCostBreakdown(totalCost, params);
-        detailsElement.innerHTML = breakdown;
+    const projectType = projectTypeInput.nextElementSibling.textContent;
+    const features = Array.from(featureInputs).map(input => 
+        input.nextElementSibling.textContent
+    );
+    const totalCost = totalCostElement.textContent;
+    
+    // Заполнить форму контакта с информацией о расчете
+    const messageTextarea = secureGetElementById('message');
+    if (messageTextarea) {
+        const calculationDetails = `
+Запрос расчета стоимости проекта:
+
+Тип проекта: ${projectType}
+${features.length > 0 ? `Дополнительные опции: ${features.join(', ')}` : ''}
+Примерная стоимость: ${totalCost}
+
+Прошу предоставить детальное коммерческое предложение.
+        `.trim();
+        
+        messageTextarea.value = calculationDetails;
+        
+        // Прокрутить к форме контакта
+        const contactSection = secureGetElementById('contact');
+        if (contactSection) {
+            contactSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // Подсветить форму
+            setTimeout(() => {
+                messageTextarea.focus();
+                messageTextarea.style.borderColor = '#667eea';
+                setTimeout(() => {
+                    messageTextarea.style.borderColor = '';
+                }, 2000);
+            }, 1000);
+        }
     }
     
-    // Update timeline estimate
-    updateTimelineEstimate(params);
-    
-    // Show/hide PDF button
-    const pdfButton = secureGetElementById('download-pdf');
-    if (pdfButton) {
-        pdfButton.style.display = totalCost > 0 ? 'block' : 'none';
+    // Закрыть калькулятор
+    const calculatorWindow = secureGetElementById('calculatorWindow');
+    if (calculatorWindow) {
+        calculatorWindow.classList.remove('active');
     }
+    
+    window.FormsModule.showNotification('Данные перенесены в форму контакта!', 'success');
 }
 
 // Animate price change

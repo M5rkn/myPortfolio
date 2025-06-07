@@ -3,11 +3,11 @@
 
 // Initialize chat widget
 function initializeChatWidget() {
-    const chatToggle = secureGetElementById('chat-toggle');
-    const chatWindow = secureGetElementById('chat-window');
-    const chatClose = secureGetElementById('chat-close');
-    const chatInput = secureGetElementById('chat-input');
-    const chatSend = secureGetElementById('chat-send');
+    const chatToggle = secureGetElementById('chatToggle');
+    const chatWindow = secureGetElementById('chatWindow');
+    const chatClose = secureGetElementById('chatClose');
+    const chatInput = secureGetElementById('chatInput');
+    const chatSend = secureGetElementById('chatSend');
     
     if (!chatToggle || !chatWindow) {
         console.warn('Chat elements not found');
@@ -183,7 +183,7 @@ function sendMessage() {
 
 // Add message to chat
 function addMessage(text, sender) {
-    const chatMessages = secureGetElementById('chat-messages');
+    const chatMessages = secureGetElementById('chatMessages');
     if (!chatMessages) return;
     
     const messageDiv = document.createElement('div');
@@ -226,8 +226,8 @@ function addMessage(text, sender) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
     
     // Bounce effect for chat toggle if window is closed
-    const chatWindow = secureGetElementById('chat-window');
-    const chatToggle = secureGetElementById('chat-toggle');
+    const chatWindow = secureGetElementById('chatWindow');
+    const chatToggle = secureGetElementById('chatToggle');
     
     if (sender === 'bot' && !chatWindow?.classList.contains('active') && chatToggle) {
         chatToggle.classList.add('bounce');
@@ -239,7 +239,7 @@ function addMessage(text, sender) {
 
 // Show typing indicator
 function showTypingIndicator() {
-    const chatMessages = secureGetElementById('chat-messages');
+    const chatMessages = secureGetElementById('chatMessages');
     if (!chatMessages) return;
     
     const typingDiv = document.createElement('div');
@@ -271,12 +271,12 @@ function hideTypingIndicator() {
 
 // Initialize chat animations
 function initializeChatAnimations() {
-    const chatToggle = secureGetElementById('chat-toggle');
+    const chatToggle = secureGetElementById('chatToggle');
     
     if (chatToggle) {
         // Pulse animation every 30 seconds
         setInterval(() => {
-            const chatWindow = secureGetElementById('chat-window');
+            const chatWindow = secureGetElementById('chatWindow');
             if (!chatWindow?.classList.contains('active')) {
                 chatToggle.classList.add('pulse');
                 setTimeout(() => {

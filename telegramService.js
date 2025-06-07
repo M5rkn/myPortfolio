@@ -5,6 +5,7 @@ class TelegramService {
         this.bot = null;
         this.adminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
         this.isEnabled = false;
+        this.sentMessages = new Set(); // Для предотвращения дублирования
         
         this.init();
     }
@@ -106,6 +107,14 @@ _Последняя проверка: ${new Date().toLocaleString('ru-RU')}_
         if (!this.isEnabled || !this.bot) return false;
 
         try {
+            // Создаем уникальный ключ для предотвращения дублирования
+            const messageKey = `${contact.email}-${contact.createdAt}-${contact.message.substring(0, 50)}`;
+            
+            if (this.sentMessages.has(messageKey)) {
+                console.log('📬 Telegram уведомление уже было отправлено (дубликат предотвращен)');
+                return true;
+            }
+
             const message = `
 🔔 *Новое сообщение с сайта!*
 
@@ -124,6 +133,16 @@ _Ответьте клиенту через панель администрат�
                 parse_mode: 'Markdown',
                 disable_web_page_preview: true 
             });
+
+            // Добавляем в список отправленных
+            this.sentMessages.add(messageKey);
+            
+            // Очищаем старые записи (оставляем только последние 100)
+            if (this.sentMessages.size > 100) {
+                const entries = Array.from(this.sentMessages);
+                this.sentMessages.clear();
+                entries.slice(-50).forEach(entry => this.sentMessages.add(entry));
+            }
 
             console.log('📬 Telegram уведомление о новом контакте отправлено');
             return true;
