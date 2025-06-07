@@ -243,14 +243,13 @@ const validateCSRFToken = (req, res, next) => {
 const tokenBlacklist = new Set();
 
 // Telegram webhook endpoint
-app.post('/telegram-webhook', express.raw({ type: 'application/json' }), (req, res) => {
+app.post('/telegram-webhook', express.json({ limit: '10mb' }), (req, res) => {
     try {
-        const body = JSON.parse(req.body);
-        req.body = body;
+        // express.json() уже парсит JSON, просто передаем дальше
         telegramService.handleWebhook(req, res);
     } catch (error) {
-        console.error('❌ Ошибка парсинга Telegram webhook:', error.message);
-        res.status(400).json({ error: 'Invalid JSON' });
+        console.error('❌ Ошибка обработки Telegram webhook:', error.message);
+        res.status(400).json({ error: 'Invalid request' });
     }
 });
 
