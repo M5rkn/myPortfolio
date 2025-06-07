@@ -109,17 +109,10 @@ const allowedOrigins = [
     'https://techportal.up.railway.app'
 ].filter(Boolean);
 
-// Debug middleware для отслеживания запросов (самый ранний)
+// Логирование только критичных API запросов
 app.use((req, res, next) => {
-    console.log(`🔍 ALL REQUEST: ${req.method} ${req.url}`);
-    
-    if (req.url.includes('/api/')) {
-        console.log(`📡 API Request: ${req.method} ${req.url}`, {
-            origin: req.headers.origin,
-            'user-agent': req.headers['user-agent']?.slice(0, 50),
-            'content-type': req.headers['content-type'],
-            'csrf-token': req.headers['x-csrf-token'] ? 'present' : 'missing'
-        });
+    if (req.url.includes('/api/contact') && req.method === 'POST') {
+        console.log(`📬 Contact form request from IP: ${req.ip}`);
     }
     next();
 });
@@ -530,22 +523,7 @@ app.get('/api/csrf-token', (req, res) => {
     });
 });
 
-// Test endpoint для отладки
-app.post('/api/test', (req, res) => {
-    console.log('🧪 Test endpoint hit:', {
-        method: req.method,
-        headers: req.headers,
-        body: req.body
-    });
-    res.json({ success: true, message: 'Test endpoint working', receivedData: req.body });
-});
 
-// Простой contact endpoint без middleware для тестирования
-app.post('/api/contact-simple', async (req, res) => {
-    console.log('📬 Simple contact endpoint hit');
-    console.log('📬 Body:', req.body);
-    res.json({ success: true, message: 'Simple endpoint working' });
-});
 
 // Admin login with enhanced security
 app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
@@ -639,15 +617,6 @@ app.post('/api/admin/logout', authenticateAdmin, (req, res) => {
 
 // Submit contact form with enhanced security
 app.post('/api/contact', apiLimiter, validateCSRFToken, async (req, res) => {
-    console.log('📬 Contact form submission received:', {
-        method: req.method,
-        contentType: req.headers['content-type'],
-        bodyKeys: Object.keys(req.body || {}),
-        hasName: !!req.body?.name,
-        hasEmail: !!req.body?.email,
-        hasMessage: !!req.body?.message
-    });
-    
     try {
         const { name, email, message } = req.body;
 
@@ -1728,15 +1697,7 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // Для nodemon
 
-// Catch-all для отладки (в самом конце)
-app.all('/api/contact*', (req, res) => {
-    console.log(`🚨 Catch-all triggered: ${req.method} ${req.url}`);
-    res.json({ 
-        success: false, 
-        message: `Method ${req.method} caught by catch-all`,
-        url: req.url
-    });
-});
+
 
 // Start server with security logging
 const server = app.listen(PORT, () => {

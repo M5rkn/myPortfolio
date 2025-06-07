@@ -49,10 +49,13 @@ function initializeChatWidget() {
         });
     }
     
-    // Add welcome message
-    setTimeout(() => {
-        addMessage('Привет! 👋 Я готов ответить на ваши вопросы о веб-разработке.', 'bot');
-    }, 1000);
+    // Add welcome message (проверяем дублирование)
+    const chatMessages = secureGetElementById('chatMessages');
+    if (chatMessages && chatMessages.children.length === 0) {
+        setTimeout(() => {
+            addMessage('Привет! Я помогу с вопросами по веб-разработке. Что вас интересует?', 'bot');
+        }, 1000);
+    }
 }
 
 // Smart response system
@@ -191,7 +194,7 @@ function addMessage(text, sender) {
     
     const avatar = document.createElement('div');
     avatar.className = 'message-avatar';
-    avatar.textContent = sender === 'bot' ? '🤖' : '👤';
+    avatar.textContent = sender === 'bot' ? '💬' : '👤';
     
     const content = document.createElement('div');
     content.className = 'message-content';
@@ -247,7 +250,7 @@ function showTypingIndicator() {
     typingDiv.id = 'typing-indicator';
     
     typingDiv.innerHTML = `
-        <div class="message-avatar">🤖</div>
+        <div class="message-avatar">💬</div>
         <div class="message-content">
             <div class="typing-dots">
                 <span></span>
@@ -289,8 +292,19 @@ function initializeChatAnimations() {
 
 // Initialize chat module
 function initializeChat() {
+    // Проверяем не инициализирован ли уже чат
+    if (window.ChatModule?.initialized) {
+        console.log('💬 Chat already initialized, skipping');
+        return;
+    }
+    
     initializeChatWidget();
     initializeChatAnimations();
+    
+    // Помечаем как инициализированный
+    if (window.ChatModule) {
+        window.ChatModule.initialized = true;
+    }
     
     console.log('💬 Chat module initialized');
 }
