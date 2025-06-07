@@ -14,6 +14,12 @@
     <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
     
     <title>Админ-панель - TechPortal</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         * {
             margin: 0;
@@ -1344,6 +1350,19 @@
                 logout();
             }
         }, SECURITY_CONFIG.tokenCheckInterval);
+    </script>
+    
+    <!-- Essential modules -->
+    <script src="js/security.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        // Initialize modules for admin panel
+        if (window.SecurityModule) {
+            SecurityModule.initSecurity();
+        }
+        if (window.UtilsModule) {
+            UtilsModule.initUtils();
+        }
     </script>
 </body>
 </html> 

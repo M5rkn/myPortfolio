@@ -7,7 +7,7 @@
     <meta name="description" content="Бесплатный генератор технических заданий для веб-проектов">
     
     <!-- Стили -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1430,6 +1430,23 @@
         
         function getBudgetText(budget) {
             return PRICING_CONFIG.budgetRanges[budget] || budget;
+        }
+    </script>
+    
+    <!-- Essential modules -->
+    <script src="js/security.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/forms.js"></script>
+    <script>
+        // Initialize modules for TZ generator
+        if (window.SecurityModule) {
+            SecurityModule.initSecurity();
+        }
+        if (window.UtilsModule) {
+            UtilsModule.initUtils();
+        }
+        if (window.FormsModule) {
+            FormsModule.initForms();
         }
     </script>
 </body>
