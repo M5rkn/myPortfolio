@@ -109,6 +109,21 @@ const allowedOrigins = [
     'https://techportal.up.railway.app'
 ].filter(Boolean);
 
+// Debug middleware для отслеживания запросов (самый ранний)
+app.use((req, res, next) => {
+    console.log(`🔍 ALL REQUEST: ${req.method} ${req.url}`);
+    
+    if (req.url.includes('/api/')) {
+        console.log(`📡 API Request: ${req.method} ${req.url}`, {
+            origin: req.headers.origin,
+            'user-agent': req.headers['user-agent']?.slice(0, 50),
+            'content-type': req.headers['content-type'],
+            'csrf-token': req.headers['x-csrf-token'] ? 'present' : 'missing'
+        });
+    }
+    next();
+});
+
 app.use(cors({
     origin: function (origin, callback) {
         // Allow requests with no origin (Railway direct access, mobile apps)
@@ -131,8 +146,8 @@ app.use(cors({
         }
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-Requested-With', 'Accept'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-Requested-With', 'Accept', 'Origin'],
     exposedHeaders: ['X-CSRF-Token'],
     preflightContinue: false,
     optionsSuccessStatus: 200
@@ -515,6 +530,33 @@ app.get('/api/csrf-token', (req, res) => {
     });
 });
 
+// Test endpoint для отладки
+app.post('/api/test', (req, res) => {
+    console.log('🧪 Test endpoint hit:', {
+        method: req.method,
+        headers: req.headers,
+        body: req.body
+    });
+    res.json({ success: true, message: 'Test endpoint working', receivedData: req.body });
+});
+
+// Простой contact endpoint без middleware для тестирования
+app.post('/api/contact-simple', async (req, res) => {
+    console.log('📬 Simple contact endpoint hit');
+    console.log('📬 Body:', req.body);
+    res.json({ success: true, message: 'Simple endpoint working' });
+});
+
+// Catch-all для всех POST на /api/contact*
+app.all('/api/contact*', (req, res) => {
+    console.log(`🚨 Catch-all triggered: ${req.method} ${req.url}`);
+    res.json({ 
+        success: false, 
+        message: `Method ${req.method} caught by catch-all`,
+        url: req.url
+    });
+});
+
 // Admin login with enhanced security
 app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
     try {
@@ -607,6 +649,15 @@ app.post('/api/admin/logout', authenticateAdmin, (req, res) => {
 
 // Submit contact form with enhanced security
 app.post('/api/contact', apiLimiter, validateCSRFToken, async (req, res) => {
+    console.log('📬 Contact form submission received:', {
+        method: req.method,
+        contentType: req.headers['content-type'],
+        bodyKeys: Object.keys(req.body || {}),
+        hasName: !!req.body?.name,
+        hasEmail: !!req.body?.email,
+        hasMessage: !!req.body?.message
+    });
+    
     try {
         const { name, email, message } = req.body;
 

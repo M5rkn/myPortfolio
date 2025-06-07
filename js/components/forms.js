@@ -136,11 +136,16 @@ function validateField(field) {
 
 // Handle form submission
 async function handleFormSubmission(form) {
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (!submitButton) {
+        console.error('Submit button not found in form');
+        return;
+    }
+    
+    const originalText = submitButton.textContent || 'Отправить';
+    
     try {
         // Show loading state
-        const submitButton = form.querySelector('button[type="submit"]');
-        const originalText = submitButton.textContent;
-        
         submitButton.disabled = true;
         submitButton.textContent = 'Отправка...';
         
@@ -166,8 +171,22 @@ async function handleFormSubmission(form) {
             data[key] = window.SecurityModule.sanitizeHTML(value.trim());
         }
         
-        // Determine API endpoint
-        const action = form.getAttribute('action') || '/api/contact';
+        // Determine API endpoint (временно тестируем простой endpoint)
+        const action = form.getAttribute('action') || '/api/contact-simple';
+        
+        console.log('📤 Form action attribute:', form.getAttribute('action'));
+        console.log('📤 Final endpoint:', action);
+        console.log('📤 Form data:', data);
+        console.log('📤 Current URL:', window.location.href);
+        
+        // Check if required modules are available
+        if (!window.ApiModule || !window.ApiModule.secureApiCall) {
+            throw new Error('API module не загружен. Пожалуйста, обновите страницу.');
+        }
+        
+        if (!window.SecurityModule || !window.SecurityModule.sanitizeHTML) {
+            throw new Error('Security module не загружен. Пожалуйста, обновите страницу.');
+        }
         
         // Submit form
         const result = await window.ApiModule.secureApiCall(action, {
@@ -175,23 +194,36 @@ async function handleFormSubmission(form) {
             body: JSON.stringify(data)
         });
         
-        if (result.success) {
+        if (result && result.success) {
             showNotification('Сообщение успешно отправлено!', 'success');
             form.reset();
             clearValidationErrors(form);
         } else {
-            throw new Error(result.message || 'Произошла ошибка при отправке');
+            throw new Error(result?.message || 'Произошла ошибка при отправке');
         }
         
     } catch (error) {
         console.error('Form submission error:', error);
-        showNotification(error.message, 'error');
+        
+        // Show user-friendly error message
+        let errorMessage = 'Произошла ошибка при отправке сообщения';
+        
+        if (error.message.includes('getCSRFToken')) {
+            errorMessage = 'Ошибка безопасности. Пожалуйста, обновите страницу и попробуйте снова.';
+        } else if (error.message.includes('Rate limit')) {
+            errorMessage = 'Слишком много запросов. Пожалуйста, подождите немного.';
+        } else if (error.message.includes('network') || error.message.includes('fetch')) {
+            errorMessage = 'Проблемы с подключением. Проверьте интернет и попробуйте снова.';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        showNotification(errorMessage, 'error');
     } finally {
-        // Restore button state
-        const submitButton = form.querySelector('button[type="submit"]');
+        // Always restore button state
         if (submitButton) {
             submitButton.disabled = false;
-            submitButton.textContent = originalText || 'Отправить';
+            submitButton.textContent = originalText;
         }
     }
 }

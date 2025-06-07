@@ -97,8 +97,84 @@ function isValidURL(url) {
     }
 }
 
+// CSRF Token generation and retrieval
+let csrfToken = null;
+
+function generateCSRFToken() {
+    const timestamp = Date.now().toString();
+    const random = Math.random().toString(36).substring(2);
+    const userAgent = navigator.userAgent.replace(/[^a-zA-Z0-9]/g, '').substring(0, 10);
+    
+    const tokenData = `${timestamp}-${random}-${userAgent}`;
+    
+    // Simple hash function for client-side token
+    let hash = 0;
+    for (let i = 0; i < tokenData.length; i++) {
+        const char = tokenData.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    
+    return `csrf_${Math.abs(hash).toString(36)}_${timestamp}`;
+}
+
+async function getCSRFToken() {
+    // Return cached token if still valid (valid for 30 minutes)
+    if (csrfToken) {
+        try {
+            const tokenParts = csrfToken.split('_');
+            const timestamp = parseInt(tokenParts[tokenParts.length - 1]);
+            const now = Date.now();
+            
+            // Token is valid for 30 minutes
+            if (now - timestamp < 30 * 60 * 1000) {
+                return csrfToken;
+            }
+        } catch (error) {
+            console.warn('Invalid CSRF token format, regenerating...');
+        }
+    }
+    
+    // Generate new token
+    csrfToken = generateCSRFToken();
+    
+    // Store in sessionStorage for persistence across page loads
+    try {
+        sessionStorage.setItem('csrf_token', csrfToken);
+    } catch (error) {
+        console.warn('Could not store CSRF token in session storage');
+    }
+    
+    return csrfToken;
+}
+
+// Try to restore token from sessionStorage on load
+function restoreCSRFToken() {
+    try {
+        const storedToken = sessionStorage.getItem('csrf_token');
+        if (storedToken) {
+            const tokenParts = storedToken.split('_');
+            const timestamp = parseInt(tokenParts[tokenParts.length - 1]);
+            const now = Date.now();
+            
+            // Check if token is still valid (30 minutes)
+            if (now - timestamp < 30 * 60 * 1000) {
+                csrfToken = storedToken;
+                console.log('🔒 CSRF token restored from session');
+            } else {
+                sessionStorage.removeItem('csrf_token');
+            }
+        }
+    } catch (error) {
+        console.warn('Could not restore CSRF token from session storage');
+    }
+}
+
 // Security initialization function
 function initializeSecurity() {
+    // Restore CSRF token
+    restoreCSRFToken();
+    
     // Secure external links
     document.querySelectorAll('a[href^="http"]').forEach(link => {
         if (!link.href.includes(window.location.hostname)) {
@@ -136,5 +212,6 @@ window.SecurityModule = {
     sanitizeHTML,
     validateInput,
     isValidURL,
+    getCSRFToken,
     initializeSecurity
 }; 
