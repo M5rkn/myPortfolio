@@ -1108,7 +1108,8 @@ img.lazy.loaded {
     right: 0;
     width: 350px;
     height: 450px;
-    background: #000000;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
     border-radius: 15px;
     border: 2px solid #667eea;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
@@ -1178,9 +1179,10 @@ img.lazy.loaded {
 }
 
 .bot-message .message-content {
-    background: rgba(102, 126, 234, 0.15);
-    border: 1px solid rgba(102, 126, 234, 0.3);
-    color: var(--text-primary);
+    background: rgba(102, 126, 234, 0.2);
+    border: 2px solid rgba(102, 126, 234, 0.5);
+    color: #ffffff;
+    font-weight: 500;
 }
 
 .user-message .message-content {
@@ -1270,9 +1272,10 @@ img.lazy.loaded {
     bottom: 70px;
     left: 0;
     width: 400px;
-    background: #000000;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
     border-radius: 15px;
-    border: 2px solid #667eea;
+    border: 2px solid #43e97b;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
     display: none;
     max-height: 80vh;
@@ -1314,6 +1317,8 @@ img.lazy.loaded {
 
 .calculator-content {
     padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
 }
 
 .special-offer {
@@ -1517,8 +1522,11 @@ img.lazy.loaded {
         width: calc(100vw - 20px);
         height: 350px;
         right: -5px;
-        background: #000000 !important;
-        border: 2px solid #667eea !important;
+        bottom: 70px;
+        background: rgba(0, 0, 0, 0.98) !important;
+        backdrop-filter: blur(15px) !important;
+        border: 3px solid #667eea !important;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3) !important;
     }
     
     .cost-calculator {
@@ -1529,6 +1537,11 @@ img.lazy.loaded {
     .calculator-window {
         width: calc(100vw - 20px);
         left: -5px;
+        bottom: 70px;
+        background: rgba(0, 0, 0, 0.98) !important;
+        backdrop-filter: blur(15px) !important;
+        border: 3px solid #43e97b !important;
+        box-shadow: 0 10px 30px rgba(67, 233, 123, 0.3) !important;
     }
     
     .calculator-toggle {
@@ -1542,17 +1555,25 @@ img.lazy.loaded {
     
     /* Дополнительные стили для чата на мобильных */
     .chat-input-container {
-        border-top: 2px solid rgba(102, 126, 234, 0.5) !important;
-        background: #000000;
+        border-top: 2px solid rgba(102, 126, 234, 0.7) !important;
+        background: rgba(0, 0, 0, 0.9) !important;
+        backdrop-filter: blur(5px) !important;
     }
     
     .chat-messages {
-        background: #000000;
+        background: rgba(0, 0, 0, 0.8) !important;
+        backdrop-filter: blur(5px) !important;
     }
     
     .bot-message .message-content {
-        background: rgba(102, 126, 234, 0.25) !important;
-        border: 1px solid rgba(102, 126, 234, 0.5) !important;
+        background: rgba(102, 126, 234, 0.4) !important;
+        border: 2px solid rgba(102, 126, 234, 0.7) !important;
+        color: #ffffff !important;
+    }
+    
+    .calculator-content {
+        background: rgba(0, 0, 0, 0.8) !important;
+        backdrop-filter: blur(5px) !important;
     }
 }
 
@@ -1904,16 +1925,21 @@ img.lazy.loaded {
 .chat-toggle, .calculator-toggle {
     transform-style: preserve-3d;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    min-width: 48px;
+    min-height: 48px;
+    touch-action: manipulation;
 }
 
-.chat-toggle:hover {
+.chat-toggle:hover,
+.chat-toggle:active {
     transform: scale(1.1) rotateY(15deg) rotateX(10deg);
     box-shadow: 
         0 15px 30px rgba(102, 126, 234, 0.4),
         0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-.calculator-toggle:hover {
+.calculator-toggle:hover,
+.calculator-toggle:active {
     transform: translateY(-3px) rotateX(10deg) scale(1.05);
     box-shadow: 
         0 15px 30px rgba(67, 233, 123, 0.4),
@@ -2561,4 +2587,228 @@ code::-webkit-scrollbar-thumb:hover {
 .interactive-element:hover::after {
     width: 200px;
     height: 200px;
+}
+
+/* ========== УЛУЧШЕННЫЕ МОБИЛЬНЫЕ СТИЛИ ========== */
+
+/* Дополнительная мобильная оптимизация */
+@media (max-width: 480px) {
+    /* Оптимизация кнопок для сенсорного управления */
+    .chat-toggle, .calculator-toggle {
+        min-width: 70px !important;
+        min-height: 70px !important;
+        font-size: 1.4rem !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    .chat-toggle {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        border: 3px solid rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .calculator-toggle {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important; 
+        border: 3px solid rgba(255, 255, 255, 0.2) !important;
+        padding: 1rem 1.5rem !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Улучшенные стили окон */
+    .chat-window,
+    .calculator-window {
+        border-radius: 20px 20px 0 0 !important;
+        border-width: 4px !important;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    /* Улучшение видимости текста в чате */
+    .chat-input {
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: #ffffff !important;
+        font-size: 16px !important;
+        padding: 1rem !important;
+        border: 2px solid rgba(102, 126, 234, 0.8) !important;
+    }
+    
+    .chat-input:focus {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3) !important;
+    }
+    
+    .chat-input::placeholder {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    .chat-send {
+        min-width: 50px !important;
+        min-height: 50px !important;
+        font-size: 1.2rem !important;
+    }
+    
+    /* Улучшение видимости калькулятора */
+    .calc-option {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 2px solid rgba(67, 233, 123, 0.6) !important;
+        color: #ffffff !important;
+        padding: 1rem !important;
+        font-size: 0.95rem !important;
+    }
+    
+    .calc-option:hover,
+    .calc-option:active {
+        background: rgba(67, 233, 123, 0.2) !important;
+        border-color: #43e97b !important;
+        transform: scale(1.02) !important;
+    }
+    
+    .calc-result {
+        background: rgba(67, 233, 123, 0.2) !important;
+        border: 2px solid #43e97b !important;
+        color: #ffffff !important;
+        font-size: 1.1rem !important;
+        padding: 1.5rem !important;
+    }
+    
+    /* Оптимизация основного контента */
+    .hero-title {
+        font-size: 2.5rem !important;
+        line-height: 1.2 !important;
+    }
+    
+    .hero-description {
+        font-size: 1.1rem !important;
+        line-height: 1.5 !important;
+    }
+    
+    .btn {
+        padding: 1rem 2rem !important;
+        font-size: 1rem !important;
+        min-height: 50px !important;
+        touch-action: manipulation !important;
+    }
+    
+    .section-title {
+        font-size: 2rem !important;
+    }
+    
+    /* Навигация для мобильных */
+    .nav-menu {
+        background: rgba(0, 0, 0, 0.98) !important;
+        backdrop-filter: blur(20px) !important;
+    }
+    
+    .nav-link {
+        padding: 1rem !important;
+        font-size: 1.1rem !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .hamburger {
+        width: 35px !important;
+        height: 35px !important;
+    }
+    
+    .bar {
+        height: 4px !important;
+    }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 360px) {
+    .chat-window,
+    .calculator-window {
+        width: calc(100vw - 10px) !important;
+        left: 5px !important;
+        right: 5px !important;
+    }
+    
+    .hero-title {
+        font-size: 2rem !important;
+    }
+    
+    .btn {
+        padding: 0.8rem 1.5rem !important;
+        font-size: 0.95rem !important;
+    }
+}
+
+/* Ландшафтная ориентация на мобильных */
+@media (max-width: 768px) and (orientation: landscape) {
+    .chat-window,
+    .calculator-window {
+        height: 70vh !important;
+        max-height: 400px !important;
+    }
+    
+    .hero {
+        padding: 2rem 0 !important;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem !important;
+    }
+}
+
+/* Поддержка темной темы для мобильных */
+@media (prefers-color-scheme: dark) and (max-width: 480px) {
+    .chat-window,
+    .calculator-window {
+        background: rgba(0, 0, 0, 0.98) !important;
+        border-color: rgba(102, 126, 234, 0.8) !important;
+    }
+    
+    .chat-messages {
+        background: rgba(0, 0, 0, 0.9) !important;
+    }
+    
+    .calculator-content {
+        background: rgba(0, 0, 0, 0.9) !important;
+    }
+}
+
+/* Улучшение производительности для мобильных */
+@media (max-width: 768px) {
+    * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .hero-visual,
+    .floating-cards,
+    #particles-js {
+        display: none !important;
+    }
+    
+    .portfolio-item,
+    .service-item {
+        transform: none !important;
+        transition: none !important;
+    }
+    
+    .portfolio-item:hover,
+    .service-item:hover {
+        transform: scale(1.02) !important;
+        transition: transform 0.2s ease !important;
+    }
+}
+
+/* Высококонтрастный режим для доступности */
+@media (prefers-contrast: high) {
+    .chat-window,
+    .calculator-window {
+        border-width: 4px !important;
+        box-shadow: 0 0 0 2px #ffffff !important;
+    }
+    
+    .chat-input,
+    .calc-option {
+        border-width: 3px !important;
+    }
+    
+    .bot-message .message-content {
+        background: #000000 !important;
+        color: #ffffff !important;
+        border: 3px solid #667eea !important;
+    }
 }
