@@ -52,8 +52,10 @@ function clearValidationErrors(form) {
 // Real-time form validation
 function addRealTimeValidation() {
     const forms = secureQuerySelectorAll('form');
+    console.log('📝 Found forms:', forms.length);
     
-    forms.forEach(form => {
+    forms.forEach((form, index) => {
+        console.log(`📝 Processing form ${index}:`, form.id || 'no-id', form);
         const fields = form.querySelectorAll('input, textarea');
         
         fields.forEach(field => {
@@ -70,11 +72,20 @@ function addRealTimeValidation() {
             });
         });
         
-        // Form submission handler
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await handleFormSubmission(form);
-        });
+        // Form submission handler (проверяем дублирование)
+        if (!form.dataset.handlerAdded) {
+            console.log(`📝 Adding submit handler to form ${index}`);
+            form.dataset.handlerAdded = 'true';
+            form.addEventListener('submit', async (e) => {
+                console.log('📝 Form submit handler triggered BEFORE preventDefault');
+                e.preventDefault();
+                console.log('📝 Form submit handler triggered AFTER preventDefault');
+                await handleFormSubmission(form);
+            });
+            console.log(`📝 Submit handler added to form ${index}`);
+        } else {
+            console.log(`📝 Form ${index} already has handler`);
+        }
     });
 }
 
@@ -136,6 +147,10 @@ function validateField(field) {
 
 // Handle form submission
 async function handleFormSubmission(form) {
+    console.log('🚀 handleFormSubmission called');
+    console.log('🚀 Form element:', form);
+    console.log('🚀 Call stack:', new Error().stack);
+    
     const submitButton = form.querySelector('button[type="submit"]');
     if (!submitButton) {
         console.error('Submit button not found in form');
@@ -189,10 +204,17 @@ async function handleFormSubmission(form) {
         }
         
         // Submit form
-        const result = await window.ApiModule.secureApiCall(action, {
-            method: 'POST',
-            body: JSON.stringify(data)
-        });
+        console.log('📤 About to call secureApiCall...');
+        try {
+            const result = await window.ApiModule.secureApiCall(action, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+            console.log('📤 secureApiCall result:', result);
+        } catch (apiError) {
+            console.error('📤 secureApiCall error:', apiError);
+            throw apiError;
+        }
         
         if (result && result.success) {
             showNotification('Сообщение успешно отправлено!', 'success');
