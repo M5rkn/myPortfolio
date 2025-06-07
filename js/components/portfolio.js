@@ -362,10 +362,21 @@ function addHoverAnimations() {
         });
         
         // Click handler for modal
-        item.addEventListener('click', () => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
             const projectId = item.dataset.projectId || 'project-1';
             openProjectModal(projectId);
         });
+        
+        // Also handle portfolio link clicks
+        const portfolioLink = item.querySelector('.portfolio-link');
+        if (portfolioLink) {
+            portfolioLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const projectId = item.dataset.projectId || 'project-1';
+                openProjectModal(projectId);
+            });
+        }
     });
 }
 

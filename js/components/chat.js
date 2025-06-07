@@ -158,7 +158,7 @@ function getSmartResponse(message) {
 
 // Send message function
 function sendMessage() {
-    const chatInput = secureGetElementById('chat-input');
+    const chatInput = secureGetElementById('chatInput');
     const message = chatInput?.value.trim();
     
     if (!message || !chatInput) return;

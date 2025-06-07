@@ -151,7 +151,7 @@
             <p class="section-subtitle">Коллекция проектов, демонстрирующих мой опыт и креативность</p>
             
             <div class="portfolio-grid">
-                <div class="portfolio-item">
+                <div class="portfolio-item" data-project-id="project-1">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-1"></div>
                         <div class="portfolio-overlay">
@@ -162,7 +162,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-item">
+                <div class="portfolio-item" data-project-id="project-2">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-2"></div>
                         <div class="portfolio-overlay">
@@ -173,7 +173,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-item">
+                <div class="portfolio-item" data-project-id="project-3">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-3"></div>
                         <div class="portfolio-overlay">
@@ -184,7 +184,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-item">
+                <div class="portfolio-item" data-project-id="project-4">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-4"></div>
                         <div class="portfolio-overlay">
@@ -195,7 +195,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-item">
+                <div class="portfolio-item" data-project-id="project-5">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-5"></div>
                         <div class="portfolio-overlay">
@@ -206,7 +206,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-item">
+                <div class="portfolio-item" data-project-id="project-6">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-6"></div>
                         <div class="portfolio-overlay">
@@ -349,52 +349,9 @@
     </footer>
 
     <!-- Modal for Project Details -->
-    <div id="projectModal" class="modal">
-        <div class="modal-content">
-            <span class="modal-close">&times;</span>
-            <div class="modal-header">
-                <h2 id="modalTitle">Название проекта</h2>
-                <div class="modal-tech" id="modalTech">React, Node.js</div>
-            </div>
-            <div class="modal-body">
-                <div class="modal-image" id="modalImage"></div>
-                <div class="modal-info">
-                    <div class="modal-description" id="modalDescription">
-                        Подробное описание проекта будет здесь...
-                    </div>
-                    <div class="modal-features" id="modalFeatures">
-                        <h4>Возможности:</h4>
-                        <ul>
-                            <li>Адаптивный дизайн</li>
-                            <li>Современные технологии</li>
-                            <li>SEO оптимизация</li>
-                        </ul>
-                    </div>
-                    <div class="modal-stats">
-                        <div class="stat-item">
-                            <span class="stat-number" id="modalViews">0</span>
-                            <span class="stat-label">Просмотров</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="modalLikes">0</span>
-                            <span class="stat-label">Лайков</span>
-                        </div>
-                    </div>
-                    <div class="modal-actions">
-                        <a href="#" class="btn btn-primary" id="modalDemo" target="_blank" rel="noopener noreferrer">Посмотреть демо</a>
-                        <a href="#" class="btn btn-secondary" id="modalGithub" target="_blank" rel="noopener noreferrer">GitHub</a>
-                        <button class="btn btn-like" id="modalLikeBtn"><span class="like-icon">❤️</span> <span class="like-text">Нравится</span></button>
-                        <button class="btn btn-share" id="modalShareBtn">📤 Поделиться</button>
-                    </div>
-                    
-                    <!-- Gallery navigation -->
-                    <div class="modal-gallery-nav" id="modalGalleryNav" style="display: none;">
-                        <button class="gallery-btn gallery-prev" id="galleryPrev">‹</button>
-                        <span class="gallery-counter"><span id="currentSlide">1</span> / <span id="totalSlides">1</span></span>
-                        <button class="gallery-btn gallery-next" id="galleryNext">›</button>
-                    </div>
-                </div>
-            </div>
+    <div id="project-modal-overlay" class="modal-overlay">
+        <div id="project-modal-content" class="modal-content">
+            <!-- Dynamic content will be inserted here -->
         </div>
     </div>
 
@@ -509,6 +466,8 @@
         window.addEventListener('load', () => {
             setTimeout(loadParticles, 1000);
         });
+        
+
     </script>
     <!-- JavaScript modules loaded in <head> for better performance -->
 </body>
