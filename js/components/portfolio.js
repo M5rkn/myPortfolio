@@ -81,7 +81,7 @@ function openProjectModal(projectId) {
             description: 'Современный интернет-магазин с корзиной, фильтрами и админ-панелью',
             technologies: ['Node.js', 'MongoDB', 'Express', 'EJS'],
             features: ['Корзина покупок', 'Система фильтров', 'Админ-панель', 'Интеграция с платежами'],
-            images: ['/images/project1-1.jpg', '/images/project1-2.jpg', '/images/project1-3.jpg'],
+            images: ['data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkludGVybmV0LW1hZ2F6aW48L3RleHQ+Cjwvc3ZnPg=='],
             liveUrl: '#',
             githubUrl: '#'
         },
@@ -90,7 +90,7 @@ function openProjectModal(projectId) {
             description: 'Красивый лендинг с плавными анимациями и параллакс эффектами',
             technologies: ['HTML5', 'SCSS', 'JavaScript', 'GSAP'],
             features: ['Параллакс эффекты', 'Плавные анимации', 'Адаптивный дизайн', 'Оптимизация'],
-            images: ['/images/project2-1.jpg', '/images/project2-2.jpg'],
+            images: ['data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxlbmRpbmc8L3RleHQ+Cjwvc3ZnPg=='],
             liveUrl: '#',
             githubUrl: '#'
         },
@@ -99,7 +99,7 @@ function openProjectModal(projectId) {
             description: 'Безопасная система регистрации и авторизации с JWT токенами',
             technologies: ['Node.js', 'JWT', 'MongoDB', 'bcrypt'],
             features: ['JWT авторизация', 'Безопасные пароли', 'Восстановление пароля', 'Двухфакторная аутентификация'],
-            images: ['/images/project3-1.jpg'],
+            images: ['data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkF1dGggU3lzdGVtPC90ZXh0Pgo8L3N2Zz4='],
             liveUrl: '#',
             githubUrl: '#'
         }

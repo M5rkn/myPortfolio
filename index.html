@@ -467,8 +467,207 @@
             setTimeout(loadParticles, 1000);
         });
         
-
-    </script>
+                 // Инициализация резервных обработчиков
+         setTimeout(() => {
+            
+            // Добавим кликеры для тестирования
+            const chatToggle = document.getElementById('chatToggle');
+            const calcToggle = document.getElementById('calculatorToggle');
+            
+                         if (chatToggle && !chatToggle.hasAttribute('data-listener-added')) {
+                 chatToggle.addEventListener('click', () => {
+                     const chatWindow = document.getElementById('chatWindow');
+                     if (chatWindow) {
+                         chatWindow.classList.toggle('active');
+                     }
+                 });
+                 chatToggle.setAttribute('data-listener-added', 'true');
+             }
+             
+             if (calcToggle && !calcToggle.hasAttribute('data-listener-added')) {
+                 calcToggle.addEventListener('click', () => {
+                     const calcWindow = document.getElementById('calculatorWindow');
+                     if (calcWindow) {
+                         calcWindow.classList.toggle('active');
+                     }
+                 });
+                 calcToggle.setAttribute('data-listener-added', 'true');
+             }
+             
+             // Резервные обработчики закрытия
+             const chatClose = document.getElementById('chatClose');
+             const calcClose = document.getElementById('calculatorClose');
+             
+             if (chatClose) {
+                 chatClose.addEventListener('click', () => {
+                     const chatWindow = document.getElementById('chatWindow');
+                     if (chatWindow) {
+                         chatWindow.classList.remove('active');
+                     }
+                 });
+             }
+             
+             if (calcClose) {
+                 calcClose.addEventListener('click', () => {
+                     const calcWindow = document.getElementById('calculatorWindow');
+                     if (calcWindow) {
+                         calcWindow.classList.remove('active');
+                     }
+                 });
+                           }
+              
+              // Добавляем обработчики для портфолио 
+              const portfolioItems = document.querySelectorAll('.portfolio-item');
+              portfolioItems.forEach(item => {
+                  item.addEventListener('click', (e) => {
+                      e.preventDefault();
+                      const projectId = item.dataset.projectId || 'project-1';
+                      
+                      // Попробуем использовать модуль портфолио, если доступен
+                      if (window.PortfolioModule && typeof window.PortfolioModule.openProjectModal === 'function') {
+                          window.PortfolioModule.openProjectModal(projectId);
+                      } else {
+                          // Fallback: простое модальное окно
+                          openSimpleModal(projectId);
+                      }
+                  });
+              });
+                  }, 4000);
+         
+         // Простая fallback функция для модального окна
+         function openSimpleModal(projectId) {
+             
+             const projects = {
+                 'project-1': { title: 'Интернет-магазин электроники', tech: 'Node.js, MongoDB, Express' },
+                 'project-2': { title: 'Лендинг с анимациями', tech: 'HTML5, SCSS, JavaScript, GSAP' },
+                 'project-3': { title: 'Система авторизации', tech: 'Node.js, JWT, MongoDB' },
+                 'project-4': { title: 'Корпоративный блог', tech: 'React, Node.js, админка' },
+                 'project-5': { title: 'WordPress + Custom', tech: 'WordPress' },
+                 'project-6': { title: 'PSD → верстка', tech: 'Figma/PSD → HTML, CSS' }
+             };
+             
+             const project = projects[projectId] || projects['project-1'];
+             
+             let modal = document.getElementById('project-modal-overlay');
+             if (!modal) {
+                 // Создаем модальное окно если его нет
+                 modal = document.createElement('div');
+                 modal.id = 'project-modal-overlay';
+                 modal.className = 'modal-overlay';
+                 modal.style.cssText = `
+                     position: fixed;
+                     top: 0;
+                     left: 0;
+                     width: 100%;
+                     height: 100%;
+                     background: rgba(0, 0, 0, 0.8);
+                     display: flex;
+                     align-items: center;
+                     justify-content: center;
+                     z-index: 10000;
+                     opacity: 0;
+                     transition: opacity 0.3s;
+                 `;
+                 document.body.appendChild(modal);
+             }
+             
+             modal.innerHTML = `
+                 <div class="modal-content" style="
+                     background: white;
+                     padding: 2rem;
+                     border-radius: 10px;
+                     max-width: 600px;
+                     max-height: 80vh;
+                     overflow-y: auto;
+                     position: relative;
+                     transform: scale(0.9);
+                     transition: transform 0.3s;
+                 ">
+                     <button onclick="closeSimpleModal()" style="
+                         position: absolute;
+                         top: 10px;
+                         right: 15px;
+                         background: none;
+                         border: none;
+                         font-size: 24px;
+                         cursor: pointer;
+                         color: #999;
+                     ">&times;</button>
+                     
+                     <h2 style="margin-top: 0; color: #333;">${project.title}</h2>
+                     <p style="color: #666; margin-bottom: 1rem;"><strong>Технологии:</strong> ${project.tech}</p>
+                     
+                     <div style="margin: 1rem 0;">
+                         <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPiR7project.title}</text>Cjwvc3ZnPg==" 
+                              alt="${project.title}" 
+                              style="width: 100%; height: 200px; object-fit: cover; border-radius: 5px;">
+                     </div>
+                     
+                     <p style="color: #666; line-height: 1.6;">
+                         Подробная информация о проекте будет добавлена позже. 
+                         Этот проект демонстрирует современные технологии веб-разработки.
+                     </p>
+                     
+                     <div style="margin-top: 1.5rem;">
+                         <button onclick="closeSimpleModal()" style="
+                             background: #667eea;
+                             color: white;
+                             border: none;
+                             padding: 0.75rem 1.5rem;
+                             border-radius: 5px;
+                             cursor: pointer;
+                             margin-right: 1rem;
+                         ">Закрыть</button>
+                         <button onclick="alert('Демо будет добавлено позже')" style="
+                             background: #43e97b;
+                             color: white;
+                             border: none;
+                             padding: 0.75rem 1.5rem;
+                             border-radius: 5px;
+                             cursor: pointer;
+                         ">Посмотреть демо</button>
+                     </div>
+                 </div>
+             `;
+             
+             // Показываем модальное окно
+             modal.style.display = 'flex';
+             setTimeout(() => {
+                 modal.style.opacity = '1';
+                 const content = modal.querySelector('.modal-content');
+                 if (content) content.style.transform = 'scale(1)';
+             }, 10);
+             
+             // Закрытие по клику на overlay
+             modal.addEventListener('click', (e) => {
+                 if (e.target === modal) {
+                     closeSimpleModal();
+                 }
+             });
+             
+             // Закрытие по Escape
+             document.addEventListener('keydown', function escapeHandler(e) {
+                 if (e.key === 'Escape') {
+                     closeSimpleModal();
+                     document.removeEventListener('keydown', escapeHandler);
+                 }
+             });
+         }
+         
+         function closeSimpleModal() {
+             const modal = document.getElementById('project-modal-overlay');
+             if (modal) {
+                 modal.style.opacity = '0';
+                 const content = modal.querySelector('.modal-content');
+                 if (content) content.style.transform = 'scale(0.9)';
+                 
+                 setTimeout(() => {
+                     modal.style.display = 'none';
+                 }, 300);
+             }
+         }
+ 
+      </script>
     <!-- JavaScript modules loaded in <head> for better performance -->
 </body>
 </html> 
