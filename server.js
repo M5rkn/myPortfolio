@@ -12,6 +12,9 @@ const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
 require('dotenv').config();
 
+// Telegram integration
+const telegramService = require('./telegramService');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -235,6 +238,18 @@ const validateCSRFToken = (req, res, next) => {
 
 // JWT Token blacklist (use Redis in production)
 const tokenBlacklist = new Set();
+
+// Telegram webhook endpoint
+app.post('/telegram-webhook', express.raw({ type: 'application/json' }), (req, res) => {
+    try {
+        const body = JSON.parse(req.body);
+        req.body = body;
+        telegramService.handleWebhook(req, res);
+    } catch (error) {
+        console.error('❌ Ошибка парсинга Telegram webhook:', error.message);
+        res.status(400).json({ error: 'Invalid JSON' });
+    }
+});
 
 // Secure static file serving with path traversal protection
 app.use(express.static('.', {
@@ -646,6 +661,9 @@ app.post('/api/contact', apiLimiter, validateCSRFToken, async (req, res) => {
 
         await contact.save();
         
+        // Отправка уведомления в Telegram
+        telegramService.notifyNewContact(contact);
+        
         console.log(`New contact form submission from IP: ${clientIP}`);
 
         res.json({
@@ -745,6 +763,103 @@ app.delete('/api/admin/contacts/:id', authenticateAdmin, async (req, res) => {
         }
         
         res.json({ success: true });
+    } catch (error) {
+        handleError(res, error);
+    }
+});
+
+// Telegram Bot Management API
+app.get('/api/admin/telegram/status', authenticateAdmin, async (req, res) => {
+    try {
+        const isAvailable = telegramService.isAvailable();
+        const botInfo = await telegramService.getBotInfo();
+        
+        res.json({
+            success: true,
+            telegram: {
+                enabled: isAvailable,
+                botInfo: botInfo,
+                adminChatId: telegramService.adminChatId ? '***настроен***' : null
+            }
+        });
+    } catch (error) {
+        handleError(res, error);
+    }
+});
+
+// Send test notification to Telegram
+app.post('/api/admin/telegram/test', authenticateAdmin, async (req, res) => {
+    try {
+        if (!telegramService.isAvailable()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Telegram интеграция не настроена'
+            });
+        }
+
+        const testContact = {
+            name: 'Тестовый пользователь',
+            email: 'test@example.com',
+            message: 'Это тестовое сообщение для проверки Telegram интеграции.',
+            createdAt: new Date(),
+            ipAddress: '127.0.0.1'
+        };
+
+        const sent = await telegramService.notifyNewContact(testContact);
+        
+        res.json({
+            success: sent,
+            message: sent ? 'Тестовое уведомление отправлено' : 'Ошибка отправки'
+        });
+    } catch (error) {
+        handleError(res, error);
+    }
+});
+
+// Get and send Telegram statistics
+app.post('/api/admin/telegram/stats', authenticateAdmin, async (req, res) => {
+    try {
+        if (!telegramService.isAvailable()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Telegram интеграция не настроена'
+            });
+        }
+
+        // Collect statistics
+        const totalContacts = await Contact.countDocuments();
+        const newContacts = await Contact.countDocuments({
+            createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
+        });
+        const unreadContacts = await Contact.countDocuments({ isRead: false });
+        
+        const projectViews = await ProjectView.find({}).lean();
+        const projectNames = {
+            'project-1': 'Интернет-магазин',
+            'project-2': 'Лендинг с анимациями',
+            'project-3': 'Система авторизации',
+            'project-4': 'Корпоративный блог',
+            'project-5': 'WordPress + Custom',
+            'project-6': 'PSD → верстка'
+        };
+
+        const stats = {
+            totalContacts,
+            newContacts,
+            unreadContacts,
+            projectViews: projectViews.map(pv => ({
+                name: projectNames[pv.projectId] || pv.projectId,
+                views: pv.views
+            }))
+        };
+
+        const sent = await telegramService.sendStats(stats);
+        
+        res.json({
+            success: sent,
+            message: sent ? 'Статистика отправлена в Telegram' : 'Ошибка отправки',
+            stats
+        });
     } catch (error) {
         handleError(res, error);
     }
@@ -1361,6 +1476,22 @@ const server = app.listen(PORT, () => {
         console.log(`🔧 Cache Duration: 10 minutes`);
         console.log(`🔧 CSRF Fallback: Enabled for Railway`);
     }
+    
+    // Setup Telegram webhook in production
+    if (process.env.NODE_ENV === 'production' && railwayUrl) {
+        setTimeout(() => {
+            telegramService.setupWebhook(railwayUrl);
+        }, 5000); // Wait 5 seconds after server start
+    }
+    
+    // Log Telegram integration status
+    setTimeout(() => {
+        if (telegramService.isAvailable()) {
+            console.log('✅ Telegram Bot интеграция активна');
+        } else {
+            console.log('ℹ️  Telegram интеграция отключена (настройте TELEGRAM_BOT_TOKEN и TELEGRAM_ADMIN_CHAT_ID)');
+        }
+    }, 2000);
 });
 
 // Security timeout for server

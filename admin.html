@@ -251,6 +251,40 @@
             </div>
         </div>
 
+        <!-- Telegram Section -->
+        <div class="contacts-section" style="margin-bottom: 2rem;">
+            <h2 class="section-title">📱 Telegram Bot</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="stat-card">
+                    <div class="stat-number" id="telegramStatus">-</div>
+                    <div>Статус бота</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="telegramBot">-</div>
+                    <div>Бот</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="telegramChat">-</div>
+                    <div>Чат ID</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                <button class="refresh-btn" onclick="checkTelegramStatus()" style="margin-bottom: 0;">
+                    📡 Проверить статус
+                </button>
+                <button class="refresh-btn" onclick="sendTestMessage()" style="margin-bottom: 0; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    🧪 Тестовое сообщение
+                </button>
+                <button class="refresh-btn" onclick="sendTelegramStats()" style="margin-bottom: 0; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    📊 Отправить статистику
+                </button>
+            </div>
+            
+            <div id="telegramResult" style="display: none; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;"></div>
+        </div>
+
         <div class="contacts-section">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                 <h2 class="section-title">Заявки</h2>
@@ -379,6 +413,118 @@
             sessionStorage.removeItem('adminToken');
             sessionStorage.clear();
             window.location.replace('/login');
+        }
+
+        // Telegram functions
+        async function checkTelegramStatus() {
+            const token = checkAuth();
+            if (!token) return;
+            
+            try {
+                const response = await fetch('/api/admin/telegram/status', {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    const telegram = data.telegram;
+                    
+                    // Update status indicators
+                    document.getElementById('telegramStatus').textContent = telegram.enabled ? '✅ Активен' : '❌ Отключен';
+                    document.getElementById('telegramBot').textContent = telegram.botInfo ? telegram.botInfo.username : 'Не настроен';
+                    document.getElementById('telegramChat').textContent = telegram.adminChatId || 'Не настроен';
+                    
+                    showTelegramResult(telegram.enabled ? 'Telegram Bot активен и готов к работе' : 'Telegram Bot не настроен', 'success');
+                } else {
+                    showTelegramResult('Ошибка получения статуса Telegram', 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showTelegramResult('Ошибка подключения к серверу', 'error');
+            }
+        }
+
+        async function sendTestMessage() {
+            const token = checkAuth();
+            if (!token) return;
+            
+            try {
+                const response = await fetch('/api/admin/telegram/test', {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showTelegramResult('Тестовое сообщение успешно отправлено в Telegram!', 'success');
+                } else {
+                    showTelegramResult(data.message || 'Ошибка отправки тестового сообщения', 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showTelegramResult('Ошибка подключения к серверу', 'error');
+            }
+        }
+
+        async function sendTelegramStats() {
+            const token = checkAuth();
+            if (!token) return;
+            
+            try {
+                const response = await fetch('/api/admin/telegram/stats', {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showTelegramResult('Статистика успешно отправлена в Telegram!', 'success');
+                } else {
+                    showTelegramResult(data.message || 'Ошибка отправки статистики', 'error');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                showTelegramResult('Ошибка подключения к серверу', 'error');
+            }
+        }
+
+        function showTelegramResult(message, type) {
+            const resultEl = document.getElementById('telegramResult');
+            resultEl.textContent = sanitizeText(message);
+            resultEl.style.display = 'block';
+            
+            if (type === 'success') {
+                resultEl.style.background = 'rgba(76, 175, 80, 0.1)';
+                resultEl.style.color = '#4CAF50';
+                resultEl.style.border = '1px solid rgba(76, 175, 80, 0.3)';
+            } else {
+                resultEl.style.background = 'rgba(244, 67, 54, 0.1)';
+                resultEl.style.color = '#f44336';
+                resultEl.style.border = '1px solid rgba(244, 67, 54, 0.3)';
+            }
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                resultEl.style.display = 'none';
+            }, 5000);
         }
 
         // Show error message
@@ -785,6 +931,8 @@
         window.addEventListener('load', async () => {
             await initCSRF();
             loadContacts();
+            // Load Telegram status on page load
+            setTimeout(checkTelegramStatus, 1000);
         });
 
         // Auto-refresh every 30 seconds with security checks
