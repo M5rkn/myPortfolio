@@ -561,7 +561,10 @@ body {
     position: relative;
     overflow: hidden;
     max-width: 350px;
-    height: auto;
+    height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .service-item:hover {
@@ -575,6 +578,8 @@ body {
     font-size: 3rem;
     margin-bottom: 1rem;
     display: block;
+    height: 60px;
+    line-height: 60px;
 }
 
 .service-item h3 {
@@ -585,11 +590,20 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    height: 48px;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .service-item p {
     color: #b0b0b0;
     line-height: 1.6;
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
 }
 
 /* About Section */
@@ -1522,6 +1536,11 @@ img.lazy.loaded {
         gap: 1rem;
     }
     
+    .service-item {
+        height: 250px;
+        max-width: 100%;
+    }
+    
     /* Chat and Calculator mobile styles */
     .chat-widget {
         bottom: 10px;
@@ -1863,6 +1882,10 @@ img.lazy.loaded {
     .services-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1.2rem;
+    }
+    
+    .service-item {
+        height: 280px;
     }
 }
 
