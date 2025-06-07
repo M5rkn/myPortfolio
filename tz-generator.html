@@ -12,48 +12,92 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     
     <style>
+        /* Import same variables as main site */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --border-color: #333333;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
         .tz-generator {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--bg-primary);
             padding: 2rem 0;
+            position: relative;
+        }
+        
+        .tz-generator::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
         
         .tz-container {
             max-width: 800px;
             margin: 0 auto;
             padding: 0 1rem;
+            position: relative;
+            z-index: 1;
         }
         
         .tz-header {
             text-align: center;
             margin-bottom: 3rem;
-            color: white;
+            color: var(--text-primary);
         }
         
         .tz-title {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .tz-subtitle {
             font-size: 1.2rem;
+            color: var(--text-secondary);
             opacity: 0.9;
         }
         
         .tz-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(26, 26, 26, 0.95);
             backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
         
         .progress-bar {
             width: 100%;
             height: 8px;
-            background: #f0f0f0;
+            background: var(--border-color);
             border-radius: 4px;
             margin-bottom: 2rem;
             overflow: hidden;
@@ -61,10 +105,11 @@
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
             border-radius: 4px;
             transition: width 0.3s ease;
             width: 0%;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
         }
         
         .step {
@@ -91,7 +136,7 @@
             font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 1rem;
-            color: #333;
+            color: var(--text-primary);
         }
         
         .form-group {
@@ -102,22 +147,31 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
-            color: #333;
+            color: var(--text-primary);
         }
         
         .form-input, .form-textarea, .form-select {
             width: 100%;
             padding: 0.75rem;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 10px;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
             box-sizing: border-box;
+            background: rgba(26, 26, 26, 0.8);
+            color: var(--text-primary);
         }
         
         .form-input:focus, .form-textarea:focus, .form-select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+            background: rgba(26, 26, 26, 1);
+        }
+        
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
         }
         
         .form-textarea {
@@ -134,21 +188,26 @@
         
         .option-card {
             padding: 1rem;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
+            background: rgba(26, 26, 26, 0.5);
+            color: var(--text-primary);
         }
         
         .option-card:hover {
-            border-color: #667eea;
+            border-color: var(--accent-primary);
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            background: rgba(26, 26, 26, 0.8);
         }
         
         .option-card.selected {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--accent-primary);
+            background: rgba(102, 126, 234, 0.15);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
         }
         
         .option-icon {
@@ -163,7 +222,7 @@
         
         .option-desc {
             font-size: 0.9rem;
-            color: #666;
+            color: var(--text-secondary);
         }
         
         .checkbox-group {
@@ -182,7 +241,7 @@
         }
         
         .checkbox-item:hover {
-            background: rgba(102, 126, 234, 0.05);
+            background: rgba(102, 126, 234, 0.1);
         }
         
         .checkbox-item input {
@@ -195,7 +254,7 @@
             align-items: center;
             margin-top: 2rem;
             padding-top: 2rem;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid var(--border-color);
         }
         
         .btn {
@@ -211,23 +270,26 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
             color: white;
+            border: none;
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
         
         .btn-secondary {
-            background: #f8f8f8;
-            color: #333;
-            border: 2px solid #e0e0e0;
+            background: rgba(26, 26, 26, 0.8);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
         }
         
         .btn-secondary:hover {
-            background: #f0f0f0;
+            background: rgba(26, 26, 26, 1);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
         }
         
         .btn:disabled {
@@ -246,11 +308,13 @@
         }
         
         .tz-preview {
-            background: white;
+            background: rgba(26, 26, 26, 0.8);
             padding: 2rem;
             border-radius: 15px;
             margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
         }
         
         .tz-export {
@@ -288,6 +352,58 @@
                 align-items: center;
             }
         }
+        
+        /* Additional dark theme styles */
+        .progress-status {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Custom scrollbar for dark theme */
+        .tz-preview::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .tz-preview::-webkit-scrollbar-track {
+            background: rgba(51, 51, 51, 0.3);
+            border-radius: 4px;
+        }
+        
+        .tz-preview::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 4px;
+        }
+        
+        .tz-preview::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+        }
+        
+        /* Checkbox custom styling */
+        .checkbox-item input[type="checkbox"] {
+            accent-color: var(--accent-primary);
+        }
+        
+        /* Back button in header */
+        .back-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(26, 26, 26, 0.8);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .back-btn:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -295,6 +411,7 @@
         <div class="tz-container">
             <!-- Header -->
             <div class="tz-header">
+                <a href="index.html" class="back-btn">← Назад на главную</a>
                 <h1 class="tz-title">🚀 Генератор ТЗ</h1>
                 <p class="tz-subtitle">Создайте профессиональное техническое задание за 5 минут</p>
             </div>
@@ -304,7 +421,7 @@
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
                 </div>
-                <div style="text-align: center; color: #666; font-size: 0.9rem;">
+                <div class="progress-status">
                     Шаг <span id="currentStep">1</span> из <span id="totalSteps">6</span>
                 </div>
             </div>
@@ -444,10 +561,10 @@
                         <label class="form-label">Планируемый бюджет *</label>
                         <select class="form-select" id="budget">
                             <option value="">Выберите диапазон</option>
-                            <option value="small">До 50 000 руб (простой проект)</option>
-                            <option value="medium">50 000 - 150 000 руб (средний проект)</option>
-                            <option value="large">150 000 - 300 000 руб (сложный проект)</option>
-                            <option value="enterprise">300 000+ руб (корпоративный уровень)</option>
+                            <option value="small">50€ - 150€ (простой проект)</option>
+                            <option value="medium">150€ - 400€ (средний проект)</option>
+                            <option value="large">400€ - 800€ (сложный проект)</option>
+                            <option value="enterprise">800€+ (корпоративный уровень)</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -469,10 +586,7 @@
                 <!-- Navigation -->
                 <div class="navigation">
                     <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()" style="display: none;">Назад</button>
-                    <div style="display: flex; gap: 1rem;">
-                        <a href="index.html" class="btn btn-secondary">На главную</a>
-                        <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Далее</button>
-                    </div>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Далее</button>
                 </div>
             </div>
             
@@ -499,6 +613,53 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
+        // Единая система ценообразования
+        const PRICING_CONFIG = {
+            // Базовые цены проектов
+            projectTypes: {
+                'landing': { min: 50, max: 150, name: 'Лендинг' },
+                'website': { min: 100, max: 300, name: 'Многостраничный сайт' },
+                'shop': { min: 200, max: 500, name: 'Интернет-магазин' },
+                'app': { min: 300, max: 800, name: 'Веб-приложение' }
+            },
+            
+            // Дополнительные услуги
+            features: {
+                'admin': { cost: 25, name: 'Админ-панель' },
+                'auth': { cost: 20, name: 'Авторизация' },
+                'api': { cost: 25, name: 'API интеграция' },
+                'seo': { cost: 25, name: 'SEO оптимизация' },
+                'responsive': { cost: 0, name: 'Адаптивная верстка' },
+                'analytics': { cost: 10, name: 'Системы аналитики' },
+                'contact-form': { cost: 5, name: 'Форма обратной связи' }
+            },
+            
+            // Диапазоны бюджета
+            budgetRanges: {
+                'small': '50€ - 150€',
+                'medium': '150€ - 400€', 
+                'large': '400€ - 800€',
+                'enterprise': '800€+'
+            },
+            
+            // Функция для получения стоимости проекта
+            calculateProjectCost: function(projectType, features = []) {
+                let baseCost = this.projectTypes[projectType]?.min || 0;
+                let additionalCost = features.reduce((sum, feature) => {
+                    return sum + (this.features[feature]?.cost || 0);
+                }, 0);
+                return baseCost + additionalCost;
+            },
+            
+            // Функция для определения диапазона бюджета
+            getBudgetRange: function(totalCost) {
+                if (totalCost <= 150) return 'small';
+                if (totalCost <= 400) return 'medium';
+                if (totalCost <= 800) return 'large';
+                return 'enterprise';
+            }
+        };
+
         // Fallback if jsPDF doesn't load
         if (typeof window.jspdf === 'undefined') {
             console.warn('jsPDF не загружен, PDF экспорт недоступен');
@@ -724,39 +885,34 @@
                 'classic': 'Классический стиль'
             };
             
-            const budgetRanges = {
-                'small': 'До 50 000 руб',
-                'medium': '50 000 - 150 000 руб',
-                'large': '150 000 - 300 000 руб',
-                'enterprise': '300 000+ руб'
-            };
+            const budgetRanges = PRICING_CONFIG.budgetRanges;
             
             return `
-                <h1 style="color: #333; border-bottom: 2px solid #667eea; padding-bottom: 1rem;">
+                <h1 style="color: var(--text-primary); border-bottom: 2px solid var(--accent-primary); padding-bottom: 1rem;">
                     Техническое задание: ${formData.projectName}
                 </h1>
                 
-                <h2 style="color: #667eea; margin-top: 2rem;">1. Общая информация</h2>
+                <h2 style="color: var(--accent-primary); margin-top: 2rem;">1. Общая информация</h2>
                 <p><strong>Тип проекта:</strong> ${projectTypes[formData.projectType]}</p>
                 <p><strong>Описание:</strong> ${formData.projectDescription}</p>
                 ${formData.competitors ? `<p><strong>Конкуренты/примеры:</strong> ${formData.competitors}</p>` : ''}
                 
-                <h2 style="color: #667eea; margin-top: 2rem;">2. Целевая аудитория</h2>
+                <h2 style="color: var(--accent-primary); margin-top: 2rem;">2. Целевая аудитория</h2>
                 <p><strong>Возраст:</strong> ${formData.targetAge}</p>
                 <p><strong>Технический уровень:</strong> ${formData.techLevel}</p>
                 ${formData.userNeeds ? `<p><strong>Потребности пользователей:</strong> ${formData.userNeeds}</p>` : ''}
                 
-                <h2 style="color: #667eea; margin-top: 2rem;">3. Функциональные требования</h2>
+                <h2 style="color: var(--accent-primary); margin-top: 2rem;">3. Функциональные требования</h2>
                 <ul>
                     ${formData.features.map(feature => `<li>${getFeatureName(feature)}</li>`).join('')}
                 </ul>
                 
-                <h2 style="color: #667eea; margin-top: 2rem;">4. Дизайн-требования</h2>
+                <h2 style="color: var(--accent-primary); margin-top: 2rem;">4. Дизайн-требования</h2>
                 <p><strong>Стиль:</strong> ${designStyles[formData.designStyle]}</p>
                 ${formData.colorPrefs ? `<p><strong>Цветовые предпочтения:</strong> ${formData.colorPrefs}</p>` : ''}
                 ${formData.branding ? `<p><strong>Фирменный стиль:</strong> ${getBrandingText(formData.branding)}</p>` : ''}
                 
-                <h2 style="color: #667eea; margin-top: 2rem;">5. Технические требования</h2>
+                <h2 style="color: var(--accent-primary); margin-top: 2rem;">5. Технические требования</h2>
                 <ul>
                     <li>Адаптивная верстка для всех устройств</li>
                     <li>Кроссбраузерная совместимость</li>
@@ -765,12 +921,16 @@
                     <li>Безопасность и защита данных</li>
                 </ul>
                 
-                <h2 style="color: #667eea; margin-top: 2rem;">6. Бюджет и сроки</h2>
-                <p><strong>Бюджет:</strong> ${budgetRanges[formData.budget]}</p>
+                <h2 style="color: var(--accent-primary); margin-top: 2rem;">6. Бюджет и сроки</h2>
+                <p><strong>Планируемый бюджет:</strong> ${budgetRanges[formData.budget]}</p>
+                <p><strong>Расчетная стоимость:</strong> ${PRICING_CONFIG.calculateProjectCost(formData.projectType, formData.features)}€ (базовая цена без дополнительных сложностей)</p>
+                <div style="margin: 1rem 0; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px; font-size: 0.9rem;">
+                    <strong>Расчет:</strong> Базовая стоимость ${PRICING_CONFIG.projectTypes[formData.projectType]?.name}: ${PRICING_CONFIG.projectTypes[formData.projectType]?.min}€${formData.features.length > 0 ? ' + дополнительные функции: ' + formData.features.map(f => PRICING_CONFIG.features[f]?.cost || 0).filter(c => c > 0).join('€ + ') + '€' : ''}
+                </div>
                 <p><strong>Сроки:</strong> ${getDeadlineText(formData.deadline)}</p>
                 ${formData.additionalReqs ? `<p><strong>Дополнительные требования:</strong> ${formData.additionalReqs}</p>` : ''}
                 
-                <h2 style="color: #667eea; margin-top: 2rem;">7. Результат</h2>
+                <h2 style="color: var(--accent-primary); margin-top: 2rem;">7. Результат</h2>
                 <p>По итогам работы заказчик получит:</p>
                 <ul>
                     <li>Полностью готовый к работе ${projectTypes[formData.projectType].toLowerCase()}</li>
@@ -779,7 +939,7 @@
                     <li>Техническую поддержку в течение месяца</li>
                 </ul>
                 
-                <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
+                <div style="margin-top: 2rem; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border-left: 4px solid var(--accent-primary);">
                     <p style="margin: 0;"><strong>Документ создан:</strong> ${new Date().toLocaleDateString('ru-RU')}</p>
                     <p style="margin: 0;"><strong>Генератор ТЗ:</strong> TechPortal</p>
                 </div>
@@ -787,11 +947,8 @@
         }
         
         function getFeatureName(feature) {
-            const names = {
-                'responsive': 'Адаптивная верстка',
-                'seo': 'SEO оптимизация',
-                'analytics': 'Системы аналитики',
-                'contact-form': 'Форма обратной связи',
+            // Расширенные названия для дополнительных функций
+            const extendedNames = {
                 'animations': 'Анимации и параллакс эффекты',
                 'popup': 'Всплывающие окна',
                 'countdown': 'Таймер обратного отсчета',
@@ -805,13 +962,11 @@
                 'payment': 'Система онлайн-оплаты',
                 'orders': 'Управление заказами',
                 'inventory': 'Система учета остатков',
-                'auth': 'Система авторизации',
-                'admin': 'Административная панель',
                 'dashboard': 'Дашборд с аналитикой',
-                'api': 'API для интеграций',
                 'notifications': 'Система уведомлений'
             };
-            return names[feature] || feature;
+            
+            return PRICING_CONFIG.features[feature]?.name || extendedNames[feature] || feature;
         }
         
         function getBrandingText(branding) {
@@ -949,13 +1104,7 @@
         
         // Helper functions for PDF
         function getProjectTypeName(type) {
-            const names = {
-                'landing': 'Лендинг-страница',
-                'website': 'Многостраничный сайт',
-                'shop': 'Интернет-магазин',
-                'app': 'Веб-приложение'
-            };
-            return names[type] || type;
+            return PRICING_CONFIG.projectTypes[type]?.name || type;
         }
         
         function getDesignStyleName(style) {
@@ -969,13 +1118,7 @@
         }
         
         function getBudgetText(budget) {
-            const budgets = {
-                'small': 'До 50 000 руб',
-                'medium': '50 000 - 150 000 руб',
-                'large': '150 000 - 300 000 руб',
-                'enterprise': '300 000+ руб'
-            };
-            return budgets[budget] || budget;
+            return PRICING_CONFIG.budgetRanges[budget] || budget;
         }
     </script>
 </body>
