@@ -467,72 +467,93 @@
             setTimeout(loadParticles, 1000);
         });
         
-                 // Инициализация резервных обработчиков
-         setTimeout(() => {
+        // Добавим кликеры для тестирования
+        setTimeout(() => {
             
-            // Добавим кликеры для тестирования
+            // Добавим кликеры для чата и калькулятора
             const chatToggle = document.getElementById('chatToggle');
             const calcToggle = document.getElementById('calculatorToggle');
             
-                         if (chatToggle && !chatToggle.hasAttribute('data-listener-added')) {
-                 chatToggle.addEventListener('click', () => {
-                     const chatWindow = document.getElementById('chatWindow');
-                     if (chatWindow) {
-                         chatWindow.classList.toggle('active');
-                     }
-                 });
-                 chatToggle.setAttribute('data-listener-added', 'true');
-             }
-             
-             if (calcToggle && !calcToggle.hasAttribute('data-listener-added')) {
-                 calcToggle.addEventListener('click', () => {
-                     const calcWindow = document.getElementById('calculatorWindow');
-                     if (calcWindow) {
-                         calcWindow.classList.toggle('active');
-                     }
-                 });
-                 calcToggle.setAttribute('data-listener-added', 'true');
-             }
-             
-             // Резервные обработчики закрытия
-             const chatClose = document.getElementById('chatClose');
-             const calcClose = document.getElementById('calculatorClose');
-             
-             if (chatClose) {
-                 chatClose.addEventListener('click', () => {
-                     const chatWindow = document.getElementById('chatWindow');
-                     if (chatWindow) {
-                         chatWindow.classList.remove('active');
-                     }
-                 });
-             }
-             
-             if (calcClose) {
-                 calcClose.addEventListener('click', () => {
-                     const calcWindow = document.getElementById('calculatorWindow');
-                     if (calcWindow) {
-                         calcWindow.classList.remove('active');
-                     }
-                 });
-                           }
+            if (chatToggle && !chatToggle.hasAttribute('data-listener-added')) {
+                chatToggle.addEventListener('click', () => {
+                    const chatWindow = document.getElementById('chatWindow');
+                    if (chatWindow) {
+                        chatWindow.classList.toggle('active');
+                    }
+                });
+                chatToggle.setAttribute('data-listener-added', 'true');
+            }
+            
+            if (calcToggle && !calcToggle.hasAttribute('data-listener-added')) {
+                calcToggle.addEventListener('click', () => {
+                    const calcWindow = document.getElementById('calculatorWindow');
+                    if (calcWindow) {
+                        calcWindow.classList.toggle('active');
+                    }
+                });
+                calcToggle.setAttribute('data-listener-added', 'true');
+            }
+            
+            // Резервные обработчики закрытия
+            const chatClose = document.getElementById('chatClose');
+            const calcClose = document.getElementById('calculatorClose');
+            
+            if (chatClose) {
+                chatClose.addEventListener('click', () => {
+                    const chatWindow = document.getElementById('chatWindow');
+                    if (chatWindow) {
+                        chatWindow.classList.remove('active');
+                    }
+                });
+            }
+            
+            if (calcClose) {
+                calcClose.addEventListener('click', () => {
+                    const calcWindow = document.getElementById('calculatorWindow');
+                    if (calcWindow) {
+                        calcWindow.classList.remove('active');
+                    }
+                });
+            }
               
-              // Добавляем обработчики для портфолио 
-              const portfolioItems = document.querySelectorAll('.portfolio-item');
-              portfolioItems.forEach(item => {
-                  item.addEventListener('click', (e) => {
-                      e.preventDefault();
-                      const projectId = item.dataset.projectId || 'project-1';
-                      
-                      // Попробуем использовать модуль портфолио, если доступен
-                      if (window.PortfolioModule && typeof window.PortfolioModule.openProjectModal === 'function') {
-                          window.PortfolioModule.openProjectModal(projectId);
-                      } else {
-                          // Fallback: простое модальное окно
-                          openSimpleModal(projectId);
-                      }
-                  });
-              });
-                  }, 4000);
+            // Резервная инициализация портфолио
+            console.log('Backup portfolio initialization...');
+            const portfolioItems = document.querySelectorAll('.portfolio-item');
+            console.log('Found portfolio items:', portfolioItems.length);
+            
+            portfolioItems.forEach((item, index) => {
+                console.log(`Adding backup handler to item ${index}:`, item.dataset.projectId);
+                
+                // Убираем старые обработчики
+                item.onclick = null;
+                
+                // Добавляем новый обработчик
+                item.onclick = function(e) {
+                    e.preventDefault();
+                    const projectId = item.dataset.projectId || 'project-1';
+                    console.log('Backup: Portfolio item clicked:', projectId);
+                    
+                    // Используем глобальные функции
+                    if (window.openModal) {
+                        window.openModal(projectId);
+                    } else if (window.PortfolioModule && window.PortfolioModule.openProjectModal) {
+                        window.PortfolioModule.openProjectModal(projectId);
+                    } else {
+                        console.log('Using simple fallback modal');
+                        openSimpleModal(projectId);
+                    }
+                };
+                
+                // Также для ссылок внутри
+                const link = item.querySelector('.portfolio-link');
+                if (link) {
+                    link.onclick = function(e) {
+                        e.preventDefault();
+                        item.onclick(e);
+                    };
+                }
+            });
+         }, 500); // Уменьшил задержку еще больше
          
          // Простая fallback функция для модального окна
          function openSimpleModal(projectId) {

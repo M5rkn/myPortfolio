@@ -1,451 +1,214 @@
-// ========== PORTFOLIO COMPONENT MODULE ==========
-// Модуль портфолио с модальными окнами, фильтрацией и интерактивностью
+// ========== PORTFOLIO MODULE ==========
+// Простая и надежная система модальных окон
 
-// Portfolio filter functionality
-function filterPortfolio(category) {
-    const items = secureQuerySelectorAll('.portfolio-item');
-    const buttons = secureQuerySelectorAll('.portfolio-filter-btn');
-    
-    // Update active button
-    buttons.forEach(btn => btn.classList.remove('active'));
-    const activeButton = secureQuerySelector(`[data-filter="${category}"]`);
-    if (activeButton) activeButton.classList.add('active');
-    
-    // Filter items
-    items.forEach(item => {
-        const itemCategory = item.dataset.category;
-        
-        if (category === 'all' || itemCategory === category) {
-            item.style.display = 'block';
-            item.style.opacity = '1';
-            item.style.transform = 'scale(1)';
-        } else {
-            item.style.opacity = '0';
-            item.style.transform = 'scale(0.8)';
-            setTimeout(() => {
-                if (item.style.opacity === '0') {
-                    item.style.display = 'none';
-                }
-            }, 300);
-        }
-    });
-}
-
-// Typing effect for text elements
-function typeWriter(element, text, speed = 100) {
-    let i = 0;
-    element.textContent = '';
-    
-    function type() {
-        if (i < text.length) {
-            element.textContent += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
+// Данные проектов
+const PROJECTS = {
+    'project-1': {
+        title: 'Интернет-магазин электроники',
+        description: 'Современный интернет-магазин с корзиной, фильтрами и админ-панелью',
+        technologies: ['Node.js', 'MongoDB', 'Express', 'EJS'],
+        features: ['Корзина покупок', 'Система фильтров', 'Админ-панель', 'Интеграция с платежами'],
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNjY3ZWVhIiBvcGFjaXR5PSIwLjEiLz4KICA8Y2lyY2xlIGN4PSIyNTAiIGN5PSIxNTAiIHI9IjUwIiBmaWxsPSIjNjY3ZWVhIi8+CiAgPHRleHQgeD0iMjUwIiB5PSIyMDAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzMzMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SW50ZXJuZXQtbWFnYXppbjwvdGV4dD4KPC9zdmc+'
+    },
+    'project-2': {
+        title: 'Лендинг с анимациями',
+        description: 'Красивый лендинг с плавными анимациями и параллакс эффектами',
+        technologies: ['HTML5', 'SCSS', 'JavaScript', 'GSAP'],
+        features: ['Параллакс эффекты', 'Плавные анимации', 'Адаптивный дизайн', 'Оптимизация'],
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNDNlOTdiIiBvcGFjaXR5PSIwLjEiLz4KICA8cG9seWdvbiBwb2ludHM9IjIwMCwxMDAsMzAwLDEwMCwyNTAsMjAwIiBmaWxsPSIjNDNlOTdiIi8+CiAgPHRleHQgeD0iMjUwIiB5PSIyNDAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzMzMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+TGVuZGluZzwvdGV4dD4KPC9zdmc+'
+    },
+    'project-3': {
+        title: 'Система авторизации',
+        description: 'Безопасная система авторизации с JWT токенами и защитой от атак',
+        technologies: ['Node.js', 'JWT', 'MongoDB', 'bcrypt'],
+        features: ['JWT авторизация', 'Хеширование паролей', 'Защита от CSRF', 'Валидация данных'],
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjU2NTY1IiBvcGFjaXR5PSIwLjEiLz4KICA8cmVjdCB4PSIyMDAiIHk9IjEyMCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI2MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjU2NTY1IiBzdHJva2Utd2lkdGg9IjMiLz4KICA8Y2lyY2xlIGN4PSIyNTAiIGN5PSIxMDAiIHI9IjE1IiBmaWxsPSJub25lIiBzdHJva2U9IiNmNTY1NjUiIHN0cm9rZS13aWR0aD0iMyIvPgogIDx0ZXh0IHg9IjI1MCIgeT0iMjIwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiMzMzMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkF1dGggU3lzdGVtPC90ZXh0Pgo8L3N2Zz4='
+    },
+    'project-4': {
+        title: 'Корпоративный блог',
+        description: 'Современный блог с админ-панелью для управления контентом',
+        technologies: ['React', 'Node.js', 'Express', 'MongoDB'],
+        features: ['Админ-панель', 'WYSIWYG редактор', 'SEO оптимизация', 'Комментарии'],
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjOGI1Y2Y2IiBvcGFjaXR5PSIwLjEiLz4KICA8cmVjdCB4PSIxNTAiIHk9IjEwMCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSI4MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGI1Y2Y2IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iMTcwIiB5MT0iMTIwIiB4Mj0iMzMwIiB5Mj0iMTIwIiBzdHJva2U9IiM4YjVjZjYiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSIxNzAiIHkxPSIxNDAiIHgyPSIzMDAiIHkyPSIxNDAiIHN0cm9rZT0iIzhiNWNmNiIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGxpbmUgeDE9IjE3MCIgeTE9IjE2MCIgeDI9IjI4MCIgeTI9IjE2MCIgc3Ryb2tlPSIjOGI1Y2Y2IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8dGV4dCB4PSIyNTAiIHk9IjIyMCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSIjMzMzIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CbG9nPC90ZXh0Pgo8L3N2Zz4='
+    },
+    'project-5': {
+        title: 'WordPress + Custom',
+        description: 'Кастомная тема WordPress с функциональностью на заказ',
+        technologies: ['WordPress', 'PHP', 'MySQL', 'ACF'],
+        features: ['Кастомная тема', 'Плагины', 'ACF поля', 'SEO оптимизация'],
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMjE3NTlhIiBvcGFjaXR5PSIwLjEiLz4KICA8Y2lyY2xlIGN4PSIyNTAiIGN5PSIxNTAiIHI9IjQwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyMTc1OWEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDx0ZXh0IHg9IjI1MCIgeT0iMTU1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiMyMTc1OWEiIHRleHQtYW5jaG9yPSJtaWRkbGUiPldQPC90ZXh0PgogIDx0ZXh0IHg9IjI1MCIgeT0iMjIwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiMzMzMiIHRleHQtYW5jaG9yPSJtaWRkbGUiPldvcmRQcmVzczwvdGV4dD4KPC9zdmc+'
+    },
+    'project-6': {
+        title: 'PSD → верстка',
+        description: 'Качественная верстка из дизайн-макетов Figma, PSD, Adobe XD',
+        technologies: ['HTML5', 'CSS3', 'SCSS', 'JavaScript'],
+        features: ['Пиксель в пиксель', 'Адаптивность', 'Кроссбраузерность', 'Валидная верстка'],
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY2YjM1IiBvcGFjaXR5PSIwLjEiLz4KICA8cmVjdCB4PSIxODAiIHk9IjEwMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjgwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZjZiMzUiIHN0cm9rZS13aWR0aD0iMyIvPgogIDxyZWN0IHg9IjI2MCIgeT0iMTEwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmNmIzNSIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPHRleHQgeD0iMjUwIiB5PSIyMjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzMzMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UEVEK0hUTUw8L3RleHQ+Cjwvc3ZnPg=='
     }
-    
-    type();
-}
+};
 
-// Update modal stats (views, likes)
-async function updateModalStats(projectId) {
-    try {
-        const result = await window.ApiModule.secureApiCall(`/api/portfolio/${projectId}/stats`);
-        
-        if (result.success) {
-            const viewsElement = secureQuerySelector('.modal-views');
-            const likesElement = secureQuerySelector('.modal-likes');
-            
-            if (viewsElement) viewsElement.textContent = result.views || 0;
-            if (likesElement) likesElement.textContent = result.likes || 0;
-        }
-    } catch (error) {
-        console.warn('Failed to update modal stats:', error.message);
-    }
-}
-
-// Open project modal with enhanced UI
-function openProjectModal(projectId) {
-    const modalOverlay = secureGetElementById('project-modal-overlay');
-    const modalContent = secureGetElementById('project-modal-content');
+// Главная функция открытия модального окна
+function openModal(projectId) {
+    console.log('Opening modal for:', projectId);
     
-    if (!modalOverlay || !modalContent) {
-        console.error('Modal elements not found');
-        return;
-    }
-    
-    // Project data (in production, this would come from API)
-    const projects = {
-        'project-1': {
-            title: 'Интернет-магазин электроники',
-            description: 'Современный интернет-магазин с корзиной, фильтрами и админ-панелью',
-            technologies: ['Node.js', 'MongoDB', 'Express', 'EJS'],
-            features: ['Корзина покупок', 'Система фильтров', 'Админ-панель', 'Интеграция с платежами'],
-            images: ['data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkludGVybmV0LW1hZ2F6aW48L3RleHQ+Cjwvc3ZnPg=='],
-            liveUrl: '#',
-            githubUrl: '#'
-        },
-        'project-2': {
-            title: 'Лендинг с анимациями',
-            description: 'Красивый лендинг с плавными анимациями и параллакс эффектами',
-            technologies: ['HTML5', 'SCSS', 'JavaScript', 'GSAP'],
-            features: ['Параллакс эффекты', 'Плавные анимации', 'Адаптивный дизайн', 'Оптимизация'],
-            images: ['data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxlbmRpbmc8L3RleHQ+Cjwvc3ZnPg=='],
-            liveUrl: '#',
-            githubUrl: '#'
-        },
-        'project-3': {
-            title: 'Система авторизации',
-            description: 'Безопасная система регистрации и авторизации с JWT токенами',
-            technologies: ['Node.js', 'JWT', 'MongoDB', 'bcrypt'],
-            features: ['JWT авторизация', 'Безопасные пароли', 'Восстановление пароля', 'Двухфакторная аутентификация'],
-            images: ['data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkF1dGggU3lzdGVtPC90ZXh0Pgo8L3N2Zz4='],
-            liveUrl: '#',
-            githubUrl: '#'
-        }
-    };
-    
-    const project = projects[projectId];
+    const project = PROJECTS[projectId];
     if (!project) {
         console.error('Project not found:', projectId);
         return;
     }
+
+    // Получаем или создаем модальное окно
+    let modal = document.getElementById('project-modal-overlay');
     
-    // Build modal content with sanitized data
-    modalContent.innerHTML = `
-        <div class="modal-header">
-            <h2>${window.SecurityModule.sanitizeHTML(project.title)}</h2>
-            <button class="modal-close" onclick="window.PortfolioModule.closeProjectModal()">×</button>
-        </div>
-        
-        <div class="modal-body">
-            <div class="modal-gallery">
-                <div class="gallery-main">
-                    <img src="${project.images[0]}" alt="${window.SecurityModule.sanitizeHTML(project.title)}" class="gallery-main-image">
-                </div>
-                ${project.images.length > 1 ? `
-                    <div class="gallery-thumbnails">
-                        ${project.images.map((img, index) => `
-                            <img src="${img}" alt="Screenshot ${index + 1}" 
-                                 class="gallery-thumb ${index === 0 ? 'active' : ''}" 
-                                 onclick="window.PortfolioModule.switchGalleryImage(${index})">
-                        `).join('')}
-                    </div>
-                ` : ''}
+    if (!modal) {
+        // Создаем модальное окно если его нет
+        modal = document.createElement('div');
+        modal.id = 'project-modal-overlay';
+        modal.className = 'modal-overlay';
+        document.body.appendChild(modal);
+    }
+
+    // Заполняем содержимое
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>${project.title}</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
             </div>
             
-            <div class="modal-info">
-                <p class="project-description">${window.SecurityModule.sanitizeHTML(project.description)}</p>
-                
-                <div class="project-technologies">
-                    <h4>Технологии:</h4>
-                    <div class="tech-tags">
-                        ${project.technologies.map(tech => `<span class="tech-tag">${window.SecurityModule.sanitizeHTML(tech)}</span>`).join('')}
+            <div class="modal-body">
+                <div class="modal-gallery">
+                    <div class="gallery-main">
+                        <img src="${project.image}" alt="${project.title}" class="gallery-main-image">
                     </div>
                 </div>
                 
-                <div class="project-features">
-                    <h4>Особенности:</h4>
-                    <ul>
-                        ${project.features.map(feature => `<li>${window.SecurityModule.sanitizeHTML(feature)}</li>`).join('')}
-                    </ul>
-                </div>
-                
-                <div class="project-stats">
-                    <span class="stat-item">
-                        <span class="stat-icon">👁</span>
-                        <span class="modal-views">-</span> просмотров
-                    </span>
-                    <span class="stat-item">
-                        <span class="stat-icon">❤</span>
-                        <span class="modal-likes">-</span> лайков
-                    </span>
-                </div>
-                
-                <div class="project-actions">
-                    <a href="${project.liveUrl}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
-                        Посмотреть проект
-                    </a>
-                    <a href="${project.githubUrl}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
-                        GitHub
-                    </a>
-                    <button class="btn btn-accent like-btn" data-project-id="${projectId}" onclick="window.ApiModule.incrementLikes('${projectId}')">
-                        ❤ Нравится
-                    </button>
-                    <button class="btn btn-outline share-btn" onclick="window.PortfolioModule.shareProject('${window.SecurityModule.sanitizeHTML(project.title)}', '${window.SecurityModule.sanitizeHTML(project.description)}')">
-                        📤 Поделиться
-                    </button>
+                <div class="modal-info">
+                    <p class="project-description">${project.description}</p>
+                    
+                    <div class="project-technologies">
+                        <h4>Технологии</h4>
+                        <div class="tech-tags">
+                            ${project.technologies.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="project-features">
+                        <h4>Особенности</h4>
+                        <ul>
+                            ${project.features.map(feature => `<li>${feature}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="project-actions">
+                        <button class="btn btn-primary" onclick="alert('Демо скоро будет доступно!')">
+                            Посмотреть проект
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     `;
-    
-    // Show modal with animation
-    modalOverlay.style.display = 'flex';
-    modalOverlay.style.opacity = '0';
-    
-    requestAnimationFrame(() => {
-        modalOverlay.style.opacity = '1';
-        modalContent.style.transform = 'scale(1)';
-    });
-    
-    // Update stats
-    updateModalStats(projectId);
-    
-    // Setup gallery if multiple images
-    if (project.images.length > 1) {
-        setupProjectGallery(projectId);
-    }
-    
-    // Setup share functionality
-    setupShareButton(project);
-    
-    // Prevent body scroll
+
+    // Показываем модальное окно
+    modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    
+    // Обработчик клика по overlay
+    modal.onclick = function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    };
+    
+    console.log('Modal opened successfully');
 }
 
-// Close project modal
-function closeProjectModal() {
-    const modalOverlay = secureGetElementById('project-modal-overlay');
+// Функция закрытия модального окна
+function closeModal() {
+    console.log('Closing modal');
     
-    if (modalOverlay) {
-        modalOverlay.style.opacity = '0';
-        modalOverlay.style.pointerEvents = 'none';
+    const modal = document.getElementById('project-modal-overlay');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
         
-        const modalContent = secureGetElementById('project-modal-content');
-        if (modalContent) {
-            modalContent.style.transform = 'scale(0.9)';
-        }
-        
+        // Удаляем модальное окно через 300ms
         setTimeout(() => {
-            modalOverlay.style.display = 'none';
-            modalOverlay.style.pointerEvents = '';
-            // Restore body scroll
-            document.body.style.overflow = '';
+            if (modal.parentNode) {
+                modal.parentNode.removeChild(modal);
+            }
         }, 300);
     }
 }
 
-// Setup project gallery navigation
-function setupProjectGallery(projectId) {
-    let currentImageIndex = 0;
-    const galleryImages = secureQuerySelectorAll('.gallery-thumb');
-    const mainImage = secureQuerySelector('.gallery-main-image');
+// Инициализация обработчиков событий
+function initPortfolio() {
+    console.log('Initializing portfolio...');
     
-    if (!galleryImages.length || !mainImage) return;
-    
-    function updateGallery() {
-        // Update main image
-        const selectedThumb = galleryImages[currentImageIndex];
-        if (selectedThumb) {
-            mainImage.src = selectedThumb.src;
-            
-            // Update active thumbnail
-            galleryImages.forEach(thumb => thumb.classList.remove('active'));
-            selectedThumb.classList.add('active');
-        }
-    }
-    
-    // Add click handlers to thumbnails
-    galleryImages.forEach((thumb, index) => {
-        thumb.addEventListener('click', () => {
-            currentImageIndex = index;
-            updateGallery();
-        });
-    });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (secureGetElementById('project-modal-overlay').style.display === 'flex') {
-            if (e.key === 'ArrowLeft' && currentImageIndex > 0) {
-                currentImageIndex--;
-                updateGallery();
-            } else if (e.key === 'ArrowRight' && currentImageIndex < galleryImages.length - 1) {
-                currentImageIndex++;
-                updateGallery();
-            }
-        }
-    });
-}
-
-// Setup share button functionality
-function setupShareButton(project) {
-    const shareButton = secureQuerySelector('.share-btn');
-    if (!shareButton) return;
-    
-    shareButton.addEventListener('click', async () => {
-        const shareData = {
-            title: project.title,
-            text: project.description,
-            url: window.location.href
-        };
-        
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                fallbackShare(project);
-            }
-        } catch (error) {
-            fallbackShare(project);
-        }
-    });
-}
-
-// Fallback share functionality
-function fallbackShare(project) {
-    const shareText = `${project.title}\n\n${project.description}\n\n${window.location.href}`;
-    
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(shareText).then(() => {
-            window.FormsModule.showNotification('Ссылка скопирована в буфер обмена!', 'success');
-        }).catch(() => {
-            fallbackCopy(shareText);
-        });
-    } else {
-        fallbackCopy(shareText);
-    }
-}
-
-// Manual copy fallback
-function fallbackCopy(text) {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    textArea.style.top = '-999999px';
-    
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    try {
-        document.execCommand('copy');
-        window.FormsModule.showNotification('Информация скопирована!', 'success');
-    } catch (error) {
-        showShareModal(text);
-    } finally {
-        document.body.removeChild(textArea);
-    }
-}
-
-// Show share modal as last resort
-function showShareModal(text) {
-    const modal = document.createElement('div');
-    modal.className = 'share-modal-overlay';
-    modal.innerHTML = `
-        <div class="share-modal">
-            <h3>Поделиться проектом</h3>
-            <textarea readonly>${text}</textarea>
-            <div class="share-modal-actions">
-                <button class="btn btn-primary" onclick="this.parentElement.parentElement.parentElement.remove()">
-                    Закрыть
-                </button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Select text
-    const textarea = modal.querySelector('textarea');
-    textarea.focus();
-    textarea.select();
-}
-
-// Initialize portfolio interactions
-function addHoverAnimations() {
-    const portfolioItems = secureQuerySelectorAll('.portfolio-item');
-    
-    portfolioItems.forEach(item => {
-        item.addEventListener('mouseenter', () => {
-            item.style.transform = 'translateY(-10px) scale(1.02)';
-            item.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)';
-        });
-        
-        item.addEventListener('mouseleave', () => {
-            item.style.transform = 'translateY(0) scale(1)';
-            item.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
-        });
-        
-        // Click handler for modal
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const projectId = item.dataset.projectId || 'project-1';
-            openProjectModal(projectId);
-        });
-        
-        // Also handle portfolio link clicks
-        const portfolioLink = item.querySelector('.portfolio-link');
-        if (portfolioLink) {
-            portfolioLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                const projectId = item.dataset.projectId || 'project-1';
-                openProjectModal(projectId);
-            });
-        }
-    });
-}
-
-// Lazy loading for images
-function lazyLoadImages() {
-    const images = secureQuerySelectorAll('img[data-src]');
-    
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.remove('lazy');
-                observer.unobserve(img);
-            }
-        });
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
-}
-
-// Initialize portfolio module
-function initializePortfolio() {
-    addHoverAnimations();
-    lazyLoadImages();
-    
-    // Close modal on escape key
-    document.addEventListener('keydown', (e) => {
+    // Обработчик для клавиши Escape
+    document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-            closeProjectModal();
+            closeModal();
         }
     });
     
-    // Close modal on overlay click
-    const modalOverlay = secureGetElementById('project-modal-overlay');
-    if (modalOverlay) {
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) {
-                closeProjectModal();
-            }
-        });
-    }
+    // Добавляем обработчики клика на элементы портфолио
+    const portfolioItems = document.querySelectorAll('.portfolio-item');
+    console.log('Found portfolio items:', portfolioItems.length);
     
-    // Initialize portfolio items
-    const portfolioItems = secureQuerySelectorAll('.portfolio-item');
-    portfolioItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const projectId = item.dataset.projectId || 'project-1';
-            openProjectModal(projectId);
-        });
+    portfolioItems.forEach((item, index) => {
+        const projectId = item.getAttribute('data-project-id');
+        console.log(`Setting up item ${index + 1}:`, projectId);
+        
+        // Убираем предыдущие обработчики
+        item.removeEventListener('click', handlePortfolioClick);
+        
+        // Добавляем новый обработчик
+        item.addEventListener('click', handlePortfolioClick);
+        
+        // Также обработчики для ссылок "Подробнее"
+        const link = item.querySelector('.portfolio-link');
+        if (link) {
+            link.removeEventListener('click', handlePortfolioClick);
+            link.addEventListener('click', handlePortfolioClick);
+        }
     });
     
-    console.log('🎨 Portfolio module initialized');
+    console.log('Portfolio initialized successfully!');
 }
 
-// Export functions for other modules
+// Обработчик клика по элементу портфолио
+function handlePortfolioClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const item = e.target.closest('.portfolio-item');
+    if (!item) return;
+    
+    const projectId = item.getAttribute('data-project-id');
+    console.log('Portfolio item clicked:', projectId);
+    
+    if (projectId) {
+        openModal(projectId);
+    }
+}
+
+// Экспорт функций
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.initPortfolio = initPortfolio;
+
+// Инициализация при загрузке DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPortfolio);
+} else {
+    initPortfolio();
+}
+
+// Экспорт модуля для совместимости
 window.PortfolioModule = {
-    initializePortfolio,
-    filterPortfolio,
-    openProjectModal,
-    closeProjectModal,
-    typeWriter,
-    addHoverAnimations
+    openProjectModal: openModal,
+    closeProjectModal: closeModal,
+    initializePortfolio: initPortfolio
 }; 
