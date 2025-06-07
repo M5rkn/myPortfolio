@@ -1,0 +1,126 @@
+/* ========== PORTFOLIO WEBSITE STYLES ========== */
+/* Модульная архитектура CSS для лучшей организации и поддержки */
+
+/* 1. Основные стили - переменные, reset, типографика */
+@import url('./main.css');
+
+/* 2. Компоненты - навигация, кнопки, формы */
+@import url('./components.css');
+
+/* 3. Секции сайта - hero, portfolio, services, about, contact */
+@import url('./sections.css');
+
+/* 4. Виджеты - чат, калькулятор, модальные окна */
+@import url('./widgets.css');
+
+/* 5. Анимации и интерактивные эффекты */
+@import url('./animations.css');
+
+/* 6. Кастомный скролл */
+@import url('./scrollbar.css');
+
+/* 7. Адаптивность и мобильные стили */
+@import url('./responsive.css');
+
+/* ========== ДОПОЛНИТЕЛЬНЫЕ УТИЛИТЫ ========== */
+
+/* Быстрые классы для разработки */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-1 { gap: var(--spacing-xs); }
+.gap-2 { gap: var(--spacing-sm); }
+.gap-3 { gap: var(--spacing-md); }
+.gap-4 { gap: var(--spacing-lg); }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.fixed { position: fixed; }
+
+.z-10 { z-index: 10; }
+.z-20 { z-index: 20; }
+.z-30 { z-index: 30; }
+
+.opacity-0 { opacity: 0; }
+.opacity-50 { opacity: 0.5; }
+.opacity-100 { opacity: 1; }
+
+.pointer-events-none { pointer-events: none; }
+.cursor-pointer { cursor: pointer; }
+
+/* Состояния видимости */
+.hidden { display: none !important; }
+.visible { visibility: visible; }
+.invisible { visibility: hidden; }
+
+/* Анимации состояний */
+.fade-in { animation: fadeIn 0.5s ease forwards; }
+.fade-out { animation: fadeOut 0.5s ease forwards; }
+.slide-up { animation: slideUp 0.5s ease forwards; }
+.slide-down { animation: slideDown 0.5s ease forwards; }
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Дебаг утилиты */
+.debug {
+    border: 1px solid red !important;
+}
+
+.debug * {
+    border: 1px solid blue !important;
+}
+
+/* ========== PRINT СТИЛИ ========== */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .chat-widget,
+    .cost-calculator,
+    .floating-cards,
+    #particles-js {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .container {
+        max-width: none !important;
+        padding: 0 !important;
+    }
+    
+    .hero {
+        page-break-after: always;
+    }
+    
+    .portfolio-item,
+    .service-item {
+        page-break-inside: avoid;
+    }
+} 

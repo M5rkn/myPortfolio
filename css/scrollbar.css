@@ -1,0 +1,436 @@
+/* ========== ОСНОВНОЙ СКРОЛЛ ========== */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-gradient);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: all var(--transition-normal);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(135deg, #4f5fc9 0%, #5e3a7e 100%);
+}
+
+::-webkit-scrollbar-corner {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* ========== ТОНКИЙ СКРОЛЛ ДЛЯ МОДАЛЬНЫХ ОКОН ========== */
+.modal-content::-webkit-scrollbar,
+.chat-messages::-webkit-scrollbar,
+.calculator-content::-webkit-scrollbar,
+.portfolio-grid::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track,
+.chat-messages::-webkit-scrollbar-track,
+.calculator-content::-webkit-scrollbar-track,
+.portfolio-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.modal-content::-webkit-scrollbar-thumb,
+.chat-messages::-webkit-scrollbar-thumb,
+.calculator-content::-webkit-scrollbar-thumb,
+.portfolio-grid::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+    border-radius: 8px;
+    border: 1px solid transparent;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover,
+.chat-messages::-webkit-scrollbar-thumb:hover,
+.calculator-content::-webkit-scrollbar-thumb:hover,
+.portfolio-grid::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0%, rgba(118, 75, 162, 1) 100%);
+    box-shadow: 0 0 8px rgba(102, 126, 234, 0.4);
+}
+
+/* ========== СПЕЦИАЛЬНЫЙ СКРОЛЛ ДЛЯ SERVICES ========== */
+.services-grid::-webkit-scrollbar-thumb {
+    background: var(--secondary-gradient);
+}
+
+.services-grid::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #39d16b 0%, #2fe6c7 100%);
+    box-shadow: 0 0 10px rgba(67, 233, 123, 0.5);
+}
+
+/* ========== КАЛЬКУЛЯТОР СКРОЛЛ ========== */
+.calculator-window {
+    --scroll-color: #4facfe;
+}
+
+.calculator-window::-webkit-scrollbar,
+.calculator-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.calculator-window::-webkit-scrollbar-track,
+.calculator-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    margin: 3px;
+    border: 1px solid rgba(79, 172, 254, 0.2);
+}
+
+.calculator-window::-webkit-scrollbar-thumb,
+.calculator-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-normal);
+    box-shadow: 0 2px 4px rgba(79, 172, 254, 0.3);
+}
+
+.calculator-window::-webkit-scrollbar-thumb:hover,
+.calculator-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #3d8bfe 0%, #00d4fe 100%);
+    box-shadow: 0 0 15px rgba(79, 172, 254, 0.8);
+    transform: scale(1.05);
+}
+
+.calculator-window::-webkit-scrollbar-thumb:active,
+.calculator-content::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(135deg, #2a7aff 0%, #00c8ff 100%);
+}
+
+/* ========== СЕКЦИИ КАЛЬКУЛЯТОРА ========== */
+.calc-section::-webkit-scrollbar {
+    width: 6px;
+}
+
+.calc-section::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    border: 1px solid rgba(79, 172, 254, 0.1);
+}
+
+.calc-section::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.8) 0%, rgba(0, 242, 254, 0.8) 100%);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 1px 3px rgba(79, 172, 254, 0.4);
+}
+
+.calc-section::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 1) 0%, rgba(0, 242, 254, 1) 100%);
+    box-shadow: 0 0 10px rgba(79, 172, 254, 0.7);
+}
+
+/* ========== ОПЦИИ КАЛЬКУЛЯТОРА ========== */
+.calc-options::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.calc-options::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.calc-options::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.6) 0%, rgba(0, 242, 254, 0.6) 100%);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.calc-options::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.9) 0%, rgba(0, 242, 254, 0.9) 100%);
+    box-shadow: 0 0 5px rgba(79, 172, 254, 0.5);
+}
+
+/* ========== ВСЕ ЭЛЕМЕНТЫ КАЛЬКУЛЯТОРА ========== */
+.cost-calculator *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.cost-calculator *::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.cost-calculator *::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cost-calculator *::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #3d8bfe 0%, #00d4fe 100%);
+    box-shadow: 0 0 8px rgba(79, 172, 254, 0.6);
+}
+
+/* ========== TEXTAREA СКРОЛЛ ========== */
+textarea::-webkit-scrollbar {
+    width: 6px;
+}
+
+textarea::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.6) 100%);
+    border-radius: 6px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+}
+
+/* ========== PRE И CODE БЛОКИ ========== */
+pre::-webkit-scrollbar,
+code::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+pre::-webkit-scrollbar-thumb,
+code::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 8px;
+}
+
+pre::-webkit-scrollbar-thumb:hover,
+code::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #e885f0 0%, #f04a60 100%);
+    box-shadow: 0 0 8px rgba(240, 147, 251, 0.5);
+}
+
+/* ========== ГЛЯНЦЕВЫЕ КАРТОЧКИ СО СКРОЛЛОМ ========== */
+.scrollable-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+}
+
+.scrollable-card::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrollable-card::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+.scrollable-card::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scrollable-card::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0%, rgba(118, 75, 162, 1) 100%);
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.6);
+}
+
+/* ========== РАДУЖНЫЙ СКРОЛЛ ========== */
+.rainbow-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        135deg,
+        #667eea 0%,
+        #764ba2 25%, 
+        #43e97b 50%,
+        #38f9d7 75%,
+        #667eea 100%
+    );
+    background-size: 300% 300%;
+    animation: rainbowShift 3s ease-in-out infinite;
+}
+
+@keyframes rainbowShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* ========== СКРОЛЛ С ПУЛЬСАЦИЕЙ ========== */
+.active-scroll::-webkit-scrollbar-thumb {
+    animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    }
+    50% { 
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.7);
+    }
+}
+
+/* ========== АВТОСКРЫТИЕ СКРОЛЛА ========== */
+.auto-hide-scroll::-webkit-scrollbar {
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.auto-hide-scroll:hover::-webkit-scrollbar {
+    opacity: 1;
+}
+
+/* ========== НЕВИДИМЫЙ СКРОЛЛ ========== */
+.invisible-scroll::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+.invisible-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+/* ========== ДИНАМИЧЕСКИЕ ЦВЕТА ПО СЕКЦИЯМ ========== */
+#portfolio::-webkit-scrollbar-thumb {
+    background: var(--primary-gradient);
+}
+
+#services::-webkit-scrollbar-thumb {
+    background: var(--secondary-gradient);
+}
+
+#about::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+#contact::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* ========== FIREFOX ПОДДЕРЖКА ========== */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #667eea rgba(0, 0, 0, 0.1);
+}
+
+.modal-content,
+.chat-messages,
+.calculator-content,
+.portfolio-grid {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(102, 126, 234, 0.8) rgba(255, 255, 255, 0.05);
+}
+
+.calculator-window,
+.calculator-content,
+.calc-section,
+.calc-options,
+.cost-calculator * {
+    scrollbar-width: thin;
+    scrollbar-color: #4facfe rgba(0, 0, 0, 0.3);
+}
+
+/* ========== МОБИЛЬНАЯ АДАПТАЦИЯ ========== */
+@media (max-width: 768px) {
+    .portfolio-grid {
+        max-height: 600px;
+        padding-right: 5px;
+    }
+    
+    .portfolio-grid::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .calculator-window::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .calc-section::-webkit-scrollbar {
+        width: 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .portfolio-grid {
+        max-height: 500px;
+        padding-right: 3px;
+    }
+    
+    .portfolio-grid::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .calculator-window::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .calc-section::-webkit-scrollbar,
+    .calc-options::-webkit-scrollbar {
+        width: 3px;
+    }
+}
+
+/* ========== TOUCH УСТРОЙСТВА ========== */
+@media (hover: none) and (pointer: coarse) {
+    ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: rgba(102, 126, 234, 0.6);
+        border-radius: 4px;
+    }
+}
+
+/* ========== ПРОИЗВОДИТЕЛЬНОСТЬ ========== */
+* {
+    -webkit-overflow-scrolling: touch;
+}
+
+body::-webkit-scrollbar-thumb {
+    opacity: 0.7;
+    transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+body:hover::-webkit-scrollbar-thumb {
+    opacity: 1;
+}
+
+/* ========== ДОПОЛНИТЕЛЬНЫЕ УТИЛИТЫ ========== */
+.thin-scroll::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.thick-scroll::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+
+.hidden-scroll {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.hidden-scroll::-webkit-scrollbar {
+    display: none;
+} 

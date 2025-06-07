@@ -1,0 +1,585 @@
+/* ========== PERFORMANCE OPTIMIZATIONS ========== */
+.btn,
+.option-card,
+.form-select,
+.chat-toggle,
+.calculator-toggle {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.portfolio-item,
+.service-item {
+    backface-visibility: hidden;
+}
+
+.hero-content {
+    backface-visibility: hidden;
+}
+
+.portfolio-item:hover,
+.service-item:hover,
+.btn:hover,
+.option-card:hover {
+    will-change: transform, box-shadow, opacity;
+}
+
+.portfolio-item:not(:hover),
+.service-item:not(:hover),
+.btn:not(:hover),
+.option-card:not(:hover) {
+    will-change: auto;
+}
+
+.particles-js-canvas-el {
+    will-change: transform;
+    position: absolute;
+    z-index: -1;
+}
+
+.preloader {
+    contain: layout style paint;
+}
+
+.modal {
+    contain: layout style;
+}
+
+.navbar {
+    contain: layout style;
+}
+
+.hero-visual .card {
+    transform: translate3d(0, 0, 0);
+}
+
+/* ========== SCROLL ANIMATIONS ========== */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--primary-gradient);
+    z-index: 10000;
+    transition: width 0.1s ease;
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px) rotateX(20deg);
+    transition: all 0.8s var(--transition-slow);
+}
+
+.animate-on-scroll.animate {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+}
+
+.parallax-element {
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+}
+
+/* ========== 3D INTERACTIVE ELEMENTS ========== */
+.interactive-element {
+    position: relative;
+    overflow: hidden;
+}
+
+.interactive-element::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: all var(--transition-normal);
+    pointer-events: none;
+}
+
+.interactive-element:hover::after {
+    width: 200px;
+    height: 200px;
+}
+
+/* ========== TEXT EFFECTS ========== */
+.glitch-text {
+    position: relative;
+    display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.glitch-text:hover::before {
+    animation: glitch1 0.3s ease-in-out;
+    color: #ff0040;
+    opacity: 0.8;
+    z-index: -1;
+}
+
+.glitch-text:hover::after {
+    animation: glitch2 0.3s ease-in-out;
+    color: #00ffff;
+    opacity: 0.8;
+    z-index: -2;
+}
+
+@keyframes glitch1 {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+}
+
+@keyframes glitch2 {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(2px, -2px); }
+    40% { transform: translate(2px, 2px); }
+    60% { transform: translate(-2px, -2px); }
+    80% { transform: translate(-2px, 2px); }
+}
+
+/* ========== BREATHING ANIMATION ========== */
+.breathe {
+    animation: breathe 4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* ========== FLOATING ELEMENTS ========== */
+.float-element {
+    animation: floatGentle 6s ease-in-out infinite;
+}
+
+.float-element:nth-child(2n) {
+    animation-delay: -2s;
+}
+
+.float-element:nth-child(3n) {
+    animation-delay: -4s;
+}
+
+@keyframes floatGentle {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.8;
+    }
+    33% { 
+        transform: translateY(-10px) rotate(2deg);
+        opacity: 1;
+    }
+    66% { 
+        transform: translateY(5px) rotate(-1deg);
+        opacity: 0.9;
+    }
+}
+
+/* ========== HOVER RIPPLE EFFECTS ========== */
+.ripple-effect {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple-effect::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: all 0.5s ease;
+}
+
+.ripple-effect:hover::before {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+}
+
+/* ========== MAGNETIC BUTTONS ========== */
+.magnetic-btn {
+    position: relative;
+    transition: all var(--transition-normal);
+    transform-style: preserve-3d;
+}
+
+.magnetic-btn:hover {
+    transform: translateZ(10px);
+}
+
+.magnetic-btn::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--primary-gradient);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.magnetic-btn:hover::before {
+    opacity: 1;
+    animation: magneticPulse 1s ease-in-out;
+}
+
+@keyframes magneticPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* ========== PARTICLE ANIMATIONS ========== */
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    animation: particleFloat 3s ease-in-out infinite;
+}
+
+.particle:nth-child(odd) {
+    animation-duration: 4s;
+    animation-delay: -1s;
+}
+
+.particle:nth-child(even) {
+    animation-duration: 3.5s;
+    animation-delay: -2s;
+}
+
+@keyframes particleFloat {
+    0% {
+        opacity: 0;
+        transform: translateY(100px) scale(0);
+    }
+    20% {
+        opacity: 1;
+        transform: translateY(80px) scale(1);
+    }
+    80% {
+        opacity: 1;
+        transform: translateY(-80px) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0);
+    }
+}
+
+/* ========== LOADING ANIMATIONS ========== */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(102, 126, 234, 0.1);
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+.loading-dots {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+}
+
+.loading-dot {
+    width: 8px;
+    height: 8px;
+    background: #667eea;
+    border-radius: 50%;
+    animation: dotPulse 1.4s ease-in-out infinite both;
+}
+
+.loading-dot:nth-child(1) { animation-delay: -0.32s; }
+.loading-dot:nth-child(2) { animation-delay: -0.16s; }
+.loading-dot:nth-child(3) { animation-delay: 0s; }
+
+@keyframes dotPulse {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ========== MORPHING SHAPES ========== */
+.morph-shape {
+    width: 100px;
+    height: 100px;
+    background: var(--primary-gradient);
+    animation: morphing 4s ease-in-out infinite;
+}
+
+@keyframes morphing {
+    0%, 100% {
+        border-radius: 50%;
+        transform: rotate(0deg);
+    }
+    25% {
+        border-radius: 25% 75% 50% 50%;
+        transform: rotate(90deg);
+    }
+    50% {
+        border-radius: 50% 25% 75% 50%;
+        transform: rotate(180deg);
+    }
+    75% {
+        border-radius: 75% 50% 25% 50%;
+        transform: rotate(270deg);
+    }
+}
+
+/* ========== ENERGY WAVES ========== */
+.energy-wave {
+    position: relative;
+}
+
+.energy-wave::before,
+.energy-wave::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #667eea;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: energyPulse 2s ease-in-out infinite;
+}
+
+.energy-wave::after {
+    animation-delay: 1s;
+}
+
+@keyframes energyPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
+    }
+}
+
+/* ========== TYPEWRITER EFFECT ========== */
+.typewriter {
+    overflow: hidden;
+    border-right: 2px solid #667eea;
+    white-space: nowrap;
+    animation: 
+        typing 3.5s steps(40, end),
+        blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: #667eea; }
+}
+
+/* ========== SLIDE REVEAL ANIMATIONS ========== */
+.slide-reveal {
+    position: relative;
+    overflow: hidden;
+}
+
+.slide-reveal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-gradient);
+    transition: left 0.8s ease;
+    z-index: 1;
+}
+
+.slide-reveal:hover::before {
+    left: 100%;
+}
+
+.slide-reveal > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* ========== MATRIX RAIN EFFECT ========== */
+.matrix-rain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.matrix-char {
+    position: absolute;
+    color: #00ff00;
+    font-family: monospace;
+    font-size: 14px;
+    animation: matrixFall linear infinite;
+    opacity: 0.7;
+}
+
+@keyframes matrixFall {
+    0% {
+        transform: translateY(-100vh);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
+}
+
+/* ========== HOLOGRAPHIC EFFECT ========== */
+.holographic {
+    position: relative;
+    background: linear-gradient(45deg, 
+        transparent 30%, 
+        rgba(102, 126, 234, 0.5) 50%, 
+        transparent 70%);
+    background-size: 20px 20px;
+    animation: holographicShift 2s ease-in-out infinite;
+}
+
+@keyframes holographicShift {
+    0%, 100% {
+        background-position: 0% 0%;
+        filter: hue-rotate(0deg);
+    }
+    50% {
+        background-position: 100% 100%;
+        filter: hue-rotate(180deg);
+    }
+}
+
+/* ========== NEON GLOW EFFECT ========== */
+.neon-glow {
+    color: #667eea;
+    text-shadow: 
+        0 0 5px #667eea,
+        0 0 10px #667eea,
+        0 0 20px #667eea,
+        0 0 40px #667eea;
+    animation: neonFlicker 2s ease-in-out infinite alternate;
+}
+
+@keyframes neonFlicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        text-shadow: 
+            0 0 5px #667eea,
+            0 0 10px #667eea,
+            0 0 20px #667eea,
+            0 0 40px #667eea;
+    }
+    20%, 24%, 55% {
+        text-shadow: none;
+    }
+}
+
+/* ========== QUANTUM EFFECT ========== */
+.quantum-blur {
+    animation: quantumBlur 3s ease-in-out infinite;
+}
+
+@keyframes quantumBlur {
+    0%, 100% {
+        filter: blur(0px);
+        transform: scale(1);
+    }
+    25% {
+        filter: blur(2px);
+        transform: scale(1.05);
+    }
+    50% {
+        filter: blur(0px);
+        transform: scale(0.95);
+    }
+    75% {
+        filter: blur(1px);
+        transform: scale(1.02);
+    }
+}
+
+/* ========== OPTIMIZATION UTILITIES ========== */
+.gpu-accelerated {
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+}
+
+.performance-optimized {
+    contain: layout style paint;
+    will-change: auto;
+}
+
+.smooth-transition {
+    transition: all var(--transition-normal);
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+/* ========== REDUCED MOTION FALLBACKS ========== */
+@media (prefers-reduced-motion: reduce) {
+    .float-element,
+    .breathe,
+    .particle,
+    .morph-shape,
+    .energy-wave,
+    .holographic,
+    .neon-glow,
+    .quantum-blur {
+        animation: none !important;
+    }
+    
+    .glitch-text:hover::before,
+    .glitch-text:hover::after {
+        animation: none !important;
+        opacity: 0 !important;
+    }
+    
+    .ripple-effect:hover::before {
+        transition: none !important;
+    }
+    
+    .interactive-element:hover::after {
+        animation: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
+} 
