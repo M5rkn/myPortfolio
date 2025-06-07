@@ -111,43 +111,43 @@ function openProjectModal(projectId) {
         return;
     }
     
-    // Build modal content
+    // Build modal content with sanitized data
     modalContent.innerHTML = `
         <div class="modal-header">
-            <h2>${project.title}</h2>
-            <button class="modal-close" onclick="closeProjectModal()">×</button>
+            <h2>${window.SecurityModule.sanitizeHTML(project.title)}</h2>
+            <button class="modal-close" onclick="window.PortfolioModule.closeProjectModal()">×</button>
         </div>
         
         <div class="modal-body">
             <div class="modal-gallery">
                 <div class="gallery-main">
-                    <img src="${project.images[0]}" alt="${project.title}" class="gallery-main-image">
+                    <img src="${project.images[0]}" alt="${window.SecurityModule.sanitizeHTML(project.title)}" class="gallery-main-image">
                 </div>
                 ${project.images.length > 1 ? `
                     <div class="gallery-thumbnails">
                         ${project.images.map((img, index) => `
                             <img src="${img}" alt="Screenshot ${index + 1}" 
                                  class="gallery-thumb ${index === 0 ? 'active' : ''}" 
-                                 onclick="switchGalleryImage(${index})">
+                                 onclick="window.PortfolioModule.switchGalleryImage(${index})">
                         `).join('')}
                     </div>
                 ` : ''}
             </div>
             
             <div class="modal-info">
-                <p class="project-description">${project.description}</p>
+                <p class="project-description">${window.SecurityModule.sanitizeHTML(project.description)}</p>
                 
                 <div class="project-technologies">
                     <h4>Технологии:</h4>
                     <div class="tech-tags">
-                        ${project.technologies.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                        ${project.technologies.map(tech => `<span class="tech-tag">${window.SecurityModule.sanitizeHTML(tech)}</span>`).join('')}
                     </div>
                 </div>
                 
                 <div class="project-features">
                     <h4>Особенности:</h4>
                     <ul>
-                        ${project.features.map(feature => `<li>${feature}</li>`).join('')}
+                        ${project.features.map(feature => `<li>${window.SecurityModule.sanitizeHTML(feature)}</li>`).join('')}
                     </ul>
                 </div>
                 
@@ -163,16 +163,16 @@ function openProjectModal(projectId) {
                 </div>
                 
                 <div class="project-actions">
-                    <a href="${project.liveUrl}" class="btn btn-primary" target="_blank">
+                    <a href="${project.liveUrl}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
                         Посмотреть проект
                     </a>
-                    <a href="${project.githubUrl}" class="btn btn-secondary" target="_blank">
+                    <a href="${project.githubUrl}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
                         GitHub
                     </a>
-                    <button class="btn btn-accent like-btn" data-project-id="${projectId}" onclick="window.ApiModule.incrementLikes()">
+                    <button class="btn btn-accent like-btn" data-project-id="${projectId}" onclick="window.ApiModule.incrementLikes('${projectId}')">
                         ❤ Нравится
                     </button>
-                    <button class="btn btn-outline share-btn" onclick="shareProject('${project.title}', '${project.description}')">
+                    <button class="btn btn-outline share-btn" onclick="window.PortfolioModule.shareProject('${window.SecurityModule.sanitizeHTML(project.title)}', '${window.SecurityModule.sanitizeHTML(project.description)}')">
                         📤 Поделиться
                     </button>
                 </div>
@@ -184,10 +184,10 @@ function openProjectModal(projectId) {
     modalOverlay.style.display = 'flex';
     modalOverlay.style.opacity = '0';
     
-    setTimeout(() => {
+    requestAnimationFrame(() => {
         modalOverlay.style.opacity = '1';
         modalContent.style.transform = 'scale(1)';
-    }, 10);
+    });
     
     // Update stats
     updateModalStats(projectId);
@@ -210,9 +210,16 @@ function closeProjectModal() {
     
     if (modalOverlay) {
         modalOverlay.style.opacity = '0';
+        modalOverlay.style.pointerEvents = 'none';
+        
+        const modalContent = secureGetElementById('project-modal-content');
+        if (modalContent) {
+            modalContent.style.transform = 'scale(0.9)';
+        }
         
         setTimeout(() => {
             modalOverlay.style.display = 'none';
+            modalOverlay.style.pointerEvents = '';
             // Restore body scroll
             document.body.style.overflow = '';
         }, 300);
@@ -419,6 +426,16 @@ function initializePortfolio() {
             }
         });
     }
+    
+    // Initialize portfolio items
+    const portfolioItems = secureQuerySelectorAll('.portfolio-item');
+    portfolioItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const projectId = item.dataset.projectId || 'project-1';
+            openProjectModal(projectId);
+        });
+    });
     
     console.log('🎨 Portfolio module initialized');
 }
