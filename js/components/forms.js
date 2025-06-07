@@ -186,8 +186,8 @@ async function handleFormSubmission(form) {
             data[key] = window.SecurityModule.sanitizeHTML(value.trim());
         }
         
-        // Determine API endpoint (временно тестируем простой endpoint)
-        const action = form.getAttribute('action') || '/api/contact-simple';
+        // Determine API endpoint
+        const action = form.getAttribute('action') || '/api/contact';
         
         console.log('📤 Form action attribute:', form.getAttribute('action'));
         console.log('📤 Final endpoint:', action);
@@ -205,8 +205,9 @@ async function handleFormSubmission(form) {
         
         // Submit form
         console.log('📤 About to call secureApiCall...');
+        let result;
         try {
-            const result = await window.ApiModule.secureApiCall(action, {
+            result = await window.ApiModule.secureApiCall(action, {
                 method: 'POST',
                 body: JSON.stringify(data)
             });
