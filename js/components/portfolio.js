@@ -197,10 +197,29 @@ function handlePortfolioClick(e) {
     }
 }
 
+// Функция typewriter эффекта
+function typeWriter(element, text, speed = 80) {
+    if (!element) return;
+    
+    element.textContent = '';
+    let i = 0;
+    
+    function type() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+        }
+    }
+    
+    type();
+}
+
 // Экспорт функций
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.initPortfolio = initPortfolio;
+window.typeWriter = typeWriter;
 
 // Инициализация при загрузке DOM
 if (document.readyState === 'loading') {
@@ -213,5 +232,6 @@ if (document.readyState === 'loading') {
 window.PortfolioModule = {
     openProjectModal: openModal,
     closeProjectModal: closeModal,
-    initializePortfolio: initPortfolio
+    initializePortfolio: initPortfolio,
+    typeWriter: typeWriter
 }; 

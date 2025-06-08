@@ -84,12 +84,21 @@ function checkModuleAvailability() {
 
 // Initialize hero section with typed effect
 function initializeHeroEffects() {
-    const heroSubtitle = secureQuerySelector('.hero-subtitle');
-    if (heroSubtitle && window.PortfolioModule) {
-        const originalText = heroSubtitle.textContent;
+    // Проверяем наличие hero элементов
+    const heroHeading = secureQuerySelector('.hero-heading');
+    const heroDesc = secureQuerySelector('.hero-desc');
+    
+    if (heroHeading) {
+        heroHeading.style.opacity = '1';
+        console.log('Hero heading initialized');
+    }
+    
+    // Применяем typewriter эффект к описанию
+    if (heroDesc && window.PortfolioModule && window.PortfolioModule.typeWriter) {
+        const originalText = heroDesc.textContent;
         setTimeout(() => {
-            window.PortfolioModule.typeWriter(heroSubtitle, originalText, 80);
-        }, 1000);
+            window.PortfolioModule.typeWriter(heroDesc, originalText, 50);
+        }, 1500);
     }
 }
 
