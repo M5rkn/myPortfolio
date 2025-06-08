@@ -480,128 +480,86 @@
 
 
     
-    <!-- Railway.com Calculator Fix -->
+    
+      
+    <!-- JavaScript modules loaded in <head> for better performance -->
+    
+    <!-- RAILWAY CALCULATOR FIX - FINAL -->
     <script>
-        // Проверяем, это Railway.com или нет
-        const isRailway = window.location.hostname.includes('railway.app');
-        
-        if (isRailway) {
-            console.log('🚂 Railway.com detected - applying aggressive fixes');
+        // Проверяем Railway.com
+        if (window.location.hostname.includes('railway.app')) {
+            console.log('🚂 Railway detected - immediate calculator fix');
             
-            // Немедленно блокируем основную инициализацию
+            // Блокируем основной модуль
             window.calculatorInitialized = true;
             
-            // Функция агрессивной очистки и инициализации
-            function forceInitCalculator() {
-                console.log('🔧 Force initializing Railway calculator...');
-                
+            // Немедленный фикс
+            setTimeout(function() {
                 const toggle = document.getElementById('calculatorToggle');
                 const window_el = document.getElementById('calculatorWindow');
                 
-                if (!toggle || !window_el) {
-                    console.log('❌ Elements not found, retrying in 1s...');
-                    setTimeout(forceInitCalculator, 1000);
-                    return;
-                }
+                console.log('🔧 Railway fix elements:', !!toggle, !!window_el);
                 
-                console.log('✅ Elements found, applying fix...');
-                
-                // Убираем ВСЕ обработчики событий агрессивно
-                const parent = toggle.parentNode;
-                const newToggle = document.createElement('div');
-                newToggle.id = 'calculatorToggle';
-                newToggle.className = 'calculator-toggle';
-                newToggle.innerHTML = toggle.innerHTML;
-                parent.replaceChild(newToggle, toggle);
-                
-                // Простейший обработчик
-                newToggle.onclick = function(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
+                if (toggle && window_el) {
+                    // Полная замена элемента
+                    const parent = toggle.parentNode;
+                    const newToggle = document.createElement('div');
+                    newToggle.id = 'calculatorToggle';
+                    newToggle.className = 'calculator-toggle';
+                    newToggle.innerHTML = '<span class="calculator-icon">💰</span><span class="calculator-text">Калькулятор</span>';
                     
-                    console.log('🎯 Railway click detected');
-                    
-                    const isActive = window_el.classList.contains('active');
-                    console.log('Before toggle:', isActive);
-                    
-                    if (isActive) {
-                        window_el.classList.remove('active');
-                        console.log('✅ Calculator closed');
-                    } else {
-                        window_el.classList.add('active');
-                        console.log('✅ Calculator opened');
-                    }
-                    
-                    return false;
-                };
-                
-                // Обработчик закрытия
-                const close_el = document.getElementById('calculatorClose');
-                if (close_el) {
-                    close_el.onclick = function(event) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        window_el.classList.remove('active');
-                        console.log('🚪 Calculator closed via X');
-                        return false;
+                    newToggle.onclick = function() {
+                        console.log('🎯 Railway toggle clicked');
+                        const isActive = window_el.classList.contains('active');
+                        
+                        if (isActive) {
+                            window_el.classList.remove('active');
+                            console.log('❌ Closed');
+                        } else {
+                            window_el.classList.add('active');
+                            console.log('✅ Opened');
+                        }
                     };
-                }
-                
-                // Расчет стоимости
-                function calculateCost() {
-                    let total = 0;
                     
-                    const projectType = document.querySelector('input[name="projectType"]:checked');
-                    if (projectType) {
-                        total += parseInt(projectType.dataset.cost) || 0;
+                    parent.replaceChild(newToggle, toggle);
+                    
+                    // Обработчик закрытия
+                    const close_el = document.getElementById('calculatorClose');
+                    if (close_el) {
+                        close_el.onclick = function() {
+                            window_el.classList.remove('active');
+                        };
                     }
                     
-                    const features = document.querySelectorAll('input[name="features"]:checked');
-                    features.forEach(feature => {
-                        total += parseInt(feature.dataset.cost) || 0;
-                    });
-                    
-                    const totalElement = document.getElementById('totalCost');
-                    if (totalElement) {
-                        totalElement.textContent = total + '€';
+                    // Простой расчет
+                    function calcCost() {
+                        let total = 0;
+                        const type = document.querySelector('input[name="projectType"]:checked');
+                        if (type) total += parseInt(type.dataset.cost) || 0;
+                        
+                        document.querySelectorAll('input[name="features"]:checked').forEach(f => {
+                            total += parseInt(f.dataset.cost) || 0;
+                        });
+                        
+                        const totalEl = document.getElementById('totalCost');
+                        if (totalEl) totalEl.textContent = total + '€';
                     }
+                    
+                    // Привязка событий
+                    document.querySelectorAll('input[name="projectType"], input[name="features"]').forEach(input => {
+                        input.onchange = calcCost;
+                    });
+                    
+                    calcCost();
+                    
+                    window.railwayCalculatorReady = true;
+                    console.log('✅ Railway calculator ready!');
+                } else {
+                    console.log('❌ Elements not found, retrying...');
+                    setTimeout(arguments.callee, 1000);
                 }
-                
-                // Привязываем расчет к полям
-                setTimeout(() => {
-                    document.querySelectorAll('input[name="projectType"]').forEach(input => {
-                        input.onchange = calculateCost;
-                    });
-                    
-                    document.querySelectorAll('input[name="features"]').forEach(input => {
-                        input.onchange = calculateCost;
-                    });
-                    
-                    calculateCost();
-                }, 100);
-                
-                console.log('🎉 Railway calculator force-initialized successfully');
-                window.railwayCalculatorReady = true;
-            }
-            
-            // Запускаем инициализацию через множественные попытки
-            if (document.readyState === 'complete') {
-                setTimeout(forceInitCalculator, 500);
-            } else {
-                document.addEventListener('DOMContentLoaded', function() {
-                    setTimeout(forceInitCalculator, 1000);
-                });
-                
-                window.addEventListener('load', function() {
-                    setTimeout(forceInitCalculator, 1500);
-                });
-            }
-            
-            // Дополнительная попытка через 3 секунды
-            setTimeout(forceInitCalculator, 3000);
+            }, 100);
         }
     </script>
-    
-    <!-- JavaScript modules loaded in <head> for better performance -->
 </body>
 </html> 
