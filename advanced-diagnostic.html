@@ -125,7 +125,7 @@
         <div class="section">
             <h3>🛠️ Ручные тесты</h3>
             <button onclick="testChatWidget()">💬 Тест чата</button>
-            <button onclick="testCalculator()">🔢 Тест калькулятора</button>
+            
             <button onclick="testPortfolio()">🎨 Тест портфолио</button>
             <button onclick="testNavigation()">🧭 Тест навигации</button>
             <button onclick="testAnimations()">✨ Тест анимаций</button>
@@ -207,7 +207,7 @@
                 'FormsModule',
                 'PortfolioModule',
                 'ChatModule',
-                'CalculatorModule',
+
                 'AnimationsModule',
                 'ParticlesModule'
             ];
@@ -245,7 +245,7 @@
                 { selector: '.hero', name: 'Главная секция' },
                 { selector: '.portfolio', name: 'Портфолио' },
                 { selector: '.chat-widget', name: 'Виджет чата' },
-                { selector: '.cost-calculator', name: 'Калькулятор' },
+
                 { selector: '.contact-form', name: 'Форма контактов' }
             ];
             
@@ -375,7 +375,11 @@
             updateProgress(90, 'Генерация отчета...');
             
             // Итоговый отчет
-            const totalScore = calculateScore(moduleResults, domResults);
+                            const moduleScore = (moduleResults.loaded / moduleResults.total) * 40;
+            const domScore = (domResults.found / domResults.total) * 30;
+            const errorScore = Math.max(0, 20 - capturedErrors.length * 5);
+            const warningScore = Math.max(0, 10 - capturedWarnings.length * 2);
+            const totalScore = Math.round(moduleScore + domScore + errorScore + warningScore);
             const report = generateReport(totalScore, moduleResults, domResults);
             
             updateProgress(100, 'Диагностика завершена');
@@ -406,15 +410,7 @@
             document.getElementById('networkStatus').innerHTML = results.map(r => `<div>${r}</div>`).join('');
         }
 
-        // Расчет общего балла
-        function calculateScore(moduleResults, domResults) {
-            const moduleScore = (moduleResults.loaded / moduleResults.total) * 40;
-            const domScore = (domResults.found / domResults.total) * 30;
-            const errorScore = Math.max(0, 20 - capturedErrors.length * 5);
-            const warningScore = Math.max(0, 10 - capturedWarnings.length * 2);
-            
-            return Math.round(moduleScore + domScore + errorScore + warningScore);
-        }
+
 
         // Генерация отчета
         function generateReport(score, moduleResults, domResults) {
@@ -483,26 +479,7 @@
             displayResults('💬 Тест чата', results);
         }
 
-        function testCalculator() {
-            const results = [];
-            
-            if (window.CalculatorModule) {
-                results.push('✅ Модуль калькулятора загружен');
-                
-                // Попытка найти калькулятор
-                const calculator = document.querySelector('.cost-calculator');
-                results.push(`Калькулятор: ${calculator ? '✅ Найден' : '❌ Не найден'}`);
-                
-                if (calculator) {
-                    const inputs = calculator.querySelectorAll('input, select');
-                    results.push(`Элементы управления: ${inputs.length}`);
-                }
-            } else {
-                results.push('❌ Модуль калькулятора не загружен');
-            }
-            
-            displayResults('🔢 Тест калькулятора', results);
-        }
+
 
         function testPortfolio() {
             const results = [];

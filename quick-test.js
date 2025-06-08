@@ -28,12 +28,7 @@ function testInteractivity() {
     const portfolioItems = document.querySelectorAll('.portfolio-item');
     console.log(`🎨 Портфолио: ${portfolioItems.length} проектов`);
     
-    // 4. Тест калькулятора
-    const calculator = document.querySelector('.cost-calculator');
-    if (calculator) {
-        const inputs = calculator.querySelectorAll('input, select');
-        console.log(`🔢 Калькулятор: ${inputs.length} элементов управления`);
-    }
+
     
     // 5. Тест форм
     const forms = document.querySelectorAll('form');

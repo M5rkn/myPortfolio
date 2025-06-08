@@ -34,7 +34,7 @@
         'FormsModule',
         'PortfolioModule',
         'ChatModule',
-        'CalculatorModule',
+
         'AnimationsModule',
         'ParticlesModule'
     ];
@@ -72,7 +72,7 @@
         { selector: '.hero', name: 'Главная секция', critical: true },
         { selector: '.portfolio', name: 'Секция портфолио', critical: true },
         { selector: '.chat-widget', name: 'Виджет чата', critical: false },
-        { selector: '.cost-calculator', name: 'Калькулятор стоимости', critical: false },
+
         { selector: '.contact-form', name: 'Форма контактов', critical: false },
         { selector: '.preloader', name: 'Прелоадер', critical: false }
     ];
@@ -164,13 +164,7 @@
                 chatWidget ? 'success' : 'warning');
     }
     
-    // Тест калькулятора
-    if (window.CalculatorModule) {
-        const calculator = document.querySelector('.cost-calculator');
-        const inputs = calculator ? calculator.querySelectorAll('input, select') : [];
-        testLog(`Калькулятор: ${calculator ? 'найден' : 'не найден'}, элементов: ${inputs.length}`, 
-                calculator ? 'success' : 'warning');
-    }
+
 
     // ТЕСТ 6: Проверка производительности
     testLog('ТЕСТ 6: Проверка производительности', 'info');

@@ -3,13 +3,13 @@
 console.log('🧪 TechPortal Quick Test');
 
 // 1. Проверка модулей
-const modules = ['SecurityModule', 'ChatModule', 'CalculatorModule', 'PortfolioModule'];
+const modules = ['SecurityModule', 'ChatModule', 'PortfolioModule'];
 modules.forEach(mod => {
     console.log(`${mod}: ${window[mod] ? '✅' : '❌'}`);
 });
 
 // 2. Проверка элементов
-const elements = ['chatToggle', 'calculatorToggle', 'chatWindow'];
+const elements = ['chatToggle', 'chatWindow'];
 elements.forEach(id => {
     const el = document.getElementById(id);
     console.log(`#${id}: ${el ? '✅' : '❌'}`);
@@ -32,19 +32,7 @@ setTimeout(() => {
     }
 }, 1000);
 
-// Тест калькулятора
-setTimeout(() => {
-    const calcToggle = document.getElementById('calculatorToggle');
-    if (calcToggle) {
-        calcToggle.click();
-        console.log('Calculator toggle clicked ✅');
-        
-        setTimeout(() => {
-            const calcWindow = document.getElementById('calculatorWindow');
-            console.log(`Calculator window active: ${calcWindow?.classList.contains('active') ? '✅' : '❌'}`);
-        }, 100);
-    }
-}, 2000);
+
 
 // 4. Тест портфолио
 setTimeout(() => {
@@ -58,6 +46,6 @@ setTimeout(() => {
             console.log(`Modal created: ${modal ? '✅' : '❌'}`);
         }, 100);
     }
-}, 3000);
+}, 2000);
 
 console.log('\n⏱️ Tests will run automatically in 1-3 seconds...'); 

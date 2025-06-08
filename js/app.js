@@ -238,7 +238,7 @@ async function initializeApplication() {
         // 12. Hide preloader
         initializePreloader();
         
-        // 13. Calculate total initialization time
+        // 12. Calculate total initialization time
         const totalTime = performance.now() - AppState.performanceMetrics.loadStart;
         console.log(`🎉 TechPortal initialized successfully in ${totalTime.toFixed(2)}ms`);
         

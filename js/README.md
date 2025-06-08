@@ -21,7 +21,7 @@ js/
 │   ├── forms.js            # 11.1KB - Формы и уведомления
 │   ├── portfolio.js        # 14.8KB - Портфолио и модальные окна
 │   ├── chat.js             # 11.9KB - Чат-виджет
-│   └── calculator.js       # 13.2KB - Калькулятор стоимости
+
 ├── effects/                 # Визуальные эффекты
 │   ├── animations.js       # 12.0KB - Анимации и 3D эффекты
 │   └── particles.js        # 9.4KB  - Частицы particles.js
@@ -63,7 +63,7 @@ js/
 <script src="js/components/forms.js"></script>   <!-- 4. Формы -->
 <script src="js/components/portfolio.js"></script><!-- 5. Портфолио -->
 <script src="js/components/chat.js"></script>    <!-- 6. Чат -->
-<script src="js/components/calculator.js"></script><!-- 7. Калькулятор -->
+
 <script src="js/effects/animations.js"></script> <!-- 8. Анимации -->
 <script src="js/effects/particles.js"></script>  <!-- 9. Частицы -->
 <script src="js/app.js"></script>                <!-- 10. Инициализация -->
@@ -126,14 +126,7 @@ window.ChatModule = {
 }
 ```
 
-### CalculatorModule
-```javascript
-window.CalculatorModule = {
-    initializeCalculator,// Инициализация калькулятора
-    calculateCost,       // Расчет стоимости
-    generatePDF          // Генерация PDF
-}
-```
+
 
 ### AnimationsModule
 ```javascript
@@ -180,12 +173,12 @@ async function initializeApplication() {
     6. FormsModule.initializeForms()     // Формы
     7. PortfolioModule.initializePortfolio() // Портфолио
     8. ChatModule.initializeChat()       // Чат
-    9. CalculatorModule.initializeCalculator() // Калькулятор
-    10. AnimationsModule.initializeAnimations() // Анимации
-    11. ParticlesModule.initializeParticles() // Частицы
-    12. initializeHeroEffects()         // Hero эффекты
-    13. initializeScrollEffects()       // Скролл эффекты
-    14. monitorPerformance()            // Мониторинг
+
+    9. AnimationsModule.initializeAnimations() // Анимации
+    10. ParticlesModule.initializeParticles() // Частицы
+    11. initializeHeroEffects()         // Hero эффекты
+    12. initializeScrollEffects()       // Скролл эффекты
+    13. monitorPerformance()            // Мониторинг
 }
 ```
 
@@ -266,7 +259,7 @@ const AppConfig = {
         animations: true,
         particles: true,
         chat: true,
-        calculator: true,
+
         analytics: true
     }
 }
