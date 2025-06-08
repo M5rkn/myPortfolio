@@ -413,32 +413,14 @@
 
     <!-- Калькулятор стоимости -->
     <div id="costCalculator" class="cost-calculator">
-        <div class="calculator-toggle" id="calculatorToggle" onclick="
-            console.log('🎯 INLINE CLICK!');
-            const win = document.getElementById('calculatorWindow');
-            if(win) {
-                const isActive = win.classList.contains('active');
-                if(isActive) {
-                    win.classList.remove('active');
-                    console.log('❌ Closed inline');
-                } else {
-                    win.classList.add('active');
-                    console.log('✅ Opened inline');
-                }
-            } else {
-                console.log('❌ Window not found');
-            }
-        ">
+        <div class="calculator-toggle" id="calculatorToggle" onclick="toggleCalc()" ontouchstart="toggleCalc()" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
             <span class="calculator-icon">💰</span>
             <span class="calculator-text">Калькулятор</span>
         </div>
         <div class="calculator-window" id="calculatorWindow">
             <div class="calculator-header">
                 <h4>Горячие предложения 🔥</h4>
-                <button class="calculator-close" id="calculatorClose" onclick="
-                    console.log('🚪 Close inline');
-                    document.getElementById('calculatorWindow').classList.remove('active');
-                ">&times;</button>
+                <button class="calculator-close" id="calculatorClose" onclick="closeCalc()" ontouchstart="closeCalc()">&times;</button>
             </div>
             <div class="calculator-content">
                 
@@ -504,6 +486,31 @@
     
     <!-- INLINE CALCULATOR FUNCTIONS -->
     <script>
+        // Функция переключения калькулятора
+        function toggleCalc(event) {
+            if(event) event.preventDefault();
+            console.log('🎯 Toggle calc called');
+            const win = document.getElementById('calculatorWindow');
+            if(win) {
+                const isActive = win.classList.contains('active');
+                if(isActive) {
+                    win.classList.remove('active');
+                    console.log('❌ Closed');
+                } else {
+                    win.classList.add('active');
+                    console.log('✅ Opened');
+                }
+            }
+        }
+        
+        // Функция закрытия калькулятора
+        function closeCalc(event) {
+            if(event) event.preventDefault();
+            console.log('🚪 Close calc called');
+            const win = document.getElementById('calculatorWindow');
+            if(win) win.classList.remove('active');
+        }
+        
         // Универсальная функция расчета стоимости
         function calcTotal() {
             let total = 0;
