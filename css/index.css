@@ -2,25 +2,25 @@
 /* Модульная архитектура CSS для лучшей организации и поддержки */
 
 /* 1. Основные стили - переменные, reset, типографика */
-@import url('./main.css?v=20250608');
+@import url('./main.css');
 
 /* 2. Компоненты - навигация, кнопки, формы */
-@import url('./components.css?v=20250608');
+@import url('./components.css');
 
 /* 3. Секции сайта - hero, portfolio, services, about, contact */
-@import url('./sections.css?v=20250608');
+@import url('./sections.css');
 
-/* 4. Виджеты - чат, модальные окна */
-@import url('./widgets.css?v=20250608');
+/* 4. Виджеты - чат, калькулятор, модальные окна */
+@import url('./widgets.css');
 
 /* 5. Анимации и интерактивные эффекты */
-@import url('./animations.css?v=20250608');
+@import url('./animations.css');
 
 /* 6. Кастомный скролл */
-@import url('./scrollbar.css?v=20250608');
+@import url('./scrollbar.css');
 
 /* 7. Адаптивность и мобильные стили */
-@import url('./responsive.css?v=20250608');
+@import url('./responsive.css');
 
 /* ========== ДОПОЛНИТЕЛЬНЫЕ УТИЛИТЫ ========== */
 
@@ -99,7 +99,7 @@
     }
     
     .chat-widget,
-    
+    .cost-calculator,
     .floating-cards,
     #particles-js {
         display: none !important;

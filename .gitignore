@@ -9,7 +9,6 @@ yarn-error.log*
 *.backup
 *.bak
 *.old
-script.js.backup
 
 # Reports and temporary files
 performance-report.md

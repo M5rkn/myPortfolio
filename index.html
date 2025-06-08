@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- Security Headers - упрощенная версия для Railway -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; img-src 'self' data: blob:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;">
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="Портфолио - Современная веб-разработка | TechPortal">
     <meta property="og:description" content="Профессиональная веб-разработка: лендинги, интернет-магазины, админ-панели. Node.js, React, MongoDB. Современный дизайн и быстрая разработка.">
-    <meta property="og:image" content="/og-image.svg">
+    <meta property="og:image" content="/og-image.jpg">
     <meta property="og:url" content="https://techportal.up.railway.app">
     <meta property="og:site_name" content="TechPortal">
     
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Портфолио - Современная веб-разработка | TechPortal">
     <meta name="twitter:description" content="Профессиональная веб-разработка: лендинги, интернет-магазины, админ-панели. Node.js, React, MongoDB.">
-    <meta name="twitter:image" content="/og-image.svg">
+    <meta name="twitter:image" content="/og-image.jpg">
     
     <!-- Дополнительные метатеги -->
     <meta name="robots" content="index, follow">
@@ -48,31 +48,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="TechPortal">
     
-    <!-- Fallback шрифт + основные стили -->
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, 'Helvetica Neue', Arial, sans-serif;
-        }
-    </style>
-    
-    <!-- CSS стили - подключаем напрямую вместо @import -->
-    <link rel="stylesheet" href="css/main.css?v=20250608">
-    <link rel="stylesheet" href="css/components.css?v=20250608">
-    <link rel="stylesheet" href="css/sections.css?v=20250608">
-    <link rel="stylesheet" href="css/widgets.css?v=20250608">
-    <link rel="stylesheet" href="css/animations.css?v=20250608">
-    <link rel="stylesheet" href="css/scrollbar.css?v=20250608">
-    <link rel="stylesheet" href="css/responsive.css?v=20250608">
-    
-    <!-- Fallback для Railway.app - единый CSS файл -->
-    <link rel="stylesheet" href="css/complete.css?v=20250608" media="screen" onerror="this.onload=null;this.removeAttribute('media');">
-    
-    <!-- Шрифты с fallback -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" onerror="console.warn('Fallback: Google Fonts failed to load')">
-    
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Scroll Progress Bar -->
@@ -114,7 +93,7 @@
                     <a href="#contact" class="nav-link">Контакты</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/tz-generator" class="nav-link">Генератор ТЗ</a>
+                    <a href="tz-generator.html" class="nav-link">Генератор ТЗ</a>
                 </li>
             </ul>
             <div class="hamburger">
@@ -129,15 +108,28 @@
     <section id="home" class="hero">
         <div id="particles-js"></div>
         <div class="hero-container">
-            <div class="hero-text">
-                <h1 class="hero-heading">Создаю цифровые впечатления</h1>
-                <p class="hero-desc">Современный дизайн и разработка, которые превращают идеи в захватывающие цифровые решения</p>
-                <div class="hero-actions">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text glitch-text" data-text="Создаю цифровые">Создаю цифровые</span><br>
+                    <span class="hero-subtitle breathe">впечатления</span>
+                </h1>
+                <p class="hero-description">
+                    Современный дизайн и разработка, которые превращают идеи в захватывающие цифровые решения
+                </p>
+                <div class="hero-buttons">
                     <a href="#portfolio" class="btn btn-primary">Посмотреть работы</a>
                     <a href="#contact" class="btn btn-secondary">Связаться</a>
                 </div>
             </div>
+            <div class="hero-visual">
+                <div class="floating-cards">
+                    <div class="card card-1"></div>
+                    <div class="card card-2"></div>
+                    <div class="card card-3"></div>
+                </div>
+            </div>
         </div>
+        <div class="hero-gradient"></div>
     </section>
 
     <!-- Portfolio Section -->
@@ -147,7 +139,7 @@
             <p class="section-subtitle">Коллекция проектов, демонстрирующих мой опыт и креативность</p>
             
             <div class="portfolio-grid">
-                <div class="portfolio-item" data-project-id="project-1">
+                <div class="portfolio-item">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-1"></div>
                         <div class="portfolio-overlay">
@@ -158,7 +150,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-item" data-project-id="project-2">
+                <div class="portfolio-item">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-2"></div>
                         <div class="portfolio-overlay">
@@ -169,7 +161,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-item" data-project-id="project-3">
+                <div class="portfolio-item">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-3"></div>
                         <div class="portfolio-overlay">
@@ -180,7 +172,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-item" data-project-id="project-4">
+                <div class="portfolio-item">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-4"></div>
                         <div class="portfolio-overlay">
@@ -191,7 +183,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-item" data-project-id="project-5">
+                <div class="portfolio-item">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-5"></div>
                         <div class="portfolio-overlay">
@@ -202,7 +194,7 @@
                     </div>
                 </div>
                 
-                <div class="portfolio-item" data-project-id="project-6">
+                <div class="portfolio-item">
                     <div class="portfolio-image">
                         <div class="placeholder-image project-6"></div>
                         <div class="portfolio-overlay">
@@ -344,6 +336,56 @@
         </div>
     </footer>
 
+    <!-- Modal for Project Details -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle">Название проекта</h2>
+                <div class="modal-tech" id="modalTech">React, Node.js</div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image" id="modalImage"></div>
+                <div class="modal-info">
+                    <div class="modal-description" id="modalDescription">
+                        Подробное описание проекта будет здесь...
+                    </div>
+                    <div class="modal-features" id="modalFeatures">
+                        <h4>Возможности:</h4>
+                        <ul>
+                            <li>Адаптивный дизайн</li>
+                            <li>Современные технологии</li>
+                            <li>SEO оптимизация</li>
+                        </ul>
+                    </div>
+                    <div class="modal-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="modalViews">0</span>
+                            <span class="stat-label">Просмотров</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="modalLikes">0</span>
+                            <span class="stat-label">Лайков</span>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <a href="#" class="btn btn-primary" id="modalDemo" target="_blank" rel="noopener noreferrer">Посмотреть демо</a>
+                        <a href="#" class="btn btn-secondary" id="modalGithub" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        <button class="btn btn-like" id="modalLikeBtn"><span class="like-icon">❤️</span> <span class="like-text">Нравится</span></button>
+                        <button class="btn btn-share" id="modalShareBtn">📤 Поделиться</button>
+                    </div>
+                    
+                    <!-- Gallery navigation -->
+                    <div class="modal-gallery-nav" id="modalGalleryNav" style="display: none;">
+                        <button class="gallery-btn gallery-prev" id="galleryPrev">‹</button>
+                        <span class="gallery-counter"><span id="currentSlide">1</span> / <span id="totalSlides">1</span></span>
+                        <button class="gallery-btn gallery-next" id="galleryNext">›</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Чат виджет -->
     <div id="chatWidget" class="chat-widget">
         <div class="chat-toggle" id="chatToggle">
@@ -370,46 +412,92 @@
         </div>
     </div>
 
-    <!-- Скрипт для проверки загрузки стилей на railway.app -->
+    <!-- Калькулятор стоимости -->
+    <div id="costCalculator" class="cost-calculator">
+        <div class="calculator-toggle" id="calculatorToggle">
+            <span class="calculator-icon">💰</span>
+            <span class="calculator-text">Калькулятор</span>
+        </div>
+        <div class="calculator-window" id="calculatorWindow">
+            <div class="calculator-header">
+                <h4>Горячие предложения 🔥</h4>
+                <button class="calculator-close" id="calculatorClose">&times;</button>
+            </div>
+            <div class="calculator-content">
+                
+                <div class="calc-section">
+                    <h5>Тип проекта</h5>
+                    <div class="calc-options">
+                        <label class="calc-option">
+                            <input type="radio" name="projectType" value="landing" data-cost="50">
+                            <span>Лендинг (от 50€) 🔥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="radio" name="projectType" value="website" data-cost="100">
+                            <span>Корпоративный сайт (от 100€) 🔥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="radio" name="projectType" value="shop" data-cost="200">
+                            <span>Интернет-магазин (от 200€) 🔥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="radio" name="projectType" value="app" data-cost="300">
+                            <span>Веб-приложение (от 300€) 🔥</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="calc-section">
+                    <h5>Дополнительные опции</h5>
+                    <div class="calc-options">
+                        <label class="calc-option">
+                            <input type="checkbox" name="features" value="admin" data-cost="25">
+                            <span>Админ-панель (+25€) 💥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="checkbox" name="features" value="auth" data-cost="20">
+                            <span>Авторизация (+20€) 💥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="checkbox" name="features" value="api" data-cost="25">
+                            <span>API интеграция (+25€) 💥</span>
+                        </label>
+                        <label class="calc-option">
+                            <input type="checkbox" name="features" value="seo" data-cost="25">
+                            <span>SEO оптимизация (+25€) 💥</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="calc-result">
+                    <div class="total-cost">
+                        Примерная стоимость: <span id="totalCost">0€</span>
+                    </div>
+                    <button class="btn btn-primary" id="requestQuote">Получить точную стоимость</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        (function() {
-            const isRailway = window.location.hostname.includes('railway');
-            
-            if (isRailway) {
-                console.log('✅ Сайт запущен на Railway, стили загружены из CSS файлов');
-                
-                // Отключаем service worker на Railway из-за CORS проблем
-                if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                        for(let registration of registrations) {
-                            registration.unregister();
-                        }
-                        console.log('🔧 Service Worker отключен на Railway');
-                    });
+        // Lazy loading для particles.js
+        function loadParticles() {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js';
+            script.onload = () => {
+                // Инициализируем particles только после загрузки
+                if (typeof particlesJS !== 'undefined') {
+                    initParticles();
                 }
-                
-                // Переопределяем регистрацию service worker
-                if (navigator.serviceWorker && navigator.serviceWorker.register) {
-                    const originalRegister = navigator.serviceWorker.register;
-                    navigator.serviceWorker.register = function() {
-                        console.log('⚠️ Service Worker регистрация заблокирована на Railway');
-                        return Promise.reject(new Error('Service Worker disabled on Railway'));
-                    };
-                }
-            }
-        })();
+            };
+            document.head.appendChild(script);
+        }
+        
+        // Загружаем particles с задержкой после основного контента
+        window.addEventListener('load', () => {
+            setTimeout(loadParticles, 1000);
+        });
     </script>
-
-    <!-- Modular JavaScript Architecture - загружаем в конце для лучшей производительности -->
-    <script src="js/core/security.js"></script>
-    <script src="js/utils/api.js"></script>
-    <script src="js/core/navigation.js"></script>
-    <script src="js/components/forms.js"></script>
-    <script src="js/components/portfolio.js"></script>
-    <script src="js/components/chat.js"></script>
-    <script src="js/effects/animations.js"></script>
-    <script src="js/effects/particles.js"></script>
-    <script src="js/app.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html> 

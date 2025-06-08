@@ -1,11 +1,17 @@
 /* ========== TABLET STYLES ========== */
 @media (min-width: 481px) and (max-width: 768px) {
-    .hero-heading {
-        font-size: 3rem;
+    .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: var(--spacing-md);
     }
     
-    .hero-desc {
-        font-size: 1.1rem;
+    .hero-visual {
+        height: 300px;
+    }
+    
+    .hero-title {
+        font-size: var(--font-3xl);
     }
     
     .section-title {
@@ -25,6 +31,29 @@
         gap: var(--spacing-md);
     }
     
+    .modal-body {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .modal-stats {
+        gap: var(--spacing-sm);
+    }
+    
+    .chat-window {
+        width: 380px;
+        right: 10px;
+    }
+    
+    .calculator-window {
+        width: 380px;
+        left: 10px;
+    }
+    
     .form-group textarea {
         max-height: 250px;
         min-height: 110px;
@@ -42,19 +71,6 @@
 
 /* ========== MOBILE STYLES ========== */
 @media (max-width: 768px) {
-    .hero-heading {
-        font-size: 2.5rem;
-    }
-    
-    .hero-desc {
-        font-size: 1rem;
-    }
-    
-    .hero-actions {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
     .hamburger {
         display: flex;
         width: 35px;
@@ -81,7 +97,9 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
     
-
+    .hero-buttons {
+        justify-content: center;
+    }
     
     .btn {
         padding: var(--spacing-sm) var(--spacing-md);
@@ -97,16 +115,14 @@
         padding: 0 15px;
     }
     
-    .hero-heading {
-        font-size: 2rem;
+    .hero-title {
+        font-size: var(--font-2xl) !important;
+        line-height: 1.2 !important;
     }
     
-    .hero-desc {
-        font-size: 0.9rem;
-    }
-    
-    .hero-container {
-        padding: 0 var(--spacing-sm);
+    .hero-description {
+        font-size: var(--font-lg) !important;
+        line-height: 1.5 !important;
     }
     
     .section-title {
@@ -206,7 +222,64 @@
         color: var(--text-primary) !important;
     }
     
-
+    /* Calculator optimizations */
+    .cost-calculator {
+        bottom: 10px;
+        left: 10px;
+    }
+    
+    .calculator-toggle {
+        background: var(--secondary-gradient) !important; 
+        border: 3px solid rgba(255, 255, 255, 0.2) !important;
+        padding: var(--spacing-sm) var(--spacing-md) !important;
+        font-weight: 700 !important;
+        font-size: var(--font-xs);
+    }
+    
+    .calculator-text {
+        display: none;
+    }
+    
+    .calculator-window {
+        width: calc(100vw - 20px);
+        left: -5px;
+        bottom: 70px;
+        background: rgba(0, 0, 0, 0.98) !important;
+        backdrop-filter: blur(15px) !important;
+        border: 3px solid #43e97b !important;
+        box-shadow: 0 10px 30px rgba(67, 233, 123, 0.3) !important;
+        border-radius: 20px 20px 0 0 !important;
+        border-width: 4px !important;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    .calculator-content {
+        background: rgba(0, 0, 0, 0.8) !important;
+        backdrop-filter: blur(5px) !important;
+    }
+    
+    .calc-option {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 2px solid rgba(67, 233, 123, 0.6) !important;
+        color: var(--text-primary) !important;
+        padding: var(--spacing-sm) !important;
+        font-size: 0.95rem !important;
+    }
+    
+    .calc-option:hover,
+    .calc-option:active {
+        background: rgba(67, 233, 123, 0.2) !important;
+        border-color: #43e97b !important;
+        transform: scale(1.02) !important;
+    }
+    
+    .calc-result {
+        background: rgba(67, 233, 123, 0.2) !important;
+        border: 2px solid #43e97b !important;
+        color: var(--text-primary) !important;
+        font-size: var(--font-lg) !important;
+        padding: var(--spacing-md) !important;
+    }
     
     /* Form optimizations */
     .form-group textarea {
@@ -223,13 +296,16 @@
 
 /* ========== VERY SMALL SCREENS ========== */
 @media (max-width: 360px) {
-    .chat-window {
+    .chat-window,
+    .calculator-window {
         width: calc(100vw - 10px) !important;
         left: 5px !important;
         right: 5px !important;
     }
     
-
+    .hero-title {
+        font-size: var(--font-2xl) !important;
+    }
     
     .btn {
         padding: 0.8rem 1.5rem !important;
@@ -239,12 +315,19 @@
 
 /* ========== LANDSCAPE ORIENTATION ON MOBILE ========== */
 @media (max-width: 768px) and (orientation: landscape) {
-    .chat-window {
+    .chat-window,
+    .calculator-window {
         height: 70vh !important;
         max-height: 400px !important;
     }
     
-
+    .hero {
+        padding: var(--spacing-md) 0 !important;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem !important;
+    }
 }
 
 /* ========== LARGE DESKTOP STYLES ========== */
@@ -253,7 +336,9 @@
         width: 380px;
     }
     
-
+    .calculator-window {
+        width: 420px;
+    }
     
     .services-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -268,7 +353,8 @@
 
 /* ========== DARK THEME SUPPORT ========== */
 @media (prefers-color-scheme: dark) and (max-width: 480px) {
-    .chat-window {
+    .chat-window,
+    .calculator-window {
         background: rgba(0, 0, 0, 0.98) !important;
         border-color: rgba(102, 126, 234, 0.8) !important;
     }
@@ -277,17 +363,21 @@
         background: rgba(0, 0, 0, 0.9) !important;
     }
     
-
+    .calculator-content {
+        background: rgba(0, 0, 0, 0.9) !important;
+    }
 }
 
 /* ========== HIGH CONTRAST MODE ========== */
 @media (prefers-contrast: high) {
-    .chat-window {
+    .chat-window,
+    .calculator-window {
         border-width: 4px !important;
         box-shadow: 0 0 0 2px var(--text-primary) !important;
     }
     
-    .chat-input {
+    .chat-input,
+    .calc-option {
         border-width: 3px !important;
     }
     
@@ -314,7 +404,11 @@
         animation: none !important;
     }
     
-
+    .hero-visual,
+    .floating-cards,
+    #particles-js {
+        display: none !important;
+    }
     
     .portfolio-item,
     .service-item {

@@ -8,83 +8,142 @@
     z-index: 1;
 }
 
-/* ========== HERO SECTION ========== */
 .hero {
     min-height: 100vh;
     display: flex;
     align-items: center;
     position: relative;
-    padding-top: 80px;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
     overflow: hidden;
+    padding-top: 80px;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, #1a1a2e 50%, #16213e 100%);
+    contain: paint style;
+    will-change: transform;
 }
 
 .hero-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 2rem;
-    position: relative;
+    padding: 0 var(--spacing-sm);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    align-items: center;
     z-index: 2;
+    position: relative;
 }
 
-.hero-text {
-    text-align: left;
-    max-width: 800px;
-}
-
-.hero-heading {
-    font-size: 4rem;
+.hero-title {
+    font-size: var(--font-4xl);
     font-weight: 700;
     line-height: 1.1;
-    margin-bottom: 2rem;
-    color: #ffffff;
-    text-align: left;
+    margin-bottom: var(--spacing-md);
 }
 
-.hero-desc {
-    font-size: 1.25rem;
-    color: #b0b0b0;
-    margin-bottom: 4rem;
+.hero-subtitle {
+    color: var(--text-primary);
+}
+
+.hero-description {
+    font-size: var(--font-lg);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
     line-height: 1.6;
-    text-align: left;
 }
 
-.hero-actions {
+.hero-buttons {
     display: flex;
-    gap: 1rem;
+    gap: var(--spacing-sm);
     flex-wrap: wrap;
-    justify-content: flex-start;
+}
+
+.hero-visual {
+    position: relative;
+    height: 500px;
+}
+
+.floating-cards {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.card {
+    position: absolute;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-normal);
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 25px rgba(102, 126, 234, 0.2);
+}
+
+.card-1 {
+    width: 200px;
+    height: 250px;
+    top: 50px;
+    left: 50px;
+    animation: float 6s ease-in-out infinite;
+}
+
+.card-2 {
+    width: 180px;
+    height: 220px;
+    top: 100px;
+    right: 80px;
+    animation: float 6s ease-in-out infinite 2s;
+}
+
+.card-3 {
+    width: 160px;
+    height: 200px;
+    bottom: 100px;
+    left: 100px;
+    animation: float 6s ease-in-out infinite 4s;
+}
+
+.hero-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+    z-index: 1;
 }
 
 /* ========== PORTFOLIO SECTION ========== */
 .portfolio {
-    padding: 8rem 0;
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    padding: var(--spacing-xl) 0;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
 }
 
 .section-title {
-    font-size: 3rem;
+    font-size: var(--font-3xl);
     font-weight: 700;
     text-align: center;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin-bottom: var(--spacing-sm);
+    background: var(--primary-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 .section-subtitle {
-    font-size: 1.2rem;
-    color: #b0b0b0;
+    font-size: var(--font-lg);
+    color: var(--text-secondary);
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: var(--spacing-lg);
 }
 
 .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
-    margin-top: 4rem;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
     overflow-y: auto;
     max-height: 800px;
     padding-right: 10px;
@@ -92,11 +151,11 @@
 
 .portfolio-item {
     position: relative;
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, #2a2a2a 100%);
     border: 1px solid rgba(102, 126, 234, 0.1);
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
     backdrop-filter: blur(10px);
 }
 
@@ -143,14 +202,14 @@
 .placeholder-image {
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary-gradient);
     position: relative;
 }
 
-.project-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.project-1 { background: var(--primary-gradient); }
 .project-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
 .project-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-.project-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.project-4 { background: var(--secondary-gradient); }
 .project-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
 .project-6 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
 
@@ -166,7 +225,7 @@
     justify-content: center;
     align-items: center;
     opacity: 0;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
 }
 
 .portfolio-item:hover .portfolio-overlay {
@@ -174,15 +233,15 @@
 }
 
 .portfolio-overlay h3 {
-    font-size: 1.5rem;
+    font-size: var(--font-xl);
     font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #ffffff;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-primary);
 }
 
 .portfolio-overlay p {
-    color: #b0b0b0;
-    margin-bottom: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
 }
 
 .portfolio-link {
@@ -190,14 +249,14 @@
     text-decoration: none;
     font-weight: 600;
     border: 2px solid #667eea;
-    padding: 0.5rem 1rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: 25px;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
 }
 
 .portfolio-link:hover {
     background: #667eea;
-    color: #ffffff;
+    color: var(--text-primary);
 }
 
 /* ========== SERVICES SECTION ========== */

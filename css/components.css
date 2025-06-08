@@ -91,7 +91,7 @@
     width: 100%;
     background: rgba(10, 10, 10, 0.95);
     backdrop-filter: blur(20px);
-    z-index: var(--z-fixed);
+    z-index: 1000;
     transition: all var(--transition-normal);
     transform: translateZ(0);
     will-change: transform;
