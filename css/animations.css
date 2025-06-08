@@ -49,6 +49,32 @@
 
 
 
+/* ========== HERO ANIMATIONS ========== */
+.hero-heading {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1.2s ease-out 0.5s forwards;
+}
+
+.hero-desc {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s ease-out 0.8s forwards;
+}
+
+.hero-actions {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease-out 1.1s forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* ========== SCROLL ANIMATIONS ========== */
 .scroll-progress {
     position: fixed;
@@ -551,6 +577,14 @@
 
 /* ========== REDUCED MOTION FALLBACKS ========== */
 @media (prefers-reduced-motion: reduce) {
+    .hero-heading,
+    .hero-desc,
+    .hero-actions {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+        animation: none !important;
+    }
+    
     .float-element,
     .breathe,
     .particle,
