@@ -183,13 +183,13 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Mobile Adaptations */
+        /* Мобильная оптимизация */
         @media (max-width: 768px) {
             .login-container {
                 width: 90%;
                 max-width: none;
-                margin: var(--spacing-lg);
-                padding: var(--spacing-xl);
+                padding: var(--spacing-lg);
+                margin: var(--spacing-lg) auto;
             }
 
             .login-form {
@@ -200,15 +200,34 @@
                 margin-bottom: var(--spacing-lg);
             }
 
-            input {
+            .form-input {
                 font-size: 16px;
-                padding: var(--spacing-md);
+                padding: var(--spacing-lg);
+                height: 50px;
             }
 
-            .btn {
-                width: 100%;
+            .btn-login {
+                height: 50px;
+                font-size: var(--font-size-lg);
+            }
+
+            .form-footer {
+                flex-direction: column;
+                gap: var(--spacing-md);
+                text-align: center;
+            }
+        }
+
+        /* Планшеты */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .login-container {
+                width: 70%;
+                padding: var(--spacing-xl);
+            }
+
+            .form-input {
+                font-size: var(--font-size-base);
                 padding: var(--spacing-md);
-                font-size: var(--font-size-md);
             }
         }
 

@@ -632,99 +632,68 @@
 
         /* Mobile Navigation */
         @media (max-width: 768px) {
-            .nav-menu {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 80%;
-                height: 100vh;
-                background: var(--color-bg-card);
-                padding: var(--spacing-2xl) var(--spacing-xl);
-                transition: 0.3s ease;
-                z-index: 1000;
-                display: flex;
-                flex-direction: column;
-                gap: var(--spacing-lg);
+            html {
+                scroll-behavior: smooth;
+                -webkit-overflow-scrolling: touch;
             }
 
-            .nav-menu.active {
-                right: 0;
+            body {
+                overflow-x: hidden;
+                -webkit-tap-highlight-color: transparent;
             }
 
+            /* Увеличенная область клика для бургер-меню */
             .burger {
-                display: block;
-                z-index: 1001;
-                cursor: pointer;
+                width: 44px;
+                height: 44px;
+                padding: 10px;
+                background: var(--color-bg-card);
+                border-radius: var(--radius-full);
+                box-shadow: var(--shadow-md);
+                position: relative;
+                z-index: 1002;
+            }
+
+            .burger::before {
+                content: '';
+                position: absolute;
+                top: -10px;
+                right: -10px;
+                bottom: -10px;
+                left: -10px;
+                z-index: -1;
+            }
+
+            .nav-menu {
+                padding-top: 80px;
             }
 
             .nav-link {
                 font-size: var(--font-size-lg);
-                padding: var(--spacing-md);
-            }
-
-            /* Form Adaptations */
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: var(--spacing-lg);
-            }
-
-            .form-section {
                 padding: var(--spacing-lg);
+                margin-bottom: var(--spacing-md);
+                background: var(--color-bg-card);
+                border-radius: var(--radius-lg);
+                display: flex;
+                align-items: center;
+                transition: all 0.3s ease;
             }
 
-            /* Cards Adaptations */
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .project-type-card {
-                padding: var(--spacing-lg);
-            }
-
-            /* Features Grid */
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            /* Result Section */
-            .tz-content {
-                padding: var(--spacing-lg);
-                margin: var(--spacing-md);
-            }
-
-            /* Header Adaptations */
-            .header-content {
-                padding: var(--spacing-xl) var(--spacing-lg);
-            }
-
-            .header-title {
-                font-size: var(--font-size-2xl);
-            }
-
-            /* Inputs and Buttons */
-            input, select, textarea {
-                font-size: 16px; /* Prevents zoom on iOS */
-                padding: var(--spacing-md);
-            }
-
-            .btn {
-                width: 100%;
-                margin: var(--spacing-sm) 0;
+            .nav-link:hover {
+                background: var(--color-bg-card-hover);
+                transform: translateX(10px);
             }
         }
 
-        /* Small phones */
-        @media (max-width: 480px) {
-            .container {
-                padding: var(--spacing-md);
+        /* Планшеты */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .site-header {
+                padding: var(--spacing-lg);
             }
 
-            .header-title {
-                font-size: var(--font-size-xl);
-            }
-
-            .form-section {
-                padding: var(--spacing-md);
+            .btn-back {
+                font-size: var(--font-size-base);
+                padding: var(--spacing-md) var(--spacing-lg);
             }
         }
     </style>
@@ -1554,23 +1523,32 @@
     </script>
 
     <script>
-        // Исправленный обработчик для бургер-меню
+        // Улучшенный обработчик для бургер-меню
         document.querySelector('.burger').addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            this.classList.toggle('active');
-            document.querySelector('.nav-menu').classList.toggle('active');
-        }, { passive: false });
-
-        // Закрытие меню при клике вне его
-        document.addEventListener('click', function(e) {
+            
             const menu = document.querySelector('.nav-menu');
-            const burger = document.querySelector('.burger');
-            if (menu.classList.contains('active') && !menu.contains(e.target) && !burger.contains(e.target)) {
-                menu.classList.remove('active');
-                burger.classList.remove('active');
+            const burger = this;
+            
+            burger.classList.toggle('active');
+            menu.classList.toggle('active');
+            
+            // Добавляем обработчик для закрытия при клике вне меню
+            function closeMenu(event) {
+                if (!menu.contains(event.target) && !burger.contains(event.target)) {
+                    menu.classList.remove('active');
+                    burger.classList.remove('active');
+                    document.removeEventListener('click', closeMenu);
+                }
             }
-        });
+            
+            if (menu.classList.contains('active')) {
+                setTimeout(() => {
+                    document.addEventListener('click', closeMenu);
+                }, 0);
+            }
+        }, { passive: false });
     </script>
 </body>
 </html> 
