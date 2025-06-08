@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://*.railway.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.railway.app https://*.up.railway.app; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://*.railway.app https://*.up.railway.app; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
+    <!-- Security Headers - упрощенная версия для Railway -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; img-src 'self' data: blob:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
@@ -48,6 +48,13 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="TechPortal">
     
+    <!-- Fallback шрифт + основные стили -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+    </style>
+    
     <!-- CSS стили - подключаем напрямую вместо @import -->
     <link rel="stylesheet" href="css/main.css?v=20250608">
     <link rel="stylesheet" href="css/components.css?v=20250608">
@@ -60,9 +67,10 @@
     <!-- Fallback для Railway.app - единый CSS файл -->
     <link rel="stylesheet" href="css/complete.css?v=20250608" media="screen" onerror="this.onload=null;this.removeAttribute('media');">
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Шрифты с fallback -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" onerror="console.warn('Fallback: Google Fonts failed to load')">
     
 
 </head>
@@ -369,6 +377,25 @@
             
             if (isRailway) {
                 console.log('✅ Сайт запущен на Railway, стили загружены из CSS файлов');
+                
+                // Отключаем service worker на Railway из-за CORS проблем
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for(let registration of registrations) {
+                            registration.unregister();
+                        }
+                        console.log('🔧 Service Worker отключен на Railway');
+                    });
+                }
+                
+                // Переопределяем регистрацию service worker
+                if (navigator.serviceWorker && navigator.serviceWorker.register) {
+                    const originalRegister = navigator.serviceWorker.register;
+                    navigator.serviceWorker.register = function() {
+                        console.log('⚠️ Service Worker регистрация заблокирована на Railway');
+                        return Promise.reject(new Error('Service Worker disabled on Railway'));
+                    };
+                }
             }
         })();
     </script>
