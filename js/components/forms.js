@@ -177,8 +177,6 @@ async function handleFormSubmission(form) {
         // Determine API endpoint
         const action = form.getAttribute('action') || '/api/contact';
         
-
-        
         // Check if required modules are available
         if (!window.ApiModule || !window.ApiModule.secureApiCall) {
             throw new Error('API module не загружен. Пожалуйста, обновите страницу.');

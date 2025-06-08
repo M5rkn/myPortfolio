@@ -31,29 +31,6 @@
         gap: var(--spacing-md);
     }
     
-    .modal-body {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-sm);
-    }
-    
-    .modal-actions {
-        flex-direction: column;
-    }
-    
-    .modal-stats {
-        gap: var(--spacing-sm);
-    }
-    
-    .chat-window {
-        width: 380px;
-        right: 10px;
-    }
-    
-    .calculator-window {
-        width: 380px;
-        left: 10px;
-    }
-    
     .form-group textarea {
         max-height: 250px;
         min-height: 110px;

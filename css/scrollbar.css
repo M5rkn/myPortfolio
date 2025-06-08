@@ -161,23 +161,23 @@
 }
 
 /* ========== ВСЕ ЭЛЕМЕНТЫ КАЛЬКУЛЯТОРА ========== */
-.cost-calculator *::-webkit-scrollbar {
+.cost-calculator ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
 
-.cost-calculator *::-webkit-scrollbar-track {
+.cost-calculator ::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 6px;
 }
 
-.cost-calculator *::-webkit-scrollbar-thumb {
+.cost-calculator ::-webkit-scrollbar-thumb {
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     border-radius: 6px;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.cost-calculator *::-webkit-scrollbar-thumb:hover {
+.cost-calculator ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #3d8bfe 0%, #00d4fe 100%);
     box-shadow: 0 0 8px rgba(79, 172, 254, 0.6);
 }

@@ -523,8 +523,6 @@ app.get('/api/csrf-token', (req, res) => {
     });
 });
 
-
-
 // Admin login with enhanced security
 app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
     try {
@@ -1266,6 +1264,11 @@ app.post('/api/portfolio/like', apiLimiter, validateCSRFToken, async (req, res) 
     }
 });
 
+// Routes for pages without extension
+app.get('/tz-generator', (req, res) => {
+    res.sendFile(path.join(__dirname, 'tz-generator.html'));
+});
+
 // Secure login page route
 app.get('/login', (req, res) => {
     try {
@@ -1696,8 +1699,6 @@ const gracefulShutdown = (signal) => {
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // Для nodemon
-
-
 
 // Start server with security logging
 const server = app.listen(PORT, () => {

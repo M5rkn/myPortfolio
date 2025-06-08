@@ -100,25 +100,17 @@ function isValidURL(url) {
 // CSRF Token generation and retrieval
 let csrfToken = null;
 
-function generateCSRFToken() {
-    const timestamp = Date.now().toString();
-    const random = Math.random().toString(36).substring(2);
-    const userAgent = navigator.userAgent.replace(/[^a-zA-Z0-9]/g, '').substring(0, 10);
-    
-    const tokenData = `${timestamp}-${random}-${userAgent}`;
-    
-    // Simple hash function for client-side token
-    let hash = 0;
-    for (let i = 0; i < tokenData.length; i++) {
-        const char = tokenData.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash; // Convert to 32bit integer
+async function getCSRFToken() {
+    // В режиме разработки используем локальный токен
+    if (window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1') {
+        if (!csrfToken) {
+            csrfToken = generateCSRFToken();
+            console.log('🔧 Generated local CSRF token for development');
+        }
+        return csrfToken;
     }
     
-    return `csrf_${Math.abs(hash).toString(36)}_${timestamp}`;
-}
-
-async function getCSRFToken() {
     // Return cached token if still valid (valid for 30 minutes)
     if (csrfToken) {
         try {
@@ -135,7 +127,37 @@ async function getCSRFToken() {
         }
     }
     
-    // Generate new token
+    // Try to get token from server first
+    try {
+        const response = await fetch('/api/csrf-token', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.csrfToken) {
+                csrfToken = data.csrfToken;
+                
+                // Store in sessionStorage for persistence
+                try {
+                    sessionStorage.setItem('csrf_token', csrfToken);
+                } catch (error) {
+                    console.warn('Could not store CSRF token in session storage');
+                }
+                
+                return csrfToken;
+            }
+        }
+    } catch (error) {
+        console.warn('Could not fetch CSRF token from server, generating locally');
+    }
+    
+    // Fallback: Generate local token
     csrfToken = generateCSRFToken();
     
     // Store in sessionStorage for persistence across page loads
@@ -146,6 +168,16 @@ async function getCSRFToken() {
     }
     
     return csrfToken;
+}
+
+function generateCSRFToken() {
+    // Generate secure random token
+    const timestamp = Date.now().toString();
+    const randomPart = Math.random().toString(36).substring(2, 15) + 
+                      Math.random().toString(36).substring(2, 15);
+    
+    // Create token with proper format
+    return randomPart + timestamp.slice(-8);
 }
 
 // Try to restore token from sessionStorage on load

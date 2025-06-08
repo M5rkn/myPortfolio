@@ -60,10 +60,22 @@ function checkModuleAvailability() {
         'ApiModule'
     ];
     
-    const missing = requiredModules.filter(module => !window[module]);
+    const missing = [];
+    
+    requiredModules.forEach(module => {
+        try {
+            if (!window[module] || typeof window[module] !== 'object') {
+                missing.push(module);
+            }
+        } catch (error) {
+            console.warn(`Error checking module ${module}:`, error);
+            missing.push(module);
+        }
+    });
     
     if (missing.length > 0) {
         console.warn('Missing modules:', missing);
+        console.warn('Available modules:', Object.keys(window).filter(key => key.endsWith('Module')));
         return false;
     }
     

@@ -9,6 +9,15 @@ const urlsToCache = [
     '/',
     '/css/index.css',
     '/js/app.js',
+    '/js/core/security.js',
+    '/js/core/navigation.js',
+    '/js/components/forms.js',
+    '/js/components/portfolio.js',
+    '/js/components/chat.js',
+    '/js/components/calculator.js',
+    '/js/effects/animations.js',
+    '/js/effects/particles.js',
+    '/js/utils/api.js',
     '/manifest.json',
     '/favicon.svg',
     '/icon-192.svg'
@@ -17,7 +26,7 @@ const urlsToCache = [
 // Secure URL validation
 function isValidCacheUrl(url) {
     try {
-        const parsedUrl = new URL(url);
+        const parsedUrl = new URL(url, self.location.origin);
         
         // Only allow HTTPS (except localhost)
         if (parsedUrl.protocol !== 'https:' && 
@@ -27,9 +36,14 @@ function isValidCacheUrl(url) {
         }
         
         // Check allowed origins
-        const isAllowedOrigin = ALLOWED_ORIGINS.some(origin => 
-            parsedUrl.href.startsWith(origin)
-        );
+        const isAllowedOrigin = ALLOWED_ORIGINS.some(origin => {
+            try {
+                return parsedUrl.href.startsWith(origin) || 
+                       parsedUrl.origin === origin;
+            } catch (e) {
+                return false;
+            }
+        });
         
         if (!isAllowedOrigin) {
             return false;

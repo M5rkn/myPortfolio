@@ -143,6 +143,7 @@ function initParticles() {
 function monitorParticlesPerformance() {
     let frameCount = 0;
     let lastTime = performance.now();
+    let hasReducedParticles = false; // Флаг для предотвращения спама
     
     function checkFPS() {
         const currentTime = performance.now();
@@ -153,24 +154,29 @@ function monitorParticlesPerformance() {
             frameCount = 0;
             lastTime = currentTime;
             
-            // If FPS is too low, reduce particles
-            if (fps < 30 && window.pJSDom && window.pJSDom[0]) {
+            // If FPS is too low, reduce particles (только один раз)
+            if (fps < 30 && window.pJSDom && window.pJSDom[0] && !hasReducedParticles) {
                 const pJS = window.pJSDom[0].pJS;
                 if (pJS.particles.array.length > 20) {
                     // Remove some particles
                     pJS.particles.array.splice(0, 10);
-                    console.warn('Reduced particles for better performance');
+                    console.warn('🌌 Particles optimized for better performance');
+                    hasReducedParticles = true; // Больше не будем оптимизировать
+                    return; // Останавливаем мониторинг
                 }
             }
         }
         
-        requestAnimationFrame(checkFPS);
+        // Останавливаем мониторинг через 10 секунд для экономии ресурсов
+        if (currentTime - performance.now() < 10000) {
+            requestAnimationFrame(checkFPS);
+        }
     }
     
     requestAnimationFrame(checkFPS);
 }
 
-// Create simple fallback particles if particles.js fails
+// Create enhanced fallback particles if particles.js fails
 function createFallbackParticles() {
     const container = secureGetElementById('particles-js');
     if (!container) return;
@@ -179,72 +185,131 @@ function createFallbackParticles() {
     container.style.width = '100%';
     container.style.height = '100%';
     container.style.overflow = 'hidden';
+    container.style.pointerEvents = 'none';
     
-    // Create CSS-only particles
-    for (let i = 0; i < 20; i++) {
+    const particleCount = window.innerWidth <= 768 ? 15 : 25;
+    
+    // Create CSS-only particles with enhanced visual effects
+    for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'fallback-particle';
+        
+        const size = Math.random() * 6 + 2;
+        const opacity = Math.random() * 0.6 + 0.2;
+        const hue = Math.random() * 60 + 200; // Blue to purple range
+        const duration = Math.random() * 15 + 15;
+        const delay = Math.random() * 8;
+        
         particle.style.cssText = `
             position: absolute;
-            width: ${Math.random() * 4 + 2}px;
-            height: ${Math.random() * 4 + 2}px;
-            background: rgba(102, 126, 234, ${Math.random() * 0.5 + 0.2});
+            width: ${size}px;
+            height: ${size}px;
+            background: hsla(${hue}, 70%, 60%, ${opacity});
             border-radius: 50%;
             left: ${Math.random() * 100}%;
             top: ${Math.random() * 100}%;
-            animation: float ${Math.random() * 10 + 10}s infinite ease-in-out;
-            animation-delay: ${Math.random() * 5}s;
+            animation: 
+                float ${duration}s infinite ease-in-out,
+                pulse ${duration * 0.5}s infinite ease-in-out,
+                fadeInOut ${duration * 1.2}s infinite ease-in-out;
+            animation-delay: ${delay}s, ${delay * 0.7}s, ${delay * 1.3}s;
+            box-shadow: 0 0 ${size * 2}px hsla(${hue}, 70%, 60%, ${opacity * 0.5});
         `;
         
         container.appendChild(particle);
     }
     
-    // Add CSS animation
+    // Add enhanced CSS animations
     if (!document.querySelector('#fallback-particles-style')) {
         const style = document.createElement('style');
         style.id = 'fallback-particles-style';
         style.textContent = `
             @keyframes float {
                 0%, 100% {
-                    transform: translateY(0px) translateX(0px);
+                    transform: translateY(0px) translateX(0px) rotate(0deg);
                 }
                 25% {
-                    transform: translateY(-20px) translateX(10px);
+                    transform: translateY(-30px) translateX(15px) rotate(90deg);
                 }
                 50% {
-                    transform: translateY(-10px) translateX(-15px);
+                    transform: translateY(-15px) translateX(-25px) rotate(180deg);
                 }
                 75% {
-                    transform: translateY(-30px) translateX(5px);
+                    transform: translateY(-40px) translateX(8px) rotate(270deg);
                 }
+            }
+            
+            @keyframes pulse {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.2);
+                }
+            }
+            
+            @keyframes fadeInOut {
+                0%, 100% {
+                    opacity: 0.3;
+                }
+                50% {
+                    opacity: 0.8;
+                }
+            }
+            
+            .fallback-particle {
+                will-change: transform, opacity;
             }
         `;
         document.head.appendChild(style);
     }
+    
+    console.log('✨ Fallback particles created with enhanced effects');
 }
 
-// Lazy load particles.js if not already loaded
+// Lazy loading particles.js library for better performance
 async function lazyLoadParticles() {
-    if (typeof particlesJS !== 'undefined') {
-        initParticles();
-        return;
-    }
-    
     try {
-        // Load particles.js from CDN
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js';
-        
-        script.onload = () => {
+        // Check if already loaded
+        if (typeof particlesJS !== 'undefined') {
             initParticles();
-        };
+            return;
+        }
         
-        script.onerror = () => {
-            console.warn('Failed to load particles.js, using fallback');
-            createFallbackParticles();
-        };
+        console.log('Loading particles.js...');
         
+        // Create and load script
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js';
+        script.async = true;
+        
+        // Promise wrapper for script loading
+        const loadPromise = new Promise((resolve, reject) => {
+            script.onload = () => {
+                console.log('particles.js loaded successfully');
+                resolve();
+            };
+            script.onerror = () => {
+                console.error('Failed to load particles.js');
+                reject(new Error('Failed to load particles.js'));
+            };
+        });
+        
+        // Add script to DOM
         document.head.appendChild(script);
+        
+        // Wait for loading
+        await loadPromise;
+        
+        // Small delay to ensure library is ready
+        setTimeout(() => {
+            if (typeof particlesJS !== 'undefined') {
+                initParticles();
+            } else {
+                console.warn('particles.js not available, using fallback');
+                createFallbackParticles();
+            }
+        }, 100);
         
     } catch (error) {
         console.error('Error loading particles:', error);

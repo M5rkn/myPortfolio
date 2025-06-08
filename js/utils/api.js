@@ -151,6 +151,13 @@ async function secureApiCall(url, options = {}) {
 
 // Specialized API functions
 async function updateProjectViews() {
+    // Пропускаем API вызовы в режиме разработки
+    if (window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1') {
+        console.log('🔧 Skipping API call in development mode: updateProjectViews');
+        return;
+    }
+    
     try {
         const result = await secureApiCall('/api/portfolio/views', {
             method: 'POST',
