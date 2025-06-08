@@ -126,7 +126,7 @@ function initCustomCursor() {
             }
             document.removeEventListener('mousemove', mouseMoveHandler);
         };
-    } else {
+            } else {
         cursor.style.display = 'none';
         follower.style.display = 'none';
     }
@@ -141,15 +141,15 @@ function initSideNav() {
     
     // Использование Intersection Observer для определения активного раздела
     const sections = document.querySelectorAll('section[id]');
-    const observerOptions = {
+const observerOptions = {
         root: null,
         rootMargin: '0px',
         threshold: 0.3
-    };
-    
+};
+
     const sectionObserver = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
                 const id = entry.target.getAttribute('id');
                 
                 sideNavLinks.forEach(link => {
@@ -157,9 +157,9 @@ function initSideNav() {
                     
                     if (link.getAttribute('href') === '#' + id) {
                         link.classList.add('active');
-                    }
-                });
-            }
+        }
+    });
+}
         });
     }, observerOptions);
     
@@ -289,7 +289,7 @@ function initStatsCounter() {
                     
                     if (frame < totalFrames) {
                         requestAnimationFrame(animate);
-                    } else {
+        } else {
                         el.textContent = targetValue;
                     }
                 }
@@ -328,7 +328,7 @@ function initPortfolioFilter() {
                     setTimeout(() => {
                         item.classList.remove('filtered-out');
                     }, 10);
-                } else {
+        } else {
                     if (item.classList.contains(filterValue)) {
                         item.style.display = 'block';
                         setTimeout(() => {
@@ -355,7 +355,7 @@ function initLazyLoading() {
                 img.src = img.dataset.src;
             }
         });
-    } else {
+            } else {
         // Fallback для старых браузеров
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
@@ -536,10 +536,10 @@ function initContactForm() {
             
         } finally {
             isSubmitting = false;
+                }
+            });
         }
-    });
-}
-
+        
 // Данные проектов
 function getProjectData(projectId) {
     const projects = {
@@ -735,7 +735,7 @@ function initCVDownload() {
     if (!downloadCVBtn) return;
     
     downloadCVBtn.addEventListener('click', function(e) {
-        e.preventDefault();
+            e.preventDefault();
         
         // Создаем ссылку на CV и запускаем скачивание
         const link = document.createElement('a');
@@ -747,7 +747,7 @@ function initCVDownload() {
         link.style.display = 'none';
         document.body.appendChild(link);
         link.click();
-        setTimeout(() => {
+            setTimeout(() => {
             document.body.removeChild(link);
             
             // Показываем уведомление об успешном скачивании

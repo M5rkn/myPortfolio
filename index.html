@@ -88,7 +88,7 @@
                 top: 20px;
                 background: var(--color-bg-card);
                 border-radius: var(--radius-full);
-                display: flex;
+                display: flex; /* Показываем только на мобильных */
                 align-items: center;
                 justify-content: center;
                 z-index: 1002;
@@ -149,6 +149,16 @@
                 background: var(--color-bg-card-hover);
                 transform: translateX(10px);
             }
+            
+            /* Адаптируем размер кнопок для мобильных */
+            .btn {
+                padding: var(--spacing-sm) var(--spacing-md);
+                font-size: var(--font-size-xs);
+            }
+            
+            .hero-actions .btn {
+                margin-bottom: var(--spacing-sm);
+            }
         }
 
         /* Планшеты */
@@ -169,6 +179,31 @@
             .work-item {
                 background: var(--color-bg-card);
                 opacity: 0.9;
+            }
+            
+            /* Скрываем бургер-меню на планшетах */
+            .mobile-nav-toggle {
+                display: none;
+            }
+            
+            /* Адаптируем размер кнопок для планшетов */
+            .btn {
+                padding: var(--spacing-sm) var(--spacing-lg);
+                font-size: var(--font-size-sm);
+            }
+        }
+        
+        /* Десктопы */
+        @media (min-width: 1025px) {
+            /* Скрываем бургер-меню на десктопах */
+            .mobile-nav-toggle {
+                display: none;
+            }
+            
+            /* Адаптируем размер кнопок для десктопов */
+            .btn {
+                padding: var(--spacing-sm) var(--spacing-lg);
+                font-size: var(--font-size-sm);
             }
         }
 
@@ -239,7 +274,7 @@
 
     <!-- Мобильное меню -->
     <div class="mobile-nav-toggle" id="mobileNavToggle">
-        <div class="hamburger">
+            <div class="hamburger">
             <div class="hamburger-line"></div>
             <div class="hamburger-line"></div>
         </div>
@@ -261,7 +296,7 @@
             <a href="#about" class="mobile-nav-link">О себе</a>
             <a href="#contact" class="mobile-nav-link">Контакты</a>
             <a href="tz-generator.html" class="mobile-nav-link">ТЗ Генератор</a>
-        </nav>
+    </nav>
         <div class="mobile-nav-footer">
             <div class="mobile-nav-socials">
                 <a href="https://github.com/M5rkn" target="_blank" rel="noopener noreferrer" class="social-link">GitHub</a>
@@ -272,17 +307,17 @@
     </div>
 
     <main class="main-content">
-        <!-- Hero Section -->
+    <!-- Hero Section -->
         <section id="hero" class="section hero-section active">
             <div class="container">
-                <div class="hero-content">
+            <div class="hero-content">
                     <div class="hero-text">
                         <div class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
                             <div class="badge">Веб-разработчик</div>
                         </div>
                         <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
                             Креативные <span class="gradient-text">цифровые</span> решения
-                        </h1>
+                </h1>
                         <p class="hero-description" data-aos="fade-up" data-aos-delay="300">
                             Преобразую идеи в элегантные и функциональные веб-проекты, 
                             объединяя инновационный дизайн с современными технологиями.
@@ -344,11 +379,11 @@
                 </div>
                 <div class="scroll-text">Скролл вниз</div>
             </div>
-        </section>
+    </section>
 
         <!-- Works Section -->
         <section id="works" class="section works-section">
-            <div class="container">
+        <div class="container">
                 <div class="section-header" data-aos="fade-up">
                     <h2 class="section-title">Мои работы</h2>
                     <p class="section-subtitle">Избранные проекты из моего портфолио</p>
@@ -398,7 +433,7 @@
                                         <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </button>
-                            </div>
+                </div>
                         </div>
                     </div>
                     
@@ -418,7 +453,7 @@
                                         <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </button>
-                            </div>
+                </div>
                         </div>
                     </div>
                     
@@ -438,7 +473,7 @@
                                         <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </button>
-                            </div>
+                </div>
                         </div>
                     </div>
                     
@@ -458,7 +493,7 @@
                                         <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </button>
-                            </div>
+                </div>
                         </div>
                     </div>
                     
@@ -478,16 +513,16 @@
                                         <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </button>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Services Section -->
+    <!-- Services Section -->
         <section id="services" class="section services-section">
-            <div class="container">
+        <div class="container">
                 <div class="section-header" data-aos="fade-up">
                     <h2 class="section-title">Мои услуги</h2>
                     <p class="section-subtitle">Комплексные решения для вашего бизнеса</p>
@@ -535,8 +570,8 @@
                             <li>Интеграция с CRM и платежами</li>
                             <li>Аналитика и отслеживание конверсий</li>
                         </ul>
-                    </div>
-                    
+                </div>
+                
                     <div class="service-card" data-aos="fade-up" data-aos-delay="300">
                         <div class="service-icon">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -555,8 +590,8 @@
                             <li>Базы данных MongoDB/PostgreSQL</li>
                             <li>API и интеграции сторонних сервисов</li>
                         </ul>
-                    </div>
-                    
+                </div>
+                
                     <div class="service-card" data-aos="fade-up" data-aos-delay="400">
                         <div class="service-icon">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -576,8 +611,8 @@
                             <li>Интеграция с внешними сервисами</li>
                             <li>Оптимизация скорости и безопасности</li>
                         </ul>
-                    </div>
-                    
+                </div>
+                
                     <div class="service-card" data-aos="fade-up" data-aos-delay="500">
                         <div class="service-icon">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -596,8 +631,8 @@
                             <li>Анимации и микроинтеракции</li>
                             <li>Тестирование и улучшение UX</li>
                         </ul>
-                    </div>
-                    
+                </div>
+                
                     <div class="service-card" data-aos="fade-up" data-aos-delay="600">
                         <div class="service-icon">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -617,14 +652,14 @@
                             <li>Регулярное обслуживание и мониторинг</li>
                         </ul>
                     </div>
-                </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- About Section -->
+    <!-- About Section -->
         <section id="about" class="section about-section">
-            <div class="container">
-                <div class="about-content">
+        <div class="container">
+            <div class="about-content">
                     <div class="about-text" data-aos="fade-up">
                         <div class="section-header">
                             <h2 class="section-title">О себе</h2>
@@ -649,20 +684,20 @@
                                 </svg>
                             </a>
                         </div>
-                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Contact Section -->
+    <!-- Contact Section -->
         <section id="contact" class="section contact-section">
-            <div class="container">
+        <div class="container">
                 <div class="section-header" data-aos="fade-up">
                     <h2 class="section-title">Связаться со мной</h2>
                     <p class="section-subtitle">Готов обсудить ваш проект</p>
                 </div>
-                
-                <div class="contact-content">
+            
+            <div class="contact-content">
                     <div class="contact-form-container" data-aos="fade-right">
                         <form id="contactForm" class="contact-form" novalidate>
                             <div class="form-header">
@@ -670,7 +705,7 @@
                                 <p class="form-subtitle">Заполните форму, и я свяжусь с вами в течение 24 часов</p>
                             </div>
                             
-                            <div class="form-group">
+                        <div class="form-group">
                                 <label for="name" class="form-label">Имя</label>
                                 <div class="input-wrapper">
                                     <input type="text" id="name" name="name" class="form-input" placeholder="Ваше имя" required minlength="2" maxlength="50" autocomplete="name">
@@ -682,9 +717,9 @@
                                     </div>
                                 </div>
                                 <div class="error-message" id="nameError"></div>
-                            </div>
+                        </div>
                             
-                            <div class="form-group">
+                        <div class="form-group">
                                 <label for="email" class="form-label">Email</label>
                                 <div class="input-wrapper">
                                     <input type="email" id="email" name="email" class="form-input" placeholder="Ваш email" required maxlength="254" autocomplete="email">
@@ -696,9 +731,9 @@
                                     </div>
                                 </div>
                                 <div class="error-message" id="emailError"></div>
-                            </div>
+                        </div>
                             
-                            <div class="form-group">
+                        <div class="form-group">
                                 <label for="message" class="form-label">Сообщение</label>
                                 <div class="input-wrapper">
                                     <textarea id="message" name="message" class="form-input form-textarea" placeholder="Расскажите о вашем проекте или задайте вопрос" rows="5" required minlength="10" maxlength="1000"></textarea>
@@ -768,18 +803,18 @@
                                 <div class="contact-info-details">
                                     <h4 class="contact-info-label">Telegram</h4>
                                     <a href="https://t.me/Marklill" target="_blank" rel="noopener noreferrer" class="contact-info-value">@Marklill</a>
-                                </div>
-                            </div>
+                </div>
+                    </div>
                             
                             <div class="contact-info-item">
                                 <div class="contact-info-icon">
                                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M12 2L14.2812 9.68377H22.2418L15.7803 14.3162L18.0615 22L12 17.5L5.93852 22L8.21973 14.3162L1.75818 9.68377H9.71875L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
-                                </div>
+                    </div>
                                 <div class="contact-info-details">
                                     <h4 class="contact-info-label">Социальные сети</h4>
-                                    <div class="social-links">
+                        <div class="social-links">
                                         <a href="https://github.com/M5rkn" class="social-link" target="_blank" rel="noopener noreferrer">GitHub</a>
                                         <a href="https://www.instagram.com/m5rkn/" class="social-link" target="_blank" rel="noopener noreferrer">Instagram</a>
                                     </div>
@@ -795,11 +830,11 @@
                                     <path d="M19 15V19C19 20.1046 18.1046 21 17 21H5C3.89543 21 3 20.1046 3 19V7C3 5.89543 3.89543 5 5 5H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                 </svg>
                             </a>
-                        </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
     </main>
 
     <!-- Footer -->
@@ -809,16 +844,16 @@
                 <div class="footer-logo">
                     <span class="gradient-text">TP</span>
                     <span class="footer-logo-text">TechPortal</span>
-                </div>
-                
+                    </div>
+                    
                 <div class="footer-nav">
                     <a href="#hero" class="footer-link">Главная</a>
                     <a href="#works" class="footer-link">Работы</a>
                     <a href="#services" class="footer-link">Услуги</a>
                     <a href="#about" class="footer-link">О себе</a>
                     <a href="#contact" class="footer-link">Контакты</a>
-                </div>
-                
+    </div>
+
                 <div class="footer-socials">
                     <a href="https://github.com/M5rkn" class="social-icon" target="_blank" rel="noopener noreferrer">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -871,8 +906,8 @@
                     <div class="modal-tags" id="modalTags"></div>
                     <h2 class="modal-title" id="modalTitle">Загрузка проекта...</h2>
                     <p class="modal-description" id="modalDescription"></p>
-                </div>
-                
+    </div>
+
                 <div class="modal-image" id="modalImage"></div>
                 
                 <div class="modal-details">
@@ -884,13 +919,13 @@
                     <div class="modal-section">
                         <h3 class="modal-section-title">Технологии</h3>
                         <div class="modal-tech-stack" id="modalTechStack"></div>
-                    </div>
-                    
+                </div>
+                
                     <div class="modal-section">
                         <h3 class="modal-section-title">Особенности</h3>
                         <ul class="modal-features-list" id="modalFeatures"></ul>
-                    </div>
-                    
+                </div>
+                
                     <div class="modal-actions">
                         <a href="#" class="btn btn-primary" id="modalLiveLink" target="_blank" rel="noopener noreferrer">
                             <span>Посмотреть демо</span>

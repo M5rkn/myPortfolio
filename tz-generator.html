@@ -484,7 +484,7 @@
             flex-direction: column;
             gap: var(--spacing-md);
         }
-
+        
         .option-card::before {
             content: '';
             position: absolute;
@@ -676,7 +676,7 @@
                 border-radius: var(--radius-lg);
                 display: flex;
                 align-items: center;
-                transition: all 0.3s ease;
+            transition: all 0.3s ease;
             }
 
             .nav-link:hover {
@@ -1001,7 +1001,7 @@
         let currentStepIndex = 1;
         const totalSteps = 6;
         const formData = {};
-
+        
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
             updateProgressBar();
@@ -1030,7 +1030,7 @@
                 });
             });
         }
-
+        
         // Обновление прогресс-бара
         function updateProgressBar() {
             const progress = (currentStepIndex - 1) / (totalSteps - 1) * 100;
@@ -1047,23 +1047,23 @@
 
             saveCurrentStepData();
 
-            if (currentStepIndex < totalSteps) {
+                if (currentStepIndex < totalSteps) {
                 // Скрываем текущий шаг
-                document.getElementById(`step${currentStepIndex}`).classList.remove('active');
+                    document.getElementById(`step${currentStepIndex}`).classList.remove('active');
                 // Показываем следующий шаг
-                currentStepIndex++;
-                document.getElementById(`step${currentStepIndex}`).classList.add('active');
+                    currentStepIndex++;
+                    document.getElementById(`step${currentStepIndex}`).classList.add('active');
                 // Обновляем навигацию
-                updateNavigation();
+                    updateNavigation();
                 // Обновляем прогресс
                 updateProgressBar();
                 // Прокручиваем вверх
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-                generateTZ();
+                } else {
+                    generateTZ();
             }
         }
-
+        
         // Возврат к предыдущему шагу
         function previousStep() {
             if (currentStepIndex > 1) {
@@ -1102,8 +1102,8 @@
             if (currentStepIndex === 1) {
                 if (!formData.projectType) {
                     showError('Пожалуйста, выберите тип проекта');
-                    return false;
-                }
+                        return false;
+                    }
                 return true;
             }
 
@@ -1244,42 +1244,42 @@
                     <div class="tz-section">
                         <h2>1. Общая информация</h2>
                         <p><strong>Название проекта:</strong> ${formData.projectName}</p>
-                        <p><strong>Тип проекта:</strong> ${projectTypes[formData.projectType]}</p>
+                <p><strong>Тип проекта:</strong> ${projectTypes[formData.projectType]}</p>
                         <p><strong>Описание проекта:</strong> ${formData.projectDescription}</p>
-                        ${formData.competitors ? `<p><strong>Конкуренты/примеры:</strong> ${formData.competitors}</p>` : ''}
+                ${formData.competitors ? `<p><strong>Конкуренты/примеры:</strong> ${formData.competitors}</p>` : ''}
                     </div>
-
+                
                     <div class="tz-section">
                         <h2>2. Целевая аудитория</h2>
-                        <p><strong>Возраст:</strong> ${formData.targetAge}</p>
+                <p><strong>Возраст:</strong> ${formData.targetAge}</p>
                         <p><strong>Технический уровень:</strong> ${techLevels[formData.techLevel]}</p>
-                        ${formData.userNeeds ? `<p><strong>Потребности пользователей:</strong> ${formData.userNeeds}</p>` : ''}
+                ${formData.userNeeds ? `<p><strong>Потребности пользователей:</strong> ${formData.userNeeds}</p>` : ''}
                     </div>
-
+                
                     <div class="tz-section">
                         <h2>3. Функциональные требования</h2>
-                        <ul>
+                <ul>
                             ${formData.features.map(feature => `<li>${feature}</li>`).join('')}
-                        </ul>
+                </ul>
                     </div>
-
+                
                     <div class="tz-section">
                         <h2>4. Дизайн</h2>
-                        <p><strong>Стиль:</strong> ${designStyles[formData.designStyle]}</p>
-                        ${formData.colorPrefs ? `<p><strong>Цветовые предпочтения:</strong> ${formData.colorPrefs}</p>` : ''}
+                <p><strong>Стиль:</strong> ${designStyles[formData.designStyle]}</p>
+                ${formData.colorPrefs ? `<p><strong>Цветовые предпочтения:</strong> ${formData.colorPrefs}</p>` : ''}
                         ${formData.branding ? `<p><strong>Фирменный стиль:</strong> ${brandingOptions[formData.branding]}</p>` : ''}
                     </div>
-
+                
                     <div class="tz-section">
                         <h2>5. Технические требования</h2>
-                        <ul>
-                            <li>Адаптивная верстка для всех устройств</li>
-                            <li>Кроссбраузерная совместимость</li>
-                            <li>Оптимизация скорости загрузки</li>
-                            <li>SEO-оптимизация</li>
-                            <li>Безопасность и защита данных</li>
-                        </ul>
-                    </div>
+                <ul>
+                    <li>Адаптивная верстка для всех устройств</li>
+                    <li>Кроссбраузерная совместимость</li>
+                    <li>Оптимизация скорости загрузки</li>
+                    <li>SEO-оптимизация</li>
+                    <li>Безопасность и защита данных</li>
+                </ul>
+                </div>
 
                     <div class="tz-section">
                         <h2>6. Сроки и бюджет</h2>
@@ -1364,7 +1364,7 @@
             try {
                 await loadJsPDF();
                 
-                if (typeof window.jspdf === 'undefined') {
+            if (typeof window.jspdf === 'undefined') {
                     throw new Error('jsPDF не загружен');
                 }
             } catch (error) {

@@ -629,15 +629,15 @@ button {
   position: fixed;
   top: 20px;
   right: 20px;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   background: var(--color-bg-card);
-  border-radius: 8px;
-  display: flex;
+  border-radius: var(--radius-full);
+  display: none;
   align-items: center;
   justify-content: center;
   z-index: 1002;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
 }
 
 .hamburger {
@@ -787,9 +787,10 @@ button {
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-md) var(--spacing-xl);
+  padding: var(--spacing-sm) var(--spacing-lg);
   border-radius: var(--radius-md);
   font-weight: 600;
+  font-size: var(--font-size-sm);
   transition: all 0.3s ease;
   cursor: pointer;
   text-decoration: none;
@@ -887,6 +888,12 @@ button {
   
   .scroll-indicator {
     bottom: 20px;
+  }
+
+  /* Адаптируем размер кнопок для мобильных */
+  .btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-xs);
   }
 }
 
@@ -1661,8 +1668,14 @@ button {
 
 .modal-actions {
   display: flex;
+  justify-content: flex-start;
   gap: var(--spacing-md);
   margin-top: var(--spacing-lg);
+}
+
+.modal-actions .btn {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--font-size-sm);
 }
 
 /* Toast notifications */
@@ -1775,6 +1788,7 @@ button {
   
   .modal-actions .btn {
     width: 100%;
+    margin-bottom: var(--spacing-sm);
   }
   
   .toast-container {
@@ -1785,6 +1799,10 @@ button {
   .toast {
     min-width: 0;
     max-width: 100%;
+  }
+  
+  .contact-form .btn {
+    padding: var(--spacing-sm) var(--spacing-md);
   }
 }
 
@@ -2012,14 +2030,14 @@ button {
 }
 
 .filter-button {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--radius-full);
-  font-size: var(--font-size-sm);
-  font-weight: 500;
+  background: transparent;
+  border: 1px solid var(--color-text-tertiary);
   color: var(--color-text-tertiary);
-  background-color: var(--color-bg-tertiary);
-  transition: all var(--transition-normal);
-  border: 1px solid transparent;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .filter-button:hover, .filter-button.active {
@@ -2171,6 +2189,7 @@ button {
   
   .filter-button {
     padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-xs);
   }
   
   .works-grid {
@@ -2190,4 +2209,8 @@ button {
   .filter-button {
     font-size: var(--font-size-xs);
   }
+}
+
+.contact-form .btn {
+  margin-top: var(--spacing-md);
 } 
