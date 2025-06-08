@@ -79,54 +79,43 @@
                 transform: translateY(-5px);
             }
 
-            /* Новый дизайн бургер-меню */
+            /* Новый дизайн меню для мобильных */
             .mobile-nav-toggle {
                 width: 50px;
                 height: 50px;
                 position: fixed;
                 right: 20px;
                 top: 20px;
-                background: var(--color-bg-card);
+                background: var(--gradient-primary);
                 border-radius: var(--radius-full);
                 display: flex; /* Показываем только на мобильных */
                 align-items: center;
                 justify-content: center;
                 z-index: 1002;
                 box-shadow: var(--shadow-lg);
+                cursor: pointer;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                border: none;
             }
-
-            .hamburger {
+            
+            .mobile-nav-toggle:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-xl);
+            }
+            
+            .mobile-nav-toggle:active {
+                transform: translateY(1px);
+            }
+            
+            .menu-icon {
                 width: 24px;
                 height: 24px;
-                position: relative;
-                cursor: pointer;
-                padding: 12px;
+                color: var(--color-text-primary);
+                transition: transform 0.3s ease;
             }
-
-            .hamburger-line {
-                width: 100%;
-                height: 2px;
-                background: var(--color-text-primary);
-                position: absolute;
-                transition: all 0.3s ease;
-            }
-
-            .hamburger-line:first-child {
-                top: 25%;
-            }
-
-            .hamburger-line:last-child {
-                bottom: 25%;
-            }
-
-            .mobile-nav-toggle.active .hamburger-line:first-child {
-                transform: rotate(45deg);
-                top: 50%;
-            }
-
-            .mobile-nav-toggle.active .hamburger-line:last-child {
-                transform: rotate(-45deg);
-                bottom: 40%;
+            
+            .mobile-nav-toggle.active .menu-icon {
+                transform: rotate(90deg);
             }
 
             .mobile-nav {
@@ -150,11 +139,14 @@
                 transform: translateX(10px);
             }
             
-            /* Адаптируем размер кнопок для мобильных */
-            .btn {
-                padding: var(--spacing-sm) var(--spacing-md);
-                font-size: var(--font-size-xs);
-            }
+                /* Адаптируем размер кнопок для мобильных */
+    .btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-xs);
+        max-width: 160px; /* Ограничиваем ширину кнопок на мобильных */
+        line-height: 1.2; /* Уменьшаем высоту строки */
+        box-sizing: border-box; /* Гарантируем, что padding не добавляет ширину */
+    }
             
             .hero-actions .btn {
                 margin-bottom: var(--spacing-sm);
@@ -190,6 +182,8 @@
             .btn {
                 padding: var(--spacing-sm) var(--spacing-lg);
                 font-size: var(--font-size-sm);
+                max-width: 180px; /* Ограничиваем ширину кнопок на планшетах */
+                white-space: nowrap;
             }
         }
         
@@ -204,6 +198,9 @@
             .btn {
                 padding: var(--spacing-sm) var(--spacing-lg);
                 font-size: var(--font-size-sm);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
 
@@ -274,10 +271,11 @@
 
     <!-- Мобильное меню -->
     <div class="mobile-nav-toggle" id="mobileNavToggle">
-            <div class="hamburger">
-            <div class="hamburger-line"></div>
-            <div class="hamburger-line"></div>
-        </div>
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 7H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 12H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
     </div>
     
     <div class="mobile-nav" id="mobileNav">
