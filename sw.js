@@ -14,7 +14,7 @@ const urlsToCache = [
     '/js/components/forms.js',
     '/js/components/portfolio.js',
     '/js/components/chat.js',
-    '/js/components/calculator.js',
+
     '/js/effects/animations.js',
     '/js/effects/particles.js',
     '/js/utils/api.js',

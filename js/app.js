@@ -9,7 +9,7 @@ const AppConfig = {
         animations: true,
         particles: true,
         chat: true,
-        calculator: true,
+
         analytics: true
     }
 };
@@ -54,7 +54,7 @@ function checkModuleAvailability() {
         'FormsModule',
         'PortfolioModule',
         'ChatModule',
-        'CalculatorModule',
+
         'AnimationsModule',
         'ParticlesModule',
         'ApiModule'
@@ -209,7 +209,7 @@ async function initializeApplication() {
         // 6. Initialize content modules
         await loadModule('Portfolio', window.PortfolioModule.initializePortfolio);
         await loadModule('Chat', window.ChatModule.initializeChat);
-        await loadModule('Calculator', window.CalculatorModule.initializeCalculator);
+        
         
         // 7. Initialize visual effects (after core functionality)
         if (AppConfig.features.animations) {
@@ -256,7 +256,7 @@ async function initializeApplication() {
                     forms: window.FormsModule,
                     portfolio: window.PortfolioModule,
                     chat: window.ChatModule,
-                    calculator: window.CalculatorModule,
+        
                     animations: window.AnimationsModule,
                     particles: window.ParticlesModule,
                     api: window.ApiModule

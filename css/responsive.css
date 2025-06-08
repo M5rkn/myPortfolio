@@ -199,62 +199,7 @@
         color: var(--text-primary) !important;
     }
     
-    /* Calculator optimizations */
-    .cost-calculator {
-        bottom: 10px;
-        left: 10px;
-    }
-    
-    .calculator-toggle {
-        background: var(--secondary-gradient); 
-        border: 3px solid rgba(255, 255, 255, 0.2);
-        padding: var(--spacing-sm) var(--spacing-md);
-        font-weight: 700;
-        font-size: var(--font-xs);
-    }
-    
-    .calculator-text {
-        display: none;
-    }
-    
-    .calculator-window {
-        width: calc(100vw - 20px);
-        left: -5px;
-        bottom: 70px;
-        background: rgba(0, 0, 0, 0.98);
-        backdrop-filter: blur(15px);
-        border: 3px solid #43e97b;
-        box-shadow: 0 10px 30px rgba(67, 233, 123, 0.3);
-        border-radius: 20px 20px 0 0;
-    }
-    
-    .calculator-content {
-        background: rgba(0, 0, 0, 0.8) !important;
-        backdrop-filter: blur(5px) !important;
-    }
-    
-    .calc-option {
-        background: rgba(255, 255, 255, 0.1) !important;
-        border: 2px solid rgba(67, 233, 123, 0.6) !important;
-        color: var(--text-primary) !important;
-        padding: var(--spacing-sm) !important;
-        font-size: 0.95rem !important;
-    }
-    
-    .calc-option:hover,
-    .calc-option:active {
-        background: rgba(67, 233, 123, 0.2) !important;
-        border-color: #43e97b !important;
-        transform: scale(1.02) !important;
-    }
-    
-    .calc-result {
-        background: rgba(67, 233, 123, 0.2) !important;
-        border: 2px solid #43e97b !important;
-        color: var(--text-primary) !important;
-        font-size: var(--font-lg) !important;
-        padding: var(--spacing-md) !important;
-    }
+
     
     /* Form optimizations */
     .form-group textarea {
@@ -271,8 +216,7 @@
 
 /* ========== VERY SMALL SCREENS ========== */
 @media (max-width: 360px) {
-    .chat-window,
-    .calculator-window {
+    .chat-window {
         width: calc(100vw - 10px) !important;
         left: 5px !important;
         right: 5px !important;
@@ -290,8 +234,7 @@
 
 /* ========== LANDSCAPE ORIENTATION ON MOBILE ========== */
 @media (max-width: 768px) and (orientation: landscape) {
-    .chat-window,
-    .calculator-window {
+    .chat-window {
         height: 70vh !important;
         max-height: 400px !important;
     }
@@ -311,9 +254,7 @@
         width: 380px;
     }
     
-    .calculator-window {
-        width: 420px;
-    }
+
     
     .services-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -328,8 +269,7 @@
 
 /* ========== DARK THEME SUPPORT ========== */
 @media (prefers-color-scheme: dark) and (max-width: 480px) {
-    .chat-window,
-    .calculator-window {
+    .chat-window {
         background: rgba(0, 0, 0, 0.98) !important;
         border-color: rgba(102, 126, 234, 0.8) !important;
     }
@@ -338,21 +278,17 @@
         background: rgba(0, 0, 0, 0.9) !important;
     }
     
-    .calculator-content {
-        background: rgba(0, 0, 0, 0.9) !important;
-    }
+
 }
 
 /* ========== HIGH CONTRAST MODE ========== */
 @media (prefers-contrast: high) {
-    .chat-window,
-    .calculator-window {
+    .chat-window {
         border-width: 4px !important;
         box-shadow: 0 0 0 2px var(--text-primary) !important;
     }
     
-    .chat-input,
-    .calc-option {
+    .chat-input {
         border-width: 3px !important;
     }
     

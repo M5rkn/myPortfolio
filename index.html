@@ -50,41 +50,7 @@
     
     <link rel="stylesheet" href="css/index.css?v=20250608">
     
-    <!-- Fallback CSS для Railway.com -->
-    <style>
-        .calculator-window.active {
-            display: block !important;
-            position: absolute !important;
-            bottom: 70px !important;
-            left: 0 !important;
-            z-index: 1050 !important;
-            width: 400px !important;
-            background: rgba(0, 0, 0, 0.95) !important;
-            border: 2px solid #43e97b !important;
-            border-radius: 8px !important;
-            max-height: 80vh !important;
-            overflow-y: auto !important;
-        }
-        
-        .cost-calculator {
-            position: fixed !important;
-            bottom: 20px !important;
-            right: 20px !important;
-            z-index: 1050 !important;
-        }
-        
-        .calculator-toggle {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white !important;
-            border: none !important;
-            padding: 12px 16px !important;
-            border-radius: 50px !important;
-            cursor: pointer !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 8px !important;
-        }
-    </style>
+
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,7 +63,7 @@
     <script src="js/components/forms.js"></script>
     <script src="js/components/portfolio.js"></script>
     <script src="js/components/chat.js"></script>
-    <script src="js/components/calculator.js"></script>
+    
     <script src="js/effects/animations.js"></script>
     <script src="js/effects/particles.js"></script>
     <script src="js/app.js"></script>
@@ -411,122 +377,14 @@
         </div>
     </div>
 
-    <!-- Калькулятор стоимости -->
-    <div id="costCalculator" class="cost-calculator">
-        <div class="calculator-toggle" id="calculatorToggle" onclick="toggleCalc()" ontouchstart="toggleCalc()" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
-            <span class="calculator-icon">💰</span>
-            <span class="calculator-text">Калькулятор</span>
-        </div>
-        <div class="calculator-window" id="calculatorWindow">
-            <div class="calculator-header">
-                <h4>Горячие предложения 🔥</h4>
-                <button class="calculator-close" id="calculatorClose" onclick="closeCalc()" ontouchstart="closeCalc()">&times;</button>
-            </div>
-            <div class="calculator-content">
-                
-                <div class="calc-section">
-                    <h5>Тип проекта</h5>
-                    <div class="calc-options">
-                        <label class="calc-option">
-                            <input type="radio" name="projectType" value="landing" data-cost="50" onchange="calcTotal()">
-                            <span>Лендинг (от 50€) 🔥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="radio" name="projectType" value="website" data-cost="100" onchange="calcTotal()">
-                            <span>Корпоративный сайт (от 100€) 🔥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="radio" name="projectType" value="shop" data-cost="200" onchange="calcTotal()">
-                            <span>Интернет-магазин (от 200€) 🔥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="radio" name="projectType" value="app" data-cost="300" onchange="calcTotal()">
-                            <span>Веб-приложение (от 300€) 🔥</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="calc-section">
-                    <h5>Дополнительные опции</h5>
-                    <div class="calc-options">
-                        <label class="calc-option">
-                            <input type="checkbox" name="features" value="admin" data-cost="25" onchange="calcTotal()">
-                            <span>Админ-панель (+25€) 💥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="checkbox" name="features" value="auth" data-cost="20" onchange="calcTotal()">
-                            <span>Авторизация (+20€) 💥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="checkbox" name="features" value="api" data-cost="25" onchange="calcTotal()">
-                            <span>API интеграция (+25€) 💥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="checkbox" name="features" value="seo" data-cost="25" onchange="calcTotal()">
-                            <span>SEO оптимизация (+25€) 💥</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="calc-result">
-                    <div class="total-cost">
-                        Примерная стоимость: <span id="totalCost">0€</span>
-                    </div>
-                    <button class="btn btn-primary" id="requestQuote">Получить точную стоимость</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
 
     
     
       
     <!-- JavaScript modules loaded in <head> for better performance -->
-    
-    <!-- INLINE CALCULATOR FUNCTIONS -->
-    <script>
-        // Функция переключения калькулятора
-        function toggleCalc(event) {
-            if(event) event.preventDefault();
-            console.log('🎯 Toggle calc called');
-            const win = document.getElementById('calculatorWindow');
-            if(win) {
-                const isActive = win.classList.contains('active');
-                if(isActive) {
-                    win.classList.remove('active');
-                    console.log('❌ Closed');
-                } else {
-                    win.classList.add('active');
-                    console.log('✅ Opened');
-                }
-            }
-        }
-        
-        // Функция закрытия калькулятора
-        function closeCalc(event) {
-            if(event) event.preventDefault();
-            console.log('🚪 Close calc called');
-            const win = document.getElementById('calculatorWindow');
-            if(win) win.classList.remove('active');
-        }
-        
-        // Универсальная функция расчета стоимости
-        function calcTotal() {
-            let total = 0;
-            const type = document.querySelector('input[name="projectType"]:checked');
-            if(type) total += parseInt(type.dataset.cost) || 0;
-            
-            document.querySelectorAll('input[name="features"]:checked').forEach(f => {
-                total += parseInt(f.dataset.cost) || 0;
-            });
-            
-            const totalEl = document.getElementById('totalCost');
-            if(totalEl) totalEl.textContent = total + '€';
-            
-            console.log('💰 Cost calculated:', total + '€');
-        }
-    </script>
+
 
 </body>
 </html> 
