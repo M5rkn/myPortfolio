@@ -68,27 +68,28 @@ function initCustomCursor() {
         let mouseX = 0, mouseY = 0;
         let cursorX = 0, cursorY = 0;
         let followerX = 0, followerY = 0;
+        let animationFrameId = null;
         
-        // Оптимизированное отслеживание с использованием requestAnimationFrame
-        document.addEventListener('mousemove', function(e) {
+        const mouseMoveHandler = function(e) {
             mouseX = e.clientX;
             mouseY = e.clientY;
-        });
+        };
+        
+        document.addEventListener('mousemove', mouseMoveHandler);
         
         function updateCursor() {
-            // Плавное движение курсора с эффектом следования
             cursorX += (mouseX - cursorX) * 0.2;
             cursorY += (mouseY - cursorY) * 0.2;
             followerX += (mouseX - followerX) * 0.1;
             followerY += (mouseY - followerY) * 0.1;
             
-            cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
-            follower.style.transform = `translate(${followerX}px, ${followerY}px)`;
+            cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+            follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0)`;
             
-            requestAnimationFrame(updateCursor);
+            animationFrameId = requestAnimationFrame(updateCursor);
         }
         
-        requestAnimationFrame(updateCursor);
+        animationFrameId = requestAnimationFrame(updateCursor);
         
         // Эффекты при наведении на интерактивные элементы
         const interactiveElements = document.querySelectorAll('a, button, .work-card, .service-card, input, textarea, [data-cursor="pointer"]');
@@ -117,8 +118,15 @@ function initCustomCursor() {
                 follower.classList.remove('follower-view');
             });
         });
+        
+        // Очистка при уничтожении
+        return function cleanup() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            document.removeEventListener('mousemove', mouseMoveHandler);
+        };
     } else {
-        // Скрываем курсор на тач-устройствах
         cursor.style.display = 'none';
         follower.style.display = 'none';
     }
@@ -340,31 +348,19 @@ function initPortfolioFilter() {
 
 // Ленивая загрузка изображений
 function initLazyLoading() {
-    const lazyImages = document.querySelectorAll('[data-src]');
-    
-    if (!lazyImages.length) return;
-    
-    const imageObserver = new IntersectionObserver(function(entries, observer) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                const src = img.getAttribute('data-src');
-                
-                img.setAttribute('src', src);
-                img.classList.add('loaded');
-                
-                img.addEventListener('load', function() {
-                    img.removeAttribute('data-src');
-                });
-                
-                observer.unobserve(img);
+    if ('loading' in HTMLImageElement.prototype) {
+        const images = document.querySelectorAll('img[loading="lazy"]');
+        images.forEach(img => {
+            if (img.dataset.src) {
+                img.src = img.dataset.src;
             }
         });
-    }, { rootMargin: '50px' });
-    
-    lazyImages.forEach(img => {
-        imageObserver.observe(img);
-    });
+    } else {
+        // Fallback для старых браузеров
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
+        document.body.appendChild(script);
+    }
 }
 
 // Анимации при скролле
@@ -373,24 +369,24 @@ function initScrollAnimations() {
     
     if (!animatedElements.length) return;
     
-    const observer = new IntersectionObserver(function(entries) {
+    const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const el = entry.target;
-                const delay = el.getAttribute('data-delay') || 0;
-                
-                setTimeout(() => {
-                    el.classList.add('animate');
-                }, delay);
-                
-                observer.unobserve(el);
+                entry.target.classList.add('animate');
+                observer.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.1 });
-    
-    animatedElements.forEach(el => {
-        observer.observe(el);
+    }, {
+        threshold: 0.1,
+        rootMargin: '50px'
     });
+    
+    animatedElements.forEach(el => observer.observe(el));
+    
+    // Очистка при уничтожении
+    return function cleanup() {
+        animatedElements.forEach(el => observer.unobserve(el));
+    };
 }
 
 // Регистрация Service Worker
@@ -505,7 +501,43 @@ function initModal() {
 
 // Форма обратной связи
 function initContactForm() {
-    // ... существующий код ...
+    const form = document.getElementById('contactForm');
+    if (!form) return;
+    
+    let isSubmitting = false;
+    
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (isSubmitting) return;
+        isSubmitting = true;
+        
+        try {
+            const formData = new FormData(form);
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            const data = await response.json();
+            showToast('success', 'Сообщение отправлено!');
+            form.reset();
+            
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('error', 'Произошла ошибка при отправке');
+            
+        } finally {
+            isSubmitting = false;
+        }
+    });
 }
 
 // Данные проектов

@@ -49,8 +49,8 @@
   --font-size-lg: 1.125rem;  /* 18px */
   --font-size-xl: 1.25rem;   /* 20px */
   --font-size-2xl: 1.5rem;   /* 24px */
-  --font-size-3xl: 1.875rem; /* 30px */
-  --font-size-4xl: 2.25rem;  /* 36px */
+  --font-size-3xl: 1.75rem;  /* 28px */
+  --font-size-4xl: 2rem;     /* 32px */
   --font-size-5xl: 3rem;     /* 48px */
   --font-size-6xl: 3.75rem;  /* 60px */
   
@@ -59,10 +59,10 @@
   --spacing-sm: 0.5rem;    /* 8px */
   --spacing-md: 1rem;      /* 16px */
   --spacing-lg: 1.5rem;    /* 24px */
-  --spacing-xl: 2rem;      /* 32px */
+  --spacing-xl: 4rem;      /* 64px */
   --spacing-2xl: 3rem;     /* 48px */
-  --spacing-3xl: 4rem;     /* 64px */
-  --spacing-4xl: 6rem;     /* 96px */
+  --spacing-3xl: 3rem;     /* 48px */
+  --spacing-4xl: 4rem;     /* 64px */
   
   /* Скругления */
   --radius-sm: 0.25rem;    /* 4px */
@@ -80,7 +80,7 @@
   
   /* Контейнер */
   --container-max-width: 1280px;
-  --container-padding: 1.5rem;
+  --container-padding: 1rem;
   
   /* Z-индексы */
   --z-background: -10;
@@ -213,21 +213,27 @@ button {
 .gradient-text {
   background: var(--gradient-primary);
   -webkit-background-clip: text;
+  -moz-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
 }
 
 .gradient-text-secondary {
   background: var(--gradient-secondary);
   -webkit-background-clip: text;
+  -moz-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
 }
 
 .gradient-text-accent {
   background: var(--gradient-accent);
   -webkit-background-clip: text;
+  -moz-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
   color: transparent;
 }
 
@@ -440,21 +446,20 @@ button {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
-  background-color: var(--color-bg-tertiary);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
   transition: all var(--transition-normal);
-  color: var(--color-text-secondary);
 }
 
 .social-icon:hover {
-  background-color: var(--color-bg-card-hover);
-  color: var(--color-primary);
-  transform: translateY(-3px);
+  transform: translateY(-2px);
+  background: var(--gradient-primary);
+  color: white;
 }
 
 .social-icon svg {
   width: 20px;
   height: 20px;
-  stroke-width: 1.5;
 }
 
 /* Индикатор прокрутки */
@@ -869,13 +874,14 @@ button {
 /* Медиа-запросы */
 @media (max-width: 1280px) {
   :root {
-    --container-max-width: 1024px;
+    --container-padding: 1rem;
   }
 }
 
 @media (max-width: 1024px) {
   :root {
-    --container-max-width: 768px;
+    --font-size-4xl: 2rem;
+    --font-size-3xl: 1.75rem;
   }
   
   .section-title {
@@ -893,8 +899,8 @@ button {
 
 @media (max-width: 768px) {
   :root {
-    --container-max-width: 100%;
-    --container-padding: 1rem;
+    --spacing-4xl: 4rem;
+    --spacing-3xl: 3rem;
   }
   
   .section {
@@ -927,8 +933,30 @@ button {
     font-size: 14px;
   }
   
+  :root {
+    --font-size-base: 0.875rem;
+    --container-padding: 0.75rem;
+  }
+  
   .section {
     padding: var(--spacing-2xl) 0;
+  }
+}
+
+/* Добавляем поддержку темной темы */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-primary: #0a0f1d;
+    --color-bg-secondary: #141c2f;
+    --color-bg-tertiary: #1e2740;
+  }
+}
+
+/* Оптимизируем производительность анимаций */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
   }
 }
 
