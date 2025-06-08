@@ -3,40 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com/ https://cdn.jsdelivr.net/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), autoplay=()">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
+    
     <title>Генератор ТЗ - TechPortal</title>
     <meta name="description" content="Бесплатный генератор технических заданий для веб-проектов">
     
-    <!-- Стили -->
-    <link rel="stylesheet" href="styles.css">
+    <!-- Иконки -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon-192.svg">
+    
+    <!-- PWA манифест -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TechPortal">
+    
+    <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="css/style.css">
     
     <style>
-        /* Import same variables as main site */
         :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --accent-primary: #667eea;
-            --accent-secondary: #764ba2;
-            --border-color: #333333;
-        }
-        
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
+            /* Используем те же переменные, что и в основном сайте */
+            --color-bg-primary: #0f172a;
+            --color-bg-secondary: #1e293b;
+            --color-bg-tertiary: rgba(30, 41, 59, 0.7);
+            --color-bg-card: rgba(30, 41, 59, 0.8);
+            --color-bg-card-hover: rgba(51, 65, 85, 0.8);
+            
+            --color-text-primary: #f8fafc;
+            --color-text-secondary: #cbd5e1;
+            --color-text-tertiary: #94a3b8;
+            
+            --color-primary: #3b82f6;
+            --color-secondary: #8b5cf6;
+            --color-accent: #10b981;
+            
+            --gradient-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --gradient-secondary: linear-gradient(135deg, #8b5cf6, #ec4899);
+            --gradient-accent: linear-gradient(135deg, #10b981, #3b82f6);
+            
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            --font-size-5xl: 3rem;
+            --font-size-6xl: 3.75rem;
+            
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 0.75rem;
+            --spacing-lg: 1rem;
+            --spacing-xl: 1.5rem;
+            --spacing-2xl: 2rem;
+            --spacing-3xl: 3rem;
+            --spacing-4xl: 4rem;
+            
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+            
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.5);
+            
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+            
+            --z-toast: 9000;
+            --z-modal: 8000;
+            --z-nav: 7000;
+            --z-dropdown: 6000;
+            --z-header: 5000;
         }
         
         .tz-generator {
             min-height: 100vh;
-            background: var(--bg-primary);
+            background-color: var(--color-bg-primary);
             padding: 2rem 0;
             position: relative;
         }
@@ -49,9 +113,9 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(102, 126, 234, 0.05) 0%, transparent 50%);
+                radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
         }
@@ -59,59 +123,59 @@
         .tz-container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 0 1rem;
+            padding: 0 var(--spacing-lg);
             position: relative;
             z-index: 1;
         }
         
         .tz-header {
             text-align: center;
-            margin-bottom: 3rem;
-            color: var(--text-primary);
+            margin-bottom: var(--spacing-3xl);
+            color: var(--color-text-primary);
         }
         
         .tz-title {
-            font-size: 2.5rem;
+            font-size: var(--font-size-4xl);
             font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            margin-bottom: var(--spacing-md);
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
         .tz-subtitle {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
             opacity: 0.9;
         }
         
         .tz-card {
-            background: rgba(26, 26, 26, 0.95);
+            background: var(--color-bg-card);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-2xl);
+            margin-bottom: var(--spacing-2xl);
+            box-shadow: var(--shadow-lg);
         }
         
         .progress-bar {
             width: 100%;
             height: 8px;
-            background: var(--border-color);
-            border-radius: 4px;
-            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            margin-bottom: var(--spacing-2xl);
             overflow: hidden;
         }
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
-            border-radius: 4px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-full);
             transition: width 0.3s ease;
             width: 0%;
-            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+            box-shadow: var(--shadow-glow);
         }
         
         .step {
@@ -135,476 +199,315 @@
         }
         
         .step-title {
-            font-size: 1.5rem;
+            font-size: var(--font-size-xl);
             font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-primary);
         }
         
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--spacing-lg);
         }
         
         .form-label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: var(--spacing-sm);
             font-weight: 500;
-            color: var(--text-primary);
+            color: var(--color-text-primary);
         }
         
         .form-input, .form-textarea {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            padding: var(--spacing-md);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            transition: all var(--transition-normal);
             box-sizing: border-box;
-            background: rgba(26, 26, 26, 0.8);
-            color: var(--text-primary);
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--color-primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
         
         .form-select {
             width: 100%;
-            padding: 0.75rem 2.5rem 0.75rem 0.75rem;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            padding: var(--spacing-md) var(--spacing-xl) var(--spacing-md) var(--spacing-md);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            transition: all var(--transition-normal);
             box-sizing: border-box;
-            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(42, 42, 42, 0.9) 100%);
-            color: var(--text-primary);
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
             cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
             background-image: 
-                linear-gradient(45deg, transparent 50%, var(--accent-primary) 50%),
-                linear-gradient(135deg, var(--accent-primary) 50%, transparent 50%),
-                linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(42, 42, 42, 0.9) 100%);
+                linear-gradient(45deg, transparent 50%, var(--color-primary) 50%),
+                linear-gradient(135deg, var(--color-primary) 50%, transparent 50%);
             background-position: 
                 calc(100% - 20px) calc(1em + 2px),
-                calc(100% - 15px) calc(1em + 2px),
-                100% 0;
+                calc(100% - 15px) calc(1em + 2px);
             background-size: 
                 5px 5px,
-                5px 5px,
-                100% 100%;
+                5px 5px;
             background-repeat: no-repeat;
-            position: relative;
-        }
-        
-        .form-select:hover {
-            border-color: var(--accent-primary);
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
-        }
-        
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
-            background: rgba(26, 26, 26, 1);
         }
         
         .form-select:focus {
+            border-color: var(--color-primary);
             outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-            background-image: 
-                linear-gradient(45deg, transparent 50%, #ffffff 50%),
-                linear-gradient(135deg, #ffffff 50%, transparent 50%),
-                linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-            background-position: 
-                calc(100% - 20px) calc(1em + 2px),
-                calc(100% - 15px) calc(1em + 2px),
-                100% 0;
-            background-size: 
-                5px 5px,
-                5px 5px,
-                100% 100%;
-            background-repeat: no-repeat;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
         
-        /* Стилизация опций select */
-        .form-select option {
-            background: rgba(26, 26, 26, 0.95);
-            color: var(--text-primary);
-            padding: 0.5rem;
-            border: none;
-        }
-        
-        .form-select option:hover,
-        .form-select option:checked {
-            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
-            color: white;
-        }
-        
-        .form-input::placeholder, .form-textarea::placeholder {
-            color: var(--text-secondary);
-            opacity: 0.7;
-        }
-        
-        .form-textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        
-        .option-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-        
-        .option-card {
-            padding: 1rem;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            background: rgba(26, 26, 26, 0.5);
-            color: var(--text-primary);
-        }
-        
-        .option-card:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
-            background: rgba(26, 26, 26, 0.8);
-        }
-        
-        .option-card.selected {
-            border-color: var(--accent-primary);
-            background: rgba(102, 126, 234, 0.15);
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
-        }
-        
-        .option-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .option-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .option-desc {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-        
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        
-        .checkbox-item {
+        .form-check {
             display: flex;
             align-items: center;
-            padding: 0.5rem;
-            border-radius: 8px;
-            transition: background 0.3s ease;
+            margin-bottom: var(--spacing-sm);
         }
         
-        .checkbox-item:hover {
-            background: rgba(102, 126, 234, 0.1);
+        .form-check-input {
+            margin-right: var(--spacing-sm);
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
         }
         
-        .checkbox-item input {
-            margin-right: 0.5rem;
-        }
-        
-        .navigation {
+        .form-actions {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
+            margin-top: var(--spacing-xl);
         }
         
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
+        .btn-primary, .btn-secondary {
+            padding: var(--spacing-sm) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
             font-weight: 600;
+            border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
+            transition: all var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
-            color: white;
-            border: none;
+            background: var(--gradient-primary);
+            color: var(--color-text-primary);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
         }
         
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+        
+        .btn-primary:hover::before {
+            opacity: 1;
         }
         
         .btn-secondary {
-            background: rgba(26, 26, 26, 0.8);
-            color: var(--text-primary);
-            border: 2px solid var(--border-color);
+            background: transparent;
+            border: 2px solid var(--color-primary);
+            color: var(--color-primary);
         }
         
         .btn-secondary:hover {
-            background: rgba(26, 26, 26, 1);
-            border-color: var(--accent-primary);
-            transform: translateY(-2px);
+            background: rgba(59, 130, 246, 0.1);
         }
         
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
+        .btn-icon {
+            width: 20px;
+            height: 20px;
         }
         
         .result-section {
-            display: none;
+            margin-top: var(--spacing-2xl);
         }
         
-        .result-section.active {
-            display: block;
-            animation: fadeInUp 0.5s ease;
-        }
-        
-        .tz-preview {
-            background: rgba(26, 26, 26, 0.8);
-            padding: 2rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
-        
-        .tz-export {
-            text-align: center;
-            margin-top: 2rem;
-        }
-        
-        .export-buttons {
+        .result-actions {
             display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
         }
         
-        /* Дополнительные эффекты для select */
-        .form-group {
-            position: relative;
+        .site-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--color-bg-tertiary);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         
-        .form-group::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-            border-radius: 1px;
+        .logo {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-text-primary);
+            text-decoration: none;
         }
         
-        .form-group:focus-within::after {
-            transform: scaleX(1);
+        .logo span {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
-        /* Анимация загрузки для select при изменении */
-        .form-select.loading {
-            position: relative;
-            pointer-events: none;
-        }
-        
-        .form-select.loading::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            right: 15px;
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--accent-primary);
-            border-top: 2px solid transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            transform: translateY(-50%);
-        }
-        
-        @keyframes spin {
-            0% { transform: translateY(-50%) rotate(0deg); }
-            100% { transform: translateY(-50%) rotate(360deg); }
-        }
-        
-        /* Пульсирующий эффект при фокусе */
-        .form-group.focused {
-            position: relative;
-        }
-        
-        .form-group.focused::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 12px;
-            opacity: 0.3;
-            animation: pulse 2s infinite;
-            z-index: -1;
-        }
-        
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-                opacity: 0.3;
-            }
-            50% {
-                transform: scale(1.02);
-                opacity: 0.1;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 0.3;
-            }
-        }
-        
-        /* Улучшенный градиент для select в активном состоянии */
-        .form-select:active {
-            transform: scale(0.98);
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-        }
-        
-        /* Гладкий переход между состояниями */
-        .form-select, .form-input, .form-textarea {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        /* Эффект свечения при валидации */
-        .form-input.valid, .form-textarea.valid, .form-select.valid {
-            border-color: #4ade80;
-            box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
-        }
-        
-        .form-input.invalid, .form-textarea.invalid, .form-select.invalid {
-            border-color: #ef4444;
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
-            animation: shake 0.5s ease-in-out;
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
         @media (max-width: 768px) {
             .tz-title {
-                font-size: 2rem;
+                font-size: var(--font-size-3xl);
             }
             
             .tz-card {
-                padding: 1.5rem;
+                padding: var(--spacing-xl);
             }
             
-            .option-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .navigation {
+            .form-actions {
                 flex-direction: column;
-                gap: 1rem;
+                gap: var(--spacing-md);
             }
             
-            .export-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .form-select {
-                padding: 1rem 2.5rem 1rem 1rem;
-                font-size: 1.1rem;
+            .btn-primary, .btn-secondary {
+                width: 100%;
             }
         }
         
-        /* Additional dark theme styles */
-        .progress-status {
+        @media (max-width: 480px) {
+            .tz-title {
+                font-size: var(--font-size-2xl);
+            }
+            
+            .tz-subtitle {
+                font-size: var(--font-size-base);
+            }
+        }
+
+        /* Стили прелоадера */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-content {
             text-align: center;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
         }
-        
-        /* Custom scrollbar for dark theme */
-        .tz-preview::-webkit-scrollbar {
-            width: 8px;
+
+        .preloader-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
         }
-        
-        .tz-preview::-webkit-scrollbar-track {
-            background: rgba(51, 51, 51, 0.3);
-            border-radius: 4px;
+
+        .preloader-spinner svg {
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
         }
-        
-        .tz-preview::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 4px;
+
+        .preloader-spinner circle {
+            fill: none;
+            stroke: var(--color-primary);
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 75;
+            transform-origin: 50% 50%;
         }
-        
-        .tz-preview::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
-        }
-        
-        /* Checkbox custom styling */
-        .checkbox-item input[type="checkbox"] {
-            accent-color: var(--accent-primary);
-        }
-        
-        /* Back button in header */
-        .back-btn {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background: rgba(26, 26, 26, 0.8);
-            border: 2px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            z-index: 10;
-        }
-        
-        .back-btn:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
+    <!-- Прелоадер -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">
+                <span class="gradient-text">TP</span>
+            </div>
+            <div class="preloader-spinner">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Курсор -->
+    <div class="custom-cursor" id="customCursor"></div>
+    <div class="custom-cursor-follower" id="customCursorFollower"></div>
+
+    <!-- Линии фона -->
+    <div class="background-lines">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+    </div>
+
+    <!-- Прогресс скролла -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Шапка сайта -->
+    <div class="site-header">
+        <a href="index.html" class="logo">
+            <span>TP</span> TechPortal
+        </a>
+        <a href="index.html" class="btn btn-secondary">
+            <span>Вернуться на сайт</span>
+        </a>
+    </div>
+
+    <!-- Контент страницы -->
     <div class="tz-generator">
         <div class="tz-container">
-            <!-- Header -->
             <div class="tz-header">
-                <a href="index.html" class="back-btn">← Назад на главную</a>
-                <h1 class="tz-title">🚀 Генератор ТЗ</h1>
-                <p class="tz-subtitle">Создайте профессиональное техническое задание за 5 минут</p>
+                <h1 class="tz-title">Генератор технического задания</h1>
+                <p class="tz-subtitle">Создайте профессиональное ТЗ для вашего веб-проекта за 5 минут</p>
             </div>
             
-            <!-- Progress Bar -->
+            <!-- Остальное содержимое страницы -->
             <div class="tz-card">
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
@@ -614,9 +517,7 @@
                 </div>
             </div>
             
-            <!-- Form Steps -->
             <div class="tz-card">
-                <!-- Шаг 1: Тип проекта -->
                 <div class="step active" id="step1">
                     <h2 class="step-title">1. Какой тип проекта планируете?</h2>
                     <div class="option-grid">
@@ -643,7 +544,6 @@
                     </div>
                 </div>
                 
-                <!-- Шаг 2: Описание проекта -->
                 <div class="step" id="step2">
                     <h2 class="step-title">2. Расскажите о своем проекте</h2>
                     <div class="form-group">
@@ -660,7 +560,6 @@
                     </div>
                 </div>
                 
-                <!-- Шаг 3: Целевая аудитория -->
                 <div class="step" id="step3">
                     <h2 class="step-title">3. Кто ваша целевая аудитория?</h2>
                     <div class="form-group">
@@ -689,12 +588,10 @@
                     </div>
                 </div>
                 
-                <!-- Шаг 4: Функциональность -->
                 <div class="step" id="step4">
                     <h2 class="step-title">4. Какой функционал нужен?</h2>
                     <p style="margin-bottom: 1rem; color: #666;">Отметьте нужные функции:</p>
                     <div class="checkbox-group" id="functionalityList">
-                        <!-- Базовые функции -->
                         <div class="checkbox-item">
                             <input type="checkbox" id="responsive" value="responsive">
                             <label for="responsive">Адаптивная верстка (мобильные)</label>
@@ -714,7 +611,6 @@
                     </div>
                 </div>
                 
-                <!-- Шаг 5: Дизайн и требования -->
                 <div class="step" id="step5">
                     <h2 class="step-title">5. Дизайн и технические требования</h2>
                     <div class="form-group">
@@ -742,7 +638,6 @@
                     </div>
                 </div>
                 
-                <!-- Шаг 6: Бюджет и сроки -->
                 <div class="step" id="step6">
                     <h2 class="step-title">6. Бюджет и временные рамки</h2>
                     <div class="form-group">
@@ -771,14 +666,12 @@
                     </div>
                 </div>
                 
-                <!-- Navigation -->
                 <div class="navigation">
                     <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()" style="display: none;">Назад</button>
                     <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Далее</button>
                 </div>
             </div>
             
-            <!-- Result Section -->
             <div class="result-section" id="resultSection">
                 <div class="tz-card">
                     <h2 style="text-align: center; margin-bottom: 2rem;">✅ Ваше техническое задание готово!</h2>
@@ -800,7 +693,6 @@
     </div>
 
     <script>
-        // Lazy loading для jsPDF
         let jsPDFLoaded = false;
         
         function loadJsPDF() {
@@ -821,9 +713,7 @@
             });
         }
         
-        // Единая система ценообразования
         const PRICING_CONFIG = {
-            // Базовые цены проектов
             projectTypes: {
                 'landing': { min: 50, max: 150, name: 'Лендинг' },
                 'website': { min: 100, max: 300, name: 'Многостраничный сайт' },
@@ -831,7 +721,6 @@
                 'app': { min: 300, max: 800, name: 'Веб-приложение' }
             },
             
-            // Дополнительные услуги
             features: {
                 'admin': { cost: 25, name: 'Админ-панель' },
                 'auth': { cost: 20, name: 'Авторизация' },
@@ -842,7 +731,6 @@
                 'contact-form': { cost: 5, name: 'Форма обратной связи' }
             },
             
-            // Диапазоны бюджета
             budgetRanges: {
                 'small': '50€ - 150€',
                 'medium': '150€ - 400€', 
@@ -850,7 +738,6 @@
                 'enterprise': '800€+'
             },
             
-            // Функция для получения стоимости проекта
             calculateProjectCost: function(projectType, features = []) {
                 let baseCost = this.projectTypes[projectType]?.min || 0;
                 let additionalCost = features.reduce((sum, feature) => {
@@ -859,7 +746,6 @@
                 return baseCost + additionalCost;
             },
             
-            // Функция для определения диапазона бюджета
             getBudgetRange: function(totalCost) {
                 if (totalCost <= 150) return 'small';
                 if (totalCost <= 400) return 'medium';
@@ -868,44 +754,36 @@
             }
         };
 
-        // Fallback if jsPDF doesn't load
         if (typeof window.jspdf === 'undefined') {
             console.warn('jsPDF не загружен, PDF экспорт недоступен');
         }
     </script>
     <script>
-        // State management
         let currentStepIndex = 1;
         const totalSteps = 6;
         const formData = {};
         
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             updateProgress();
             updateFunctionalityBasedOnType();
             initializeFormEffects();
         });
         
-        // Улучшенные эффекты для форм
         function initializeFormEffects() {
-            // Анимация для select элементов
             const selects = document.querySelectorAll('.form-select');
             selects.forEach(select => {
                 select.addEventListener('change', function() {
-                    // Добавляем эффект загрузки
                     this.classList.add('loading');
                     setTimeout(() => {
                         this.classList.remove('loading');
                     }, 500);
                     
-                    // Эффект "пульсации" при выборе
                     this.style.transform = 'scale(1.02)';
                     setTimeout(() => {
                         this.style.transform = '';
                     }, 150);
                 });
                 
-                // Звуковая обратная связь (визуальная)
                 select.addEventListener('focus', function() {
                     this.style.boxShadow = '0 0 30px rgba(102, 126, 234, 0.6)';
                 });
@@ -915,7 +793,6 @@
                 });
             });
             
-            // Анимация для inputs и textarea
             const inputs = document.querySelectorAll('.form-input, .form-textarea');
             inputs.forEach(input => {
                 input.addEventListener('focus', function() {
@@ -926,7 +803,6 @@
                     this.parentElement.classList.remove('focused');
                 });
                 
-                // Эффект печати с валидацией
                 input.addEventListener('input', function() {
                     this.style.borderColor = 'var(--accent-primary)';
                     clearTimeout(this.timer);
@@ -938,7 +814,6 @@
             });
         }
         
-        // Валидация полей в реальном времени
         function validateField(field) {
             field.classList.remove('valid', 'invalid');
             
@@ -949,7 +824,6 @@
                 }
             }
             
-            // Специфичная валидация
             if (field.type === 'email') {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (field.value && !emailRegex.test(field.value)) {
@@ -970,7 +844,6 @@
             return true;
         }
         
-        // Step navigation
         function nextStep() {
             if (validateCurrentStep()) {
                 if (currentStepIndex < totalSteps) {
@@ -1014,7 +887,6 @@
             nextBtn.textContent = currentStepIndex === totalSteps ? 'Создать ТЗ' : 'Далее';
         }
         
-        // Validation
         function validateCurrentStep() {
             switch(currentStepIndex) {
                 case 1:
@@ -1084,7 +956,6 @@
             return true;
         }
         
-        // Option selection
         document.addEventListener('click', function(e) {
             if (e.target.closest('.option-card')) {
                 const card = e.target.closest('.option-card');
@@ -1094,12 +965,10 @@
             }
         });
         
-        // Dynamic functionality based on project type
         function updateFunctionalityBasedOnType() {
             const functionalityList = document.getElementById('functionalityList');
             const projectType = formData.projectType;
             
-            // Clear existing checkboxes except base ones
             const baseCheckboxes = functionalityList.innerHTML;
             
             let additionalFeatures = [];
@@ -1141,24 +1010,18 @@
                     break;
             }
             
-            // Add additional features
-            additionalFeatures.forEach(feature => {
-                const item = document.createElement('div');
-                item.className = 'checkbox-item';
-                item.innerHTML = `
+            functionalityList.innerHTML = baseCheckboxes + additionalFeatures.map(feature => `
+                <div class="checkbox-item">
                     <input type="checkbox" id="${feature.id}" value="${feature.value}">
                     <label for="${feature.id}">${feature.label}</label>
-                `;
-                functionalityList.appendChild(item);
-            });
+                </div>
+            `).join('');
         }
         
-        // Generate TZ
         function generateTZ() {
             const tzHtml = generateTZContent();
             document.getElementById('tzPreview').innerHTML = tzHtml;
             
-            // Hide form and show result
             document.querySelector('.tz-card').style.display = 'none';
             document.getElementById('resultSection').classList.add('active');
         }
@@ -1240,7 +1103,6 @@
         }
         
         function getFeatureName(feature) {
-            // Расширенные названия для дополнительных функций
             const extendedNames = {
                 'animations': 'Анимации и параллакс эффекты',
                 'popup': 'Всплывающие окна',
@@ -1281,9 +1143,7 @@
             return texts[deadline] || deadline;
         }
         
-        // Export functions
         async function downloadPDF() {
-            // Показываем индикатор загрузки
             const btn = event.target;
             const originalText = btn.textContent;
             btn.textContent = '⏳ Загружаем PDF...';
@@ -1305,19 +1165,16 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Configure for Russian text
             doc.setFont('helvetica');
             
             let yPosition = 20;
             const lineHeight = 7;
             const pageHeight = 280;
             
-            // Title
             doc.setFontSize(16);
             doc.text(`Техническое задание: ${formData.projectName}`, 20, yPosition);
             yPosition += lineHeight * 2;
             
-            // Content sections
             const content = [
                 {
                     title: '1. Общая информация',
@@ -1360,22 +1217,18 @@
             doc.setFontSize(12);
             
             content.forEach(section => {
-                // Check if we need a new page
                 if (yPosition > pageHeight - 40) {
                     doc.addPage();
                     yPosition = 20;
                 }
                 
-                // Section title
                 doc.setFont('helvetica', 'bold');
                 doc.text(section.title, 20, yPosition);
                 yPosition += lineHeight;
                 
-                // Section items
                 doc.setFont('helvetica', 'normal');
                 section.items.forEach(item => {
                     if (item) {
-                        // Handle long text wrapping
                         const splitText = doc.splitTextToSize(item, 170);
                         splitText.forEach(line => {
                             if (yPosition > pageHeight - 20) {
@@ -1431,6 +1284,30 @@
         function getBudgetText(budget) {
             return PRICING_CONFIG.budgetRanges[budget] || budget;
         }
+    </script>
+
+    <script>
+        // Скрытие прелоадера
+        window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                preloader.classList.add('hidden');
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 500);
+            }
+        });
+
+        // Запасной вариант, если событие load не сработает
+        setTimeout(() => {
+            const preloader = document.getElementById('preloader');
+            if (preloader && !preloader.classList.contains('hidden')) {
+                preloader.classList.add('hidden');
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 500);
+            }
+        }, 5000);
     </script>
 </body>
 </html> 

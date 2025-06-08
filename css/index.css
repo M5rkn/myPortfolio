@@ -1,26 +1,28 @@
-/* ========== PORTFOLIO WEBSITE STYLES ========== */
-/* Модульная архитектура CSS для лучшей организации и поддержки */
+/*==============================
+  TechPortal - Главный CSS файл
+  Версия: 2.1
+==============================*/
 
-/* 1. Основные стили - переменные, reset, типографика */
-@import url('./main.css');
+/* Базовые стили и переменные */
+@import 'style.css';
 
-/* 2. Компоненты - навигация, кнопки, формы */
-@import url('./components.css');
+/* Компоненты и элементы интерфейса */
+@import 'components.css';
 
-/* 3. Секции сайта - hero, portfolio, services, about, contact */
-@import url('./sections.css');
+/* Секции сайта */
+@import 'sections.css';
 
-/* 4. Виджеты - чат, калькулятор, модальные окна */
-@import url('./widgets.css');
+/* Виджеты и интерактивные элементы */
+@import 'widgets.css';
 
-/* 5. Анимации и интерактивные эффекты */
-@import url('./animations.css');
+/* Анимации и эффекты */
+@import 'animations.css';
 
-/* 6. Кастомный скролл */
-@import url('./scrollbar.css');
+/* Стилизация скроллбара */
+@import 'scrollbar.css';
 
-/* 7. Адаптивность и мобильные стили */
-@import url('./responsive.css');
+/* Медиа-запросы для адаптивности */
+@import 'responsive.css';
 
 /* ========== ДОПОЛНИТЕЛЬНЫЕ УТИЛИТЫ ========== */
 

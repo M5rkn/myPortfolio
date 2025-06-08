@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <!-- Security Headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com/ https://cdn.jsdelivr.net/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
@@ -13,24 +13,24 @@
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), autoplay=()">
     <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
     
-    <title>Портфолио - Современная веб-разработка | TechPortal</title>
-    <meta name="description" content="Профессиональная веб-разработка: лендинги, интернет-магазины, админ-панели. Node.js, React, MongoDB. Современный дизайн и быстрая разработка.">
-    <meta name="keywords" content="веб-разработка, создание сайтов, лендинги, интернет-магазины, Node.js, React, MongoDB, верстка, портфолио">
+    <title>TechPortal - Креативная веб-разработка | Портфолио</title>
+    <meta name="description" content="Профессиональная веб-разработка с фокусом на стильный дизайн и современные технологии. Создаю уникальные цифровые решения для вашего бизнеса.">
+    <meta name="keywords" content="веб-разработка, портфолио, frontend, backend, Node.js, React, дизайн сайтов, UI/UX">
     <meta name="author" content="TechPortal">
     
     <!-- OpenGraph метатеги -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Портфолио - Современная веб-разработка | TechPortal">
-    <meta property="og:description" content="Профессиональная веб-разработка: лендинги, интернет-магазины, админ-панели. Node.js, React, MongoDB. Современный дизайн и быстрая разработка.">
-    <meta property="og:image" content="/og-image.jpg">
+    <meta property="og:title" content="TechPortal - Креативная веб-разработка | Портфолио">
+    <meta property="og:description" content="Профессиональная веб-разработка с фокусом на стильный дизайн и современные технологии. Создаю уникальные цифровые решения для вашего бизнеса.">
+    <meta property="og:image" content="/og-image.svg">
     <meta property="og:url" content="https://techportal.up.railway.app">
     <meta property="og:site_name" content="TechPortal">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Портфолио - Современная веб-разработка | TechPortal">
-    <meta name="twitter:description" content="Профессиональная веб-разработка: лендинги, интернет-магазины, админ-панели. Node.js, React, MongoDB.">
-    <meta name="twitter:image" content="/og-image.jpg">
+    <meta name="twitter:title" content="TechPortal - Креативная веб-разработка | Портфолио">
+    <meta name="twitter:description" content="Профессиональная веб-разработка с фокусом на стильный дизайн и современные технологии. Создаю уникальные цифровые решения для вашего бизнеса.">
+    <meta name="twitter:image" content="/og-image.svg">
     
     <!-- Дополнительные метатеги -->
     <meta name="robots" content="index, follow">
@@ -43,461 +43,828 @@
     
     <!-- PWA манифест -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#667eea">
+    <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="TechPortal">
     
-    <link rel="stylesheet" href="css/index.css">
+    <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Scroll Progress Bar -->
-    <div class="scroll-progress" id="scroll-progress"></div>
-    
-    <!-- Preloader -->
-    <div id="preloader" class="preloader">
+    <!-- Прелоадер -->
+    <div class="preloader" id="preloader">
         <div class="preloader-content">
-            <div class="preloader-logo">TechPortal</div>
-            <div class="preloader-spinner">
-                <div class="spinner-ring"></div>
-                <div class="spinner-ring"></div>
-                <div class="spinner-ring"></div>
+            <div class="preloader-logo">
+                <span class="gradient-text">TP</span>
             </div>
-            <div class="preloader-text">Загружаем портфолио...</div>
+            <div class="preloader-spinner">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" />
+                </svg>
+            </div>
         </div>
     </div>
 
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <h2>TechPortal </h2>
-            </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="#home" class="nav-link">Главная</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#portfolio" class="nav-link">Работы</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#services" class="nav-link">Услуги</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#about" class="nav-link">О себе</a>
-                </li>
-                <li class="nav-item">
-                    <a href="#contact" class="nav-link">Контакты</a>
-                </li>
-                <li class="nav-item">
-                    <a href="tz-generator.html" class="nav-link">Генератор ТЗ</a>
-                </li>
-            </ul>
-            <div class="hamburger">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
-        </div>
-    </nav>
+    <!-- Курсор -->
+    <div class="custom-cursor" id="customCursor"></div>
+    <div class="custom-cursor-follower" id="customCursorFollower"></div>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div id="particles-js"></div>
-        <div class="hero-container">
-            <div class="hero-content">
-                <h1 class="hero-title">
-                    <span class="gradient-text glitch-text" data-text="Создаю цифровые">Создаю цифровые</span><br>
-                    <span class="hero-subtitle breathe">впечатления</span>
-                </h1>
-                <p class="hero-description">
-                    Современный дизайн и разработка, которые превращают идеи в захватывающие цифровые решения
-                </p>
-                <div class="hero-buttons">
-                    <a href="#portfolio" class="btn btn-primary">Посмотреть работы</a>
-                    <a href="#contact" class="btn btn-secondary">Связаться</a>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="floating-cards">
-                    <div class="card card-1"></div>
-                    <div class="card card-2"></div>
-                    <div class="card card-3"></div>
-                </div>
-            </div>
-        </div>
-        <div class="hero-gradient"></div>
-    </section>
+    <!-- Линии фона -->
+    <div class="background-lines">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+    </div>
 
-    <!-- Portfolio Section -->
-    <section id="portfolio" class="portfolio">
-        <div class="container">
-            <h2 class="section-title animate-on-scroll">Мои работы</h2>
-            <p class="section-subtitle">Коллекция проектов, демонстрирующих мой опыт и креативность</p>
-            
-            <div class="portfolio-grid">
-                <div class="portfolio-item">
-                    <div class="portfolio-image">
-                        <div class="placeholder-image project-1"></div>
-                        <div class="portfolio-overlay">
-                            <h3>Интернет-магазин</h3>
-                            <p>Node.js, MongoDB, Express</p>
-                            <a href="#" class="portfolio-link">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item">
-                    <div class="portfolio-image">
-                        <div class="placeholder-image project-2"></div>
-                        <div class="portfolio-overlay">
-                            <h3>Лендинг с анимациями</h3>
-                            <p>HTML, SCSS, JS, Parallax</p>
-                            <a href="#" class="portfolio-link">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item">
-                    <div class="portfolio-image">
-                        <div class="placeholder-image project-3"></div>
-                        <div class="portfolio-overlay">
-                            <h3>Система авторизации</h3>
-                            <p>Node.js, JWT, MongoDB</p>
-                            <a href="#" class="portfolio-link">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item">
-                    <div class="portfolio-image">
-                        <div class="placeholder-image project-4"></div>
-                        <div class="portfolio-overlay">
-                            <h3>Корпоративный блог</h3>
-                            <p>React, Node.js, админка</p>
-                            <a href="#" class="portfolio-link">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item">
-                    <div class="portfolio-image">
-                        <div class="placeholder-image project-5"></div>
-                        <div class="portfolio-overlay">
-                            <h3>WordPress + Custom</h3>
-                            <p>WordPress</p>
-                            <a href="#" class="portfolio-link">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="portfolio-item">
-                    <div class="portfolio-image">
-                        <div class="placeholder-image project-6"></div>
-                        <div class="portfolio-overlay">
-                            <h3>PSD → верстка</h3>
-                            <p>Figma/PSD → HTML, CSS</p>
-                            <a href="#" class="portfolio-link">Подробнее</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Прогресс скролла -->
+    <div class="scroll-progress" id="scrollProgress"></div>
 
-    <!-- Services Section -->
-    <section id="services" class="services">
-        <div class="container">
-            <h2 class="section-title animate-on-scroll">Что умею</h2>
-            <p class="section-subtitle">Полный спектр веб-разработки от идеи до готового проекта</p>
-            
-            <div class="services-grid">
-                <div class="service-item">
-                    <div class="service-icon">🌐</div>
-                    <h3>Лендинги и сайты</h3>
-                    <p>Лендинги, блоги, корпоративные сайты с адаптивной версткой, анимациями и параллакс эффектами</p>
-                </div>
-                
-                <div class="service-item">
-                    <div class="service-icon">🔐</div>
-                    <h3>Авторизация</h3>
-                    <p>Регистрация/логин с валидацией, восстановление пароля через email/SMS, JWT токены</p>
-                </div>
-                
-                <div class="service-item">
-                    <div class="service-icon">⚙️</div>
-                    <h3>Админка</h3>
-                    <p>Панели управления контентом, CRUD операции, управление пользователями и данными</p>
-                </div>
-                
-                <div class="service-item">
-                    <div class="service-icon">📱</div>
-                    <h3>PSD → верстка</h3>
-                    <p>Превращаю макеты Figma, PSD, Adobe XD в адаптивные, кроссбраузерные веб-страницы</p>
-                </div>
-                
-                <div class="service-item">
-                    <div class="service-icon">🗄️</div>
-                    <h3>Базы данных</h3>
-                    <p>MongoDB интеграция, работа с данными, создание API, оптимизация запросов</p>
-                </div>
-                
-                <div class="service-item">
-                    <div class="service-icon">🎯</div>
-                    <h3>WordPress</h3>
-                    <p>Кастомные темы, плагины, ACF, оптимизация скорости, SEO настройка</p>
-                </div>
+    <!-- Боковое меню -->
+    <aside class="side-nav" id="sideNav">
+        <div class="side-nav-content">
+            <div class="side-nav-logo">
+                <span class="gradient-text">TP</span>
             </div>
+            <nav class="side-nav-menu">
+                <a href="#hero" class="side-nav-link active" data-section="hero">
+                    <span class="nav-dot"></span>
+                    <span class="nav-text">Главная</span>
+                </a>
+                <a href="#works" class="side-nav-link" data-section="works">
+                    <span class="nav-dot"></span>
+                    <span class="nav-text">Работы</span>
+                </a>
+                <a href="#services" class="side-nav-link" data-section="services">
+                    <span class="nav-dot"></span>
+                    <span class="nav-text">Услуги</span>
+                </a>
+                <a href="#about" class="side-nav-link" data-section="about">
+                    <span class="nav-dot"></span>
+                    <span class="nav-text">О себе</span>
+                </a>
+                <a href="#contact" class="side-nav-link" data-section="contact">
+                    <span class="nav-dot"></span>
+                    <span class="nav-text">Контакты</span>
+                </a>
+                <a href="tz-generator.html" class="side-nav-link external">
+                    <span class="nav-dot"></span>
+                    <span class="nav-text">ТЗ Генератор</span>
+                </a>
+            </nav>
         </div>
-    </section>
+    </aside>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2 class="section-title animate-on-scroll">О себе</h2>
-                    <p class="about-description">
-                        Я создаю цифровые решения, которые объединяют современный дизайн и передовые технологии. 
-                        Моя цель — превращать сложные идеи в интуитивно понятные и красивые пользовательские интерфейсы.
-                    </p>
-                    <div class="skills">
-                        <div class="skill-item">
-                            <h4>Frontend</h4>
-                            <p>HTML, CSS/SCSS, JS (ES6+), React, Bootstrap</p>
-                        </div>
-                        <div class="skill-item">
-                            <h4>Backend</h4>
-                            <p>Node.js, Express, MongoDB (CRUD, auth)</p>
-                        </div>
-                        <div class="skill-item">
-                            <h4>Дизайн & CMS</h4>
-                            <p>WordPress, Figma, Adobe XD, PSD → верстка</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="about-visual">
-                    <div class="about-image"></div>
-                </div>
+    <!-- Мобильное меню -->
+    <div class="mobile-nav-toggle" id="mobileNavToggle">
+        <div class="hamburger">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+        </div>
+    </div>
+    
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <div class="mobile-nav-logo">
+                <span class="gradient-text">TP</span>
+            </div>
+            <div class="mobile-nav-close" id="mobileNavClose">
+                <div class="close-icon"></div>
             </div>
         </div>
-    </section>
+        <nav class="mobile-nav-menu">
+            <a href="#hero" class="mobile-nav-link">Главная</a>
+            <a href="#works" class="mobile-nav-link">Работы</a>
+            <a href="#services" class="mobile-nav-link">Услуги</a>
+            <a href="#about" class="mobile-nav-link">О себе</a>
+            <a href="#contact" class="mobile-nav-link">Контакты</a>
+            <a href="tz-generator.html" class="mobile-nav-link">ТЗ Генератор</a>
+        </nav>
+        <div class="mobile-nav-footer">
+            <div class="mobile-nav-socials">
+                <a href="https://github.com/M5rkn" target="_blank" rel="noopener noreferrer" class="social-link">GitHub</a>
+                <a href="https://t.me/Marklill" target="_blank" rel="noopener noreferrer" class="social-link">Telegram</a>
+                <a href="https://www.instagram.com/m5rkn/" target="_blank" rel="noopener noreferrer" class="social-link">Instagram</a>
+            </div>
+        </div>
+    </div>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2 class="section-title animate-on-scroll">Давайте работать вместе</h2>
-            <p class="section-subtitle">Готов обсудить ваш проект и воплотить идеи в жизнь</p>
-            
-            <div class="contact-content">
-                <div class="contact-form">
-                    <form id="contactForm" novalidate>
-                        <div class="form-group">
-                            <input type="text" id="name" name="name" placeholder="Ваше имя" required minlength="2" maxlength="50" autocomplete="name">
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section id="hero" class="section hero-section active">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <div class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
+                            <div class="badge">Веб-разработчик</div>
                         </div>
-                        <div class="form-group">
-                            <input type="email" id="email" name="email" placeholder="Email" required maxlength="254" autocomplete="email">
+                        <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
+                            Креативные <span class="gradient-text">цифровые</span> решения
+                        </h1>
+                        <p class="hero-description" data-aos="fade-up" data-aos-delay="300">
+                            Преобразую идеи в элегантные и функциональные веб-проекты, 
+                            объединяя инновационный дизайн с современными технологиями.
+                        </p>
+                        <div class="hero-actions" data-aos="fade-up" data-aos-delay="400">
+                            <a href="#works" class="btn btn-primary">
+                                <span>Мои работы</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13.5 4.5L21 12L13.5 19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M21 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                            <a href="#contact" class="btn btn-secondary">
+                                <span>Связаться</span>
+                            </a>
                         </div>
-                        <div class="form-group">
-                            <textarea id="message" name="message" placeholder="Расскажите о вашем проекте" rows="5" required minlength="10" maxlength="1000"></textarea>
+                        <div class="hero-stats" data-aos="fade-up" data-aos-delay="500">
+                            <div class="stat">
+                                <div class="stat-number" data-count="50">0</div>
+                                <div class="stat-label">Проектов</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number" data-count="5">0</div>
+                                <div class="stat-label">Лет опыта</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number" data-count="100">0</div>
+                                <div class="stat-label">Клиентов</div>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Отправить сообщение</button>
-                    </form>
-                </div>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <h4>Email</h4>
-                        <p>markoilynickiy@gmail.com</p>
                     </div>
-                    <div class="contact-item">
-                        <h4>Телефон</h4>
-                        <p>+491605479381</p>
-                    </div>
-                    <div class="contact-item">
-                        <h4>Социальные сети</h4>
-                        <div class="social-links">
-                            <a href="https://github.com/M5rkn" class="social-link" rel="noopener noreferrer" target="_blank">GitHub</a>
-                            <a href="https://www.instagram.com/m5rkn/" class="social-link" rel="noopener noreferrer" target="_blank">Instagram</a>
-                            <a href="https://t.me/Marklill" class="social-link" rel="noopener noreferrer" target="_blank">Telegram</a>
+                    <div class="hero-visual" data-aos="fade-left" data-aos-delay="300">
+                        <div class="hero-image">
+                            <div class="blob-animation"></div>
+                            <div class="rotating-tech">
+                                <div class="tech-badge">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iI0U2NTEwMCIgZD0iTTIyLjAzLDcuNUwxMi4yMiwzMC4xSDIyTDEwLjAyLDQzTDM2LDQzTDI2LjQ4LDcuNUgyMi4wM3oiLz48cGF0aCBmaWxsPSIjRkZDQTI4IiBkPSJNMzIsMzcuNUgyN2wtNS0xMWwxMC03TDMyLDM3LjV6Ii8+PC9zdmc+" alt="Tech" class="tech-icon">
+                                </div>
+                                <div class="tech-badge">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iIzAyNzdCRCIgZD0iTTI0LDM0QzExLjEsMzQsMSwzMCwxLDI1VjQwYzAsNSwxMC4xLDksMjMsOWMyLjggMCw1LjUtMC4yLDgtMC42VjM2LjFDMjkuNSwzMy44LDI2LjgsMzQsMjQsMzR6Ii8+PHBhdGggZmlsbD0iIzAzNTlCRCIgZD0iTTI0LDI1QzExLjEsMjUsMSwyMSwxLDE2VjMxYzAsNSwxMC4xLDksMjMsOWMxMi45LDAsMjMtNCwyMy05VjE2QzQ3LDIxLDM2LjksMjUsMjQsMjV6Ii8+PHBhdGggZmlsbD0iIzAzQTlGNCIgZD0iTTI0LDE2YzEyLjksMCwyMy00LDIzLTlzLTEwLjEtOS0yMy05UzEsMywyLDhTMTEuMSwxNiwyNCwxNnoiLz48L3N2Zz4=" alt="Tech" class="tech-icon">
+                                </div>
+                                <div class="tech-badge">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iIzIxOTZGMyIgZD0iTTE0LDQyaDR2LTRoLTR2NGptOCwwaDRWMjRoLTR2MThaTTYsMzJoNHYtNEg2djRabTgtNGg0di00aC00djR6bTE2LThoNHYtNGgtNHY0em0wLTh2NGg0di00SDE0djIxYTMsMywwLDEsMCw2LDBWMzBoMTRWMTBaIi8+PC9zdmc+" alt="Tech" class="tech-icon">
+                                </div>
+                                <div class="tech-badge">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iIzAwZDhlMCIgZD0iTTI0LDM0QzExLjEsMzQsMSwzMCwxLDI1VjQwYzAsNSwxMC4xLDksMjMsOWMyLjggMCw1LjUtMC4yLDgtMC42VjM2LjFDMjkuNSwzMy44LDI2LjgsMzQsMjQsMzR6Ii8+PHBhdGggZmlsbD0iIzAwYWNjMSIgZD0iTTI0LDI1QzExLjEsMjUsMSwyMSwxLDE2VjMxYzAsNSwxMC4xLDksMjMsOWMxMi45LDAsMjMtNCwyMy05VjE2QzQ3LDIxLDM2LjksMjUsMjQsMjV6Ii8+PHBhdGggZmlsbD0iIzI2YzZkYSIgZD0iTTI0LDE2YzEyLjksMCwyMy00LDIzLTlzLTEwLjEtOS0yMy05UzEsMywyLDhTMTEuMSwxNiwyNCwxNnoiLz48L3N2Zz4=" alt="Tech" class="tech-icon">
+                                </div>
+                                <div class="tech-badge">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iIzU3Rjg3MSIgZD0iTTI0LDQ3YzAsMC0xOC0xMC41LTE4LTI4LjdDNiwxMi45LDEwLjUsMSwxNywxYzUuMywwLDctNCwxNS00YzAsMjguNi04LDUwLTgsNTAiLz48cGF0aCBmaWxsPSIjRDREREQ0IiBkPSJNMjQsNDdjMCwwLDE4LTEwLjUsMTgtMjguN0M0MiwxMi45LDM3LjUsMSwzMSwxYy01LjMsMC03LTQtMTUtNGMwLDI4LjYsOCw1MCw4LDUwIi8+PC9zdmc+" alt="Tech" class="tech-icon">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+            <div class="scroll-indicator">
+                <div class="mouse">
+                    <div class="wheel"></div>
+                </div>
+                <div class="scroll-text">Скролл вниз</div>
+            </div>
+        </section>
+
+        <!-- Works Section -->
+        <section id="works" class="section works-section">
+            <div class="container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title">Мои работы</h2>
+                    <p class="section-subtitle">Избранные проекты из моего портфолио</p>
+                </div>
+                
+                <div class="works-filter" data-aos="fade-up" data-aos-delay="200">
+                    <button class="filter-button active" data-filter="all">Все</button>
+                    <button class="filter-button" data-filter="landing">Лендинги</button>
+                    <button class="filter-button" data-filter="ecommerce">E-commerce</button>
+                    <button class="filter-button" data-filter="app">Веб-приложения</button>
+                </div>
+                
+                <div class="works-grid" data-aos="fade-up" data-aos-delay="300">
+                    <div class="work-item" data-category="landing">
+                        <div class="work-image">
+                            <div class="project-preview project-1"></div>
+                            <div class="work-overlay">
+                                <div class="work-tags">
+                                    <span class="tag">React</span>
+                                    <span class="tag">GSAP</span>
+                                </div>
+                                <h3 class="work-title">Современный лендинг</h3>
+                                <p class="work-description">Одностраничный сайт с параллакс эффектами и плавными анимациями</p>
+                                <button class="work-link" data-project="project1">
+                                    Подробнее
+                                    <svg class="link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="work-item" data-category="ecommerce">
+                        <div class="work-image">
+                            <div class="project-preview project-2"></div>
+                            <div class="work-overlay">
+                                <div class="work-tags">
+                                    <span class="tag">Node.js</span>
+                                    <span class="tag">MongoDB</span>
+                                </div>
+                                <h3 class="work-title">Интернет-магазин</h3>
+                                <p class="work-description">Полнофункциональный онлайн-магазин с корзиной и оформлением заказов</p>
+                                <button class="work-link" data-project="project2">
+                                    Подробнее
+                                    <svg class="link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="work-item" data-category="app">
+                        <div class="work-image">
+                            <div class="project-preview project-3"></div>
+                            <div class="work-overlay">
+                                <div class="work-tags">
+                                    <span class="tag">React</span>
+                                    <span class="tag">Firebase</span>
+                                </div>
+                                <h3 class="work-title">Система авторизации</h3>
+                                <p class="work-description">Защищенная система входа с JWT токенами и восстановлением пароля</p>
+                                <button class="work-link" data-project="project3">
+                                    Подробнее
+                                    <svg class="link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="work-item" data-category="app">
+                        <div class="work-image">
+                            <div class="project-preview project-4"></div>
+                            <div class="work-overlay">
+                                <div class="work-tags">
+                                    <span class="tag">React</span>
+                                    <span class="tag">Node.js</span>
+                                </div>
+                                <h3 class="work-title">Корпоративный блог</h3>
+                                <p class="work-description">Многопользовательский блог с ролями и редактором контента</p>
+                                <button class="work-link" data-project="project4">
+                                    Подробнее
+                                    <svg class="link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="work-item" data-category="landing">
+                        <div class="work-image">
+                            <div class="project-preview project-5"></div>
+                            <div class="work-overlay">
+                                <div class="work-tags">
+                                    <span class="tag">WordPress</span>
+                                    <span class="tag">Custom Theme</span>
+                                </div>
+                                <h3 class="work-title">Кастомная WordPress тема</h3>
+                                <p class="work-description">Уникальная тема с нестандартными блоками и интеграциями</p>
+                                <button class="work-link" data-project="project5">
+                                    Подробнее
+                                    <svg class="link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="work-item" data-category="ecommerce">
+                        <div class="work-image">
+                            <div class="project-preview project-6"></div>
+                            <div class="work-overlay">
+                                <div class="work-tags">
+                                    <span class="tag">Figma</span>
+                                    <span class="tag">HTML/CSS</span>
+                                </div>
+                                <h3 class="work-title">Адаптивная верстка</h3>
+                                <p class="work-description">Точная pixel-perfect верстка с макета Figma с поддержкой всех устройств</p>
+                                <button class="work-link" data-project="project6">
+                                    Подробнее
+                                    <svg class="link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="section services-section">
+            <div class="container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title">Мои услуги</h2>
+                    <p class="section-subtitle">Комплексные решения для вашего бизнеса</p>
+                </div>
+                
+                <div class="services-grid">
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="service-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 9.75C2 8.23122 3.23122 7 4.75 7H19.25C20.7688 7 22 8.23122 22 9.75V19.25C22 20.7688 20.7688 22 19.25 22H4.75C3.23122 22 2 20.7688 2 19.25V9.75Z" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M7 7V3.75C7 2.23122 8.23122 1 9.75 1H14.25C15.7688 1 17 2.23122 17 3.75V7" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M22 12L2 12" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M7 12V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M17 12V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Разработка сайтов</h3>
+                        <p class="service-description">
+                            Создание современных адаптивных сайтов: от лендингов до корпоративных порталов с глубокой технической интеграцией.
+                        </p>
+                        <ul class="service-features">
+                            <li>Лендинги и многостраничные сайты</li>
+                            <li>Адаптивная верстка для всех устройств</li>
+                            <li>Интерактивные элементы и анимации</li>
+                            <li>SEO-оптимизация и быстрая загрузка</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="service-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V7C21 8.10457 20.1046 9 19 9H5C3.89543 9 3 8.10457 3 7V5Z" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M3 13C3 11.8954 3.89543 11 5 11H11C12.1046 11 13 11.8954 13 13V19C13 20.1046 12.1046 21 11 21H5C3.89543 21 3 20.1046 3 19V13Z" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M16 13.6667C16 12.1939 17.1939 11 18.6667 11H19.3333C20.8061 11 22 12.1939 22 13.6667V14.3333C22 15.8061 20.8061 17 19.3333 17H18.6667C17.1939 17 16 15.8061 16 14.3333V13.6667Z" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M16 18.6667C16 17.1939 17.1939 16 18.6667 16H19.3333C20.8061 16 22 17.1939 22 18.6667V19.3333C22 20.8061 20.8061 22 19.3333 22H18.6667C17.1939 22 16 20.8061 16 19.3333V18.6667Z" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Интернет-магазины</h3>
+                        <p class="service-description">
+                            Разработка полнофункциональных e-commerce платформ с удобным управлением товарами и интеграцией платежных систем.
+                        </p>
+                        <ul class="service-features">
+                            <li>Удобные каталоги и фильтры</li>
+                            <li>Корзина и оформление заказа</li>
+                            <li>Интеграция с CRM и платежами</li>
+                            <li>Аналитика и отслеживание конверсий</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="service-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 6C2 4.34315 3.34315 3 5 3H19C20.6569 3 22 4.34315 22 6V15C22 16.6569 20.6569 18 19 18H5C3.34315 18 2 16.6569 2 15V6Z" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M12 21H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M7 21H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Веб-приложения</h3>
+                        <p class="service-description">
+                            Разработка динамичных веб-приложений с авторизацией, личными кабинетами и обработкой данных.
+                        </p>
+                        <ul class="service-features">
+                            <li>SPA на React/Vue/Angular</li>
+                            <li>Серверная часть на Node.js</li>
+                            <li>Базы данных MongoDB/PostgreSQL</li>
+                            <li>API и интеграции сторонних сервисов</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="400">
+                        <div class="service-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 11.5C2 7.02944 2 4.79416 3.39708 3.39708C4.79416 2 7.02944 2 11.5 2C15.9706 2 18.2058 2 19.6029 3.39708C21 4.79416 21 7.02944 21 11.5V12.5C21 16.9706 21 19.2058 19.6029 20.6029C18.2058 22 15.9706 22 11.5 22C7.02944 22 4.79416 22 3.39708 20.6029C2 19.2058 2 16.9706 2 12.5V11.5Z" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M7 8H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M7 12H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M7 16H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">CMS-системы</h3>
+                        <p class="service-description">
+                            Настройка и кастомизация CMS: WordPress, OpenCart и других с разработкой уникальных плагинов и тем.
+                        </p>
+                        <ul class="service-features">
+                            <li>Кастомные WordPress темы</li>
+                            <li>Разработка плагинов и модулей</li>
+                            <li>Интеграция с внешними сервисами</li>
+                            <li>Оптимизация скорости и безопасности</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="500">
+                        <div class="service-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13 3H8.2C7.0799 3 6.51984 3 6.09202 3.21799C5.71569 3.40973 5.40973 3.71569 5.21799 4.09202C5 4.51984 5 5.0799 5 6.2V17.8C5 18.9201 5 19.4802 5.21799 19.908C5.40973 20.2843 5.71569 20.5903 6.09202 20.782C6.51984 21 7.0799 21 8.2 21H15.8C16.9201 21 17.4802 21 17.908 20.782C18.2843 20.5903 18.5903 20.2843 18.782 19.908C19 19.4802 19 18.9201 19 17.8V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13 3L19 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13 3V9H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">UI/UX Дизайн</h3>
+                        <p class="service-description">
+                            Разработка современного адаптивного дизайна с фокусом на пользовательский опыт и конверсию.
+                        </p>
+                        <ul class="service-features">
+                            <li>Прототипирование интерфейсов</li>
+                            <li>Дизайн в Figma/Adobe XD</li>
+                            <li>Анимации и микроинтеракции</li>
+                            <li>Тестирование и улучшение UX</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="service-card" data-aos="fade-up" data-aos-delay="600">
+                        <div class="service-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 8L3 12L7 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M17 8L21 12L17 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M14 4L10 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3 class="service-title">Поддержка и развитие</h3>
+                        <p class="service-description">
+                            Техническая поддержка, обновление и развитие существующих проектов, миграция на новые технологии.
+                        </p>
+                        <ul class="service-features">
+                            <li>Обновление устаревших сайтов</li>
+                            <li>Перенос на современные технологии</li>
+                            <li>Оптимизация производительности</li>
+                            <li>Регулярное обслуживание и мониторинг</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section about-section">
+            <div class="container">
+                <div class="about-content">
+                    <div class="about-visual" data-aos="fade-right">
+                        <div class="about-image">
+                            <div class="experience-badge">
+                                <span class="exp-number">5+</span>
+                                <span class="exp-text">лет опыта</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="about-text" data-aos="fade-left">
+                        <div class="section-header">
+                            <h2 class="section-title">О себе</h2>
+                            <p class="section-subtitle">Коротко о моем пути и ценностях</p>
+                        </div>
+                        
+                        <p class="about-description">
+                            Я создаю цифровые решения, которые объединяют стильный дизайн и передовые технологии. 
+                            Моя цель — превращать сложные идеи в интуитивно понятные и функциональные интерфейсы, 
+                            которые решают реальные бизнес-задачи.
+                        </p>
+                        
+                        <div class="skills-container">
+                            <h3 class="skills-title">Мои навыки</h3>
+                            <div class="skills-grid">
+                                <div class="skill-group">
+                                    <h4 class="skill-group-title">Frontend</h4>
+                                    <div class="skill-tags">
+                                        <span class="skill-tag">HTML5</span>
+                                        <span class="skill-tag">CSS3/SCSS</span>
+                                        <span class="skill-tag">JavaScript ES6+</span>
+                                        <span class="skill-tag">React</span>
+                                        <span class="skill-tag">Vue</span>
+                                        <span class="skill-tag">TypeScript</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-group">
+                                    <h4 class="skill-group-title">Backend</h4>
+                                    <div class="skill-tags">
+                                        <span class="skill-tag">Node.js</span>
+                                        <span class="skill-tag">Express</span>
+                                        <span class="skill-tag">MongoDB</span>
+                                        <span class="skill-tag">PostgreSQL</span>
+                                        <span class="skill-tag">Firebase</span>
+                                        <span class="skill-tag">REST API</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-group">
+                                    <h4 class="skill-group-title">Инструменты</h4>
+                                    <div class="skill-tags">
+                                        <span class="skill-tag">Git</span>
+                                        <span class="skill-tag">Webpack</span>
+                                        <span class="skill-tag">Docker</span>
+                                        <span class="skill-tag">VS Code</span>
+                                        <span class="skill-tag">Figma</span>
+                                        <span class="skill-tag">Adobe XD</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="skill-group">
+                                    <h4 class="skill-group-title">CMS & Frameworks</h4>
+                                    <div class="skill-tags">
+                                        <span class="skill-tag">WordPress</span>
+                                        <span class="skill-tag">OpenCart</span>
+                                        <span class="skill-tag">Bootstrap</span>
+                                        <span class="skill-tag">Tailwind</span>
+                                        <span class="skill-tag">GSAP</span>
+                                        <span class="skill-tag">Next.js</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="cta-buttons">
+                            <a href="#contact" class="btn btn-primary">
+                                <span>Связаться</span>
+                            </a>
+                            <a href="javascript:void(0)" class="btn btn-secondary" id="downloadCVBtn">
+                                <span>Скачать CV</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 3V16M12 16L16 11.625M12 16L8 11.625" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M15 21H9C6.17157 21 4.75736 21 3.87868 20.1213C3 19.2426 3 17.8284 3 15M21 15C21 17.8284 21 19.2426 20.1213 20.1213C19.5 20.7426 18.5 20.9321 17 20.9786" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section contact-section">
+            <div class="container">
+                <div class="section-header" data-aos="fade-up">
+                    <h2 class="section-title">Связаться со мной</h2>
+                    <p class="section-subtitle">Готов обсудить ваш проект</p>
+                </div>
+                
+                <div class="contact-content">
+                    <div class="contact-form-container" data-aos="fade-right">
+                        <form id="contactForm" class="contact-form" novalidate>
+                            <div class="form-header">
+                                <h3 class="form-title">Расскажите о проекте</h3>
+                                <p class="form-subtitle">Заполните форму, и я свяжусь с вами в течение 24 часов</p>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="name" class="form-label">Имя</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="name" name="name" class="form-input" placeholder="Ваше имя" required minlength="2" maxlength="50" autocomplete="name">
+                                    <div class="input-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M18 19C18 16.7909 15.3137 15 12 15C8.68629 15 6 16.7909 6 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="error-message" id="nameError"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <div class="input-wrapper">
+                                    <input type="email" id="email" name="email" class="form-input" placeholder="Ваш email" required maxlength="254" autocomplete="email">
+                                    <div class="input-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M2 6C2 4.34315 3.34315 3 5 3H19C20.6569 3 22 4.34315 22 6V18C22 19.6569 20.6569 21 19 21H5C3.34315 21 2 19.6569 2 18V6Z" stroke="currentColor" stroke-width="1.5"/>
+                                            <path d="M2 9L10.2681 13.3632C11.3366 13.9847 12.6634 13.9847 13.7319 13.3632L22 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="error-message" id="emailError"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message" class="form-label">Сообщение</label>
+                                <div class="input-wrapper">
+                                    <textarea id="message" name="message" class="form-input form-textarea" placeholder="Расскажите о вашем проекте или задайте вопрос" rows="5" required minlength="10" maxlength="1000"></textarea>
+                                    <div class="input-icon textarea-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M5 15L5 17C5 18.1046 5.89543 19 7 19L17 19C18.1046 19 19 18.1046 19 17L19 15M12 13L12 3M12 13L9 10M12 13L15 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="error-message" id="messageError"></div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <span>Отправить сообщение</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5.00003 12.0001H19M19 12.0001L13 6M19 12.0001L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            
+                            <div class="form-note">
+                                <p>Нажимая "Отправить", вы соглашаетесь с <a href="privacy-policy.html" class="text-link">Политикой конфиденциальности</a></p>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="contact-info" data-aos="fade-left">
+                        <div class="contact-info-header">
+                            <h3 class="contact-info-title">Контактная информация</h3>
+                            <p class="contact-info-subtitle">Выберите удобный способ связи</p>
+                        </div>
+                        
+                        <div class="contact-info-content">
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M2 6C2 4.34315 3.34315 3 5 3H19C20.6569 3 22 4.34315 22 6V18C22 19.6569 20.6569 21 19 21H5C3.34315 21 2 19.6569 2 18V6Z" stroke="currentColor" stroke-width="1.5"/>
+                                        <path d="M2 9L10.2681 13.3632C11.3366 13.9847 12.6634 13.9847 13.7319 13.3632L22 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                <div class="contact-info-details">
+                                    <h4 class="contact-info-label">Email</h4>
+                                    <a href="mailto:markoilynickiy@gmail.com" class="contact-info-value">markoilynickiy@gmail.com</a>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M14.5 6.5C15.2372 6.64382 15.9689 6.96892 16.5 7.5C17.0311 8.03108 17.3562 8.76284 17.5 9.5M15 3C16.5315 3.17014 17.9097 3.91107 19 5C20.0903 6.08893 20.8279 7.46869 21 9M20.9995 16.4767V19.1864C21.0037 20.2223 20.0723 21.0873 19.0265 20.9929C10.0001 21 3.00006 13.935 3.00713 4.96919C2.91294 3.92895 3.77364 3.00106 4.80817 3.00009H7.52331C7.96253 2.99577 8.38835 3.151 8.72138 3.43684C9.66819 4.24949 10.2772 7.00777 10.0429 8.10428C9.85994 8.96036 8.99696 9.55929 8.41026 10.1448C9.69864 12.4062 11.5747 14.2785 13.8405 15.5644C14.4272 14.9788 15.0274 14.1176 15.8851 13.935C16.9855 13.7008 19.7615 14.3106 20.5709 15.264C20.858 15.6021 21.0105 16.0337 20.9995 16.4767Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                <div class="contact-info-details">
+                                    <h4 class="contact-info-label">Телефон</h4>
+                                    <a href="tel:+491605479381" class="contact-info-value">+491605479381</a>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M20.4604 10.3812C20.7388 10.099 21 9.5 21 9C21 8.5 20.7388 7.901 20.4604 7.61876C19.9042 7.06379 18.9191 6.34232 17.6766 5.7363C15.1455 4.50526 11.9995 4 8.99951 4C6.00377 4 2.86163 4.50481 0.331227 5.73453C-0.90945 6.33933 -1.89603 7.05987 -2.45403 7.61407C-2.73242 7.8962 -3 8.5 -3 9C-3 9.5 -2.73242 10.1038 -2.45403 10.3859C-1.89603 10.9401 -0.90945 11.6607 0.331227 12.2655C2.86163 13.4952 6.00377 14 8.99951 14C11.9995 14 15.1455 13.4947 17.6766 12.2637C18.9191 11.6577 19.9042 10.9362 20.4604 10.3812Z" stroke="currentColor" stroke-width="1.5"/>
+                                        <path d="M14 15L14 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M10 15L10 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M6 15L6 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                                <div class="contact-info-details">
+                                    <h4 class="contact-info-label">Telegram</h4>
+                                    <a href="https://t.me/Marklill" target="_blank" rel="noopener noreferrer" class="contact-info-value">@Marklill</a>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-info-item">
+                                <div class="contact-info-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 2L14.2812 9.68377H22.2418L15.7803 14.3162L18.0615 22L12 17.5L5.93852 22L8.21973 14.3162L1.75818 9.68377H9.71875L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                <div class="contact-info-details">
+                                    <h4 class="contact-info-label">Социальные сети</h4>
+                                    <div class="social-links">
+                                        <a href="https://github.com/M5rkn" class="social-link" target="_blank" rel="noopener noreferrer">GitHub</a>
+                                        <a href="https://www.instagram.com/m5rkn/" class="social-link" target="_blank" rel="noopener noreferrer">Instagram</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-info-cta">
+                            <a href="tz-generator.html" class="btn btn-outline">
+                                <span>Создать техническое задание</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2V9M12 9H19M12 9L19.5 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M19 15V19C19 20.1046 18.1046 21 17 21H5C3.89543 21 3 20.1046 3 19V7C3 5.89543 3.89543 5 5 5H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Портфолио. Все права защищены.</p>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="gradient-text">TP</span>
+                    <span class="footer-logo-text">TechPortal</span>
+                </div>
+                
+                <div class="footer-nav">
+                    <a href="#hero" class="footer-link">Главная</a>
+                    <a href="#works" class="footer-link">Работы</a>
+                    <a href="#services" class="footer-link">Услуги</a>
+                    <a href="#about" class="footer-link">О себе</a>
+                    <a href="#contact" class="footer-link">Контакты</a>
+                </div>
+                
+                <div class="footer-socials">
+                    <a href="https://github.com/M5rkn" class="social-icon" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5229 6.47715 22 12 22C17.5229 22 22 17.5229 22 12C22 6.47715 17.5229 2 12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14.3333 19V17.137C14.3583 16.8275 14.3154 16.5163 14.2073 16.2242C14.0993 15.9321 13.9286 15.6657 13.7067 15.4428C15.8 15.2156 18 14.4431 18 10.8989C17.9998 9.99256 17.6418 9.12101 17 8.46461C17.3039 7.67171 17.2824 6.79528 16.94 6.01739C16.94 6.01739 16.1533 5.7902 14.3333 6.97248C12.8053 6.57298 11.1947 6.57298 9.66666 6.97248C7.84666 5.7902 7.05999 6.01739 7.05999 6.01739C6.71757 6.79528 6.69609 7.67171 6.99999 8.46461C6.35341 9.12588 5.99501 10.0053 5.99999 10.9183C5.99999 14.4366 8.19999 15.2091 10.2933 15.4622C10.074 15.6829 9.90483 15.9461 9.79686 16.2347C9.68889 16.5232 9.64453 16.8306 9.66666 17.137V19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9.66667 17.7018C7.66667 18.3335 6 17.7018 5 16.0684" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <a href="https://t.me/Marklill" class="social-icon" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 4.5V11.5M22 4.5L15 11.5M22 4.5H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 14L14.5 11.5L21.5 18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 14.5V19.5M16.5 17H21.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 14L9.5 11.5L2.5 18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M5 14.5V19.5M2.5 17H7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <a href="https://www.instagram.com/m5rkn/" class="social-icon" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16Z" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M17.5 6.51L17.51 6.49889" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 TechPortal. Все права защищены.</p>
+                <p class="footer-links">
+                    <a href="privacy-policy.html" class="footer-link">Политика конфиденциальности</a>
+                    <a href="privacy-policy.html" class="footer-link">Условия использования</a>
+                </p>
+            </div>
         </div>
     </footer>
 
-    <!-- Modal for Project Details -->
-    <div id="projectModal" class="modal">
-        <div class="modal-content">
-            <span class="modal-close">&times;</span>
-            <div class="modal-header">
-                <h2 id="modalTitle">Название проекта</h2>
-                <div class="modal-tech" id="modalTech">React, Node.js</div>
-            </div>
-            <div class="modal-body">
+    <!-- Project Modal -->
+    <div class="modal" id="projectModal">
+        <div class="modal-container">
+            <button class="modal-close" id="modalClose">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-tags" id="modalTags"></div>
+                    <h2 class="modal-title" id="modalTitle">Загрузка проекта...</h2>
+                    <p class="modal-description" id="modalDescription"></p>
+                </div>
+                
                 <div class="modal-image" id="modalImage"></div>
-                <div class="modal-info">
-                    <div class="modal-description" id="modalDescription">
-                        Подробное описание проекта будет здесь...
-                    </div>
-                    <div class="modal-features" id="modalFeatures">
-                        <h4>Возможности:</h4>
-                        <ul>
-                            <li>Адаптивный дизайн</li>
-                            <li>Современные технологии</li>
-                            <li>SEO оптимизация</li>
-                        </ul>
-                    </div>
-                    <div class="modal-stats">
-                        <div class="stat-item">
-                            <span class="stat-number" id="modalViews">0</span>
-                            <span class="stat-label">Просмотров</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="modalLikes">0</span>
-                            <span class="stat-label">Лайков</span>
-                        </div>
-                    </div>
-                    <div class="modal-actions">
-                        <a href="#" class="btn btn-primary" id="modalDemo" target="_blank" rel="noopener noreferrer">Посмотреть демо</a>
-                        <a href="#" class="btn btn-secondary" id="modalGithub" target="_blank" rel="noopener noreferrer">GitHub</a>
-                        <button class="btn btn-like" id="modalLikeBtn"><span class="like-icon">❤️</span> <span class="like-text">Нравится</span></button>
-                        <button class="btn btn-share" id="modalShareBtn">📤 Поделиться</button>
+                
+                <div class="modal-details">
+                    <div class="modal-section">
+                        <h3 class="modal-section-title">О проекте</h3>
+                        <p class="modal-text" id="modalAbout"></p>
                     </div>
                     
-                    <!-- Gallery navigation -->
-                    <div class="modal-gallery-nav" id="modalGalleryNav" style="display: none;">
-                        <button class="gallery-btn gallery-prev" id="galleryPrev">‹</button>
-                        <span class="gallery-counter"><span id="currentSlide">1</span> / <span id="totalSlides">1</span></span>
-                        <button class="gallery-btn gallery-next" id="galleryNext">›</button>
+                    <div class="modal-section">
+                        <h3 class="modal-section-title">Технологии</h3>
+                        <div class="modal-tech-stack" id="modalTechStack"></div>
+                    </div>
+                    
+                    <div class="modal-section">
+                        <h3 class="modal-section-title">Особенности</h3>
+                        <ul class="modal-features-list" id="modalFeatures"></ul>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <a href="#" class="btn btn-primary" id="modalLiveLink" target="_blank" rel="noopener noreferrer">
+                            <span>Посмотреть демо</span>
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 4H6C4.89543 4 4 4.89543 4 6V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M15 4H20V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M13.5 10.5L20 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="btn btn-secondary" id="modalGithubLink" target="_blank" rel="noopener noreferrer">
+                            <span>GitHub</span>
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 22.0268V19.1568C16.0375 18.68 15.9731 18.2006 15.811 17.7506C15.6489 17.3006 15.3929 16.8902 15.06 16.5468C18.2 16.1968 21.5 15.0068 21.5 9.54679C21.4997 8.15062 20.9627 6.80799 20 5.79679C20.4558 4.5753 20.4236 3.22514 19.91 2.02679C19.91 2.02679 18.73 1.67679 16 3.50679C13.708 2.88561 11.292 2.88561 8.99999 3.50679C6.26999 1.67679 5.08999 2.02679 5.08999 2.02679C4.57636 3.22514 4.54413 4.5753 4.99999 5.79679C4.03011 6.81549 3.49251 8.17026 3.49999 9.57679C3.49999 14.9968 6.79998 16.1868 9.93998 16.5768C9.61098 16.9168 9.35725 17.3222 9.19529 17.7667C9.03334 18.2112 8.96679 18.6849 8.99999 19.1568V22.0268" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 20.0267C6 20.9999 3.5 20.0267 2 17.0267" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Чат виджет -->
-    <div id="chatWidget" class="chat-widget">
-        <div class="chat-toggle" id="chatToggle">
-            <span class="chat-icon">💬</span>
-            <span class="notification-dot" id="chatNotification"></span>
-        </div>
-        <div class="chat-window" id="chatWindow">
-            <div class="chat-header">
-                <h4>Онлайн консультация</h4>
-                <button class="chat-close" id="chatClose">&times;</button>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="message bot-message">
-                    <div class="message-content">
-                        Привет! Я помогу с вопросами по веб-разработке. Что вас интересует?
-                    </div>
-                    <div class="message-time">Сейчас</div>
-                </div>
-            </div>
-            <div class="chat-input-container">
-                <input type="text" id="chatInput" class="chat-input" placeholder="Введите сообщение..." maxlength="500">
-                <button id="chatSend" class="chat-send">📤</button>
-            </div>
-        </div>
-    </div>
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Калькулятор стоимости -->
-    <div id="costCalculator" class="cost-calculator">
-        <div class="calculator-toggle" id="calculatorToggle">
-            <span class="calculator-icon">💰</span>
-            <span class="calculator-text">Калькулятор</span>
-        </div>
-        <div class="calculator-window" id="calculatorWindow">
-            <div class="calculator-header">
-                <h4>Горячие предложения 🔥</h4>
-                <button class="calculator-close" id="calculatorClose">&times;</button>
-            </div>
-            <div class="calculator-content">
-                
-                <div class="calc-section">
-                    <h5>Тип проекта</h5>
-                    <div class="calc-options">
-                        <label class="calc-option">
-                            <input type="radio" name="projectType" value="landing" data-cost="50">
-                            <span>Лендинг (от 50€) 🔥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="radio" name="projectType" value="website" data-cost="100">
-                            <span>Корпоративный сайт (от 100€) 🔥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="radio" name="projectType" value="shop" data-cost="200">
-                            <span>Интернет-магазин (от 200€) 🔥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="radio" name="projectType" value="app" data-cost="300">
-                            <span>Веб-приложение (от 300€) 🔥</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="calc-section">
-                    <h5>Дополнительные опции</h5>
-                    <div class="calc-options">
-                        <label class="calc-option">
-                            <input type="checkbox" name="features" value="admin" data-cost="25">
-                            <span>Админ-панель (+25€) 💥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="checkbox" name="features" value="auth" data-cost="20">
-                            <span>Авторизация (+20€) 💥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="checkbox" name="features" value="api" data-cost="25">
-                            <span>API интеграция (+25€) 💥</span>
-                        </label>
-                        <label class="calc-option">
-                            <input type="checkbox" name="features" value="seo" data-cost="25">
-                            <span>SEO оптимизация (+25€) 💥</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="calc-result">
-                    <div class="total-cost">
-                        Примерная стоимость: <span id="totalCost">0€</span>
-                    </div>
-                    <button class="btn btn-primary" id="requestQuote">Получить точную стоимость</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Lazy loading для particles.js
-        function loadParticles() {
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js';
-            script.onload = () => {
-                // Инициализируем particles только после загрузки
-                if (typeof particlesJS !== 'undefined') {
-                    initParticles();
-                }
-            };
-            document.head.appendChild(script);
-        }
-        
-        // Загружаем particles с задержкой после основного контента
-        window.addEventListener('load', () => {
-            setTimeout(loadParticles, 1000);
-        });
-    </script>
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    
+    <!-- Main script -->
     <script src="script.js"></script>
 </body>
 </html> 

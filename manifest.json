@@ -1,16 +1,16 @@
 {
-    "name": "TechPortal - Веб-разработка",
+    "name": "TechPortal - Креативная веб-разработка",
     "short_name": "TechPortal",
-    "description": "Профессиональная веб-разработка и дизайн",
+    "description": "Профессиональная веб-разработка с фокусом на стильный дизайн и современные технологии",
     "start_url": "/",
     "scope": "/",
     "display": "standalone",
-    "background_color": "#0a0a0a",
-    "theme_color": "#667eea",
+    "background_color": "#0a0f1d",
+    "theme_color": "#0a0f1d",
     "orientation": "portrait-primary",
-    "lang": "ru",
+    "lang": "ru-RU",
     "dir": "ltr",
-    "categories": ["business", "development"],
+    "categories": ["business", "productivity", "web development", "portfolio"],
     "prefer_related_applications": false,
     "icons": [
         {
@@ -26,10 +26,22 @@
             "purpose": "any maskable"
         }
     ],
-    "shortcuts": [],
+    "shortcuts": [
+        {
+            "name": "Мои работы",
+            "url": "/#works",
+            "description": "Просмотреть портфолио проектов"
+        },
+        {
+            "name": "Связаться",
+            "url": "/#contact",
+            "description": "Связаться для обсуждения проекта"
+        }
+    ],
     "protocol_handlers": [],
     "file_handlers": [],
     "share_target": {},
     "edge_side_panel": {},
-    "screenshots": []
+    "screenshots": [],
+    "related_applications": []
 } 

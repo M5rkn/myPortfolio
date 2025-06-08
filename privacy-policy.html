@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com/ https://cdn.jsdelivr.net/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), autoplay=()">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
+    
+    <title>Политика конфиденциальности | TechPortal</title>
+    <meta name="description" content="Политика конфиденциальности TechPortal описывает, как мы собираем, используем и защищаем вашу личную информацию.">
+    
+    <!-- Иконки -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon-192.svg">
+    
+    <!-- PWA манифест -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TechPortal">
+    
+    <!-- Шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        .privacy-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--spacing-xl) 0;
+        }
+        
+        .privacy-section {
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .privacy-title {
+            font-size: var(--font-size-2xl);
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-primary);
+        }
+        
+        .privacy-text {
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-secondary);
+        }
+        
+        .privacy-list {
+            margin-left: var(--spacing-xl);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .privacy-list li {
+            margin-bottom: var(--spacing-sm);
+            position: relative;
+            list-style-type: disc;
+            color: var(--color-text-secondary);
+        }
+        
+        .back-btn {
+            margin-top: var(--spacing-xl);
+        }
+    </style>
+</head>
+<body>
+    <!-- Прелоадер -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">
+                <span class="gradient-text">TP</span>
+            </div>
+            <div class="preloader-spinner">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Курсор -->
+    <div class="custom-cursor" id="customCursor"></div>
+    <div class="custom-cursor-follower" id="customCursorFollower"></div>
+
+    <!-- Линии фона -->
+    <div class="background-lines">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+    </div>
+
+    <!-- Прогресс скролла -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <main class="main-content">
+        <section class="section">
+            <div class="container">
+                <div class="section-header" data-aos="fade-up">
+                    <h1 class="section-title">Политика конфиденциальности</h1>
+                    <p class="section-subtitle">Последнее обновление: 8 июня 2024 г.</p>
+                </div>
+                
+                <div class="privacy-content">
+                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="100">
+                        <h2 class="privacy-title">1. Введение</h2>
+                        <p class="privacy-text">
+                            Добро пожаловать на сайт TechPortal. Мы уважаем вашу конфиденциальность и стремимся защищать ваши личные данные. 
+                            Эта политика конфиденциальности объясняет, как мы собираем, используем и защищаем информацию, которую вы предоставляете 
+                            при использовании нашего сайта.
+                        </p>
+                    </div>
+                    
+                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="150">
+                        <h2 class="privacy-title">2. Какую информацию мы собираем</h2>
+                        <p class="privacy-text">Мы можем собирать следующие типы информации:</p>
+                        <ul class="privacy-list">
+                            <li>Личные данные, такие как имя и электронная почта, которые вы добровольно предоставляете через формы обратной связи.</li>
+                            <li>Технические данные, такие как IP-адрес, тип браузера, устройство и операционная система.</li>
+                            <li>Данные об использовании, включая информацию о том, как вы взаимодействуете с нашим сайтом.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="200">
+                        <h2 class="privacy-title">3. Как мы используем вашу информацию</h2>
+                        <p class="privacy-text">Мы используем собранную информацию для:</p>
+                        <ul class="privacy-list">
+                            <li>Предоставления и улучшения наших услуг.</li>
+                            <li>Связи с вами в ответ на ваши запросы или вопросы.</li>
+                            <li>Анализа использования сайта для улучшения его функциональности.</li>
+                            <li>Соблюдения наших юридических обязательств.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="250">
+                        <h2 class="privacy-title">4. Безопасность данных</h2>
+                        <p class="privacy-text">
+                            Мы принимаем разумные меры для защиты вашей информации от несанкционированного доступа, 
+                            использования или раскрытия. Однако, передача данных через Интернет не может быть 
+                            гарантированно безопасной, и мы не можем гарантировать абсолютную безопасность информации, 
+                            переданной на наш сайт.
+                        </p>
+                    </div>
+                    
+                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="300">
+                        <h2 class="privacy-title">5. Сторонние сервисы</h2>
+                        <p class="privacy-text">
+                            Наш сайт может содержать ссылки на сторонние сайты или использовать сторонние сервисы, такие как 
+                            аналитика или социальные сети. Эти сторонние сервисы имеют свои собственные политики 
+                            конфиденциальности, и мы не несем ответственности за их практики.
+                        </p>
+                    </div>
+                    
+                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="350">
+                        <h2 class="privacy-title">6. Ваши права</h2>
+                        <p class="privacy-text">В зависимости от вашего местоположения, вы можете иметь следующие права:</p>
+                        <ul class="privacy-list">
+                            <li>Доступ к вашей личной информации.</li>
+                            <li>Исправление неточной или неполной информации.</li>
+                            <li>Удаление вашей личной информации.</li>
+                            <li>Ограничение или возражение против обработки ваших данных.</li>
+                            <li>Перенос данных к другому поставщику услуг.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="400">
+                        <h2 class="privacy-title">7. Изменения в политике конфиденциальности</h2>
+                        <p class="privacy-text">
+                            Мы можем обновлять эту политику конфиденциальности время от времени. Любые изменения 
+                            будут опубликованы на этой странице с указанием даты последнего обновления.
+                        </p>
+                    </div>
+                    
+                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="450">
+                        <h2 class="privacy-title">8. Контактная информация</h2>
+                        <p class="privacy-text">
+                            Если у вас есть вопросы или предложения относительно нашей политики конфиденциальности, 
+                            пожалуйста, свяжитесь с нами по электронной почте: markoilynickiy@gmail.com.
+                        </p>
+                    </div>
+                    
+                    <div class="back-btn" data-aos="fade-up" data-aos-delay="500">
+                        <a href="index.html" class="btn btn-primary">
+                            <span>Вернуться на главную</span>
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10.5 19.5L3 12L10.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3 12H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="gradient-text">TP</span>
+                    <span class="footer-logo-text">TechPortal</span>
+                </div>
+                
+                <div class="footer-nav">
+                    <a href="index.html" class="footer-link">Главная</a>
+                    <a href="index.html#works" class="footer-link">Работы</a>
+                    <a href="index.html#services" class="footer-link">Услуги</a>
+                    <a href="index.html#about" class="footer-link">О себе</a>
+                    <a href="index.html#contact" class="footer-link">Контакты</a>
+                </div>
+                
+                <div class="footer-socials">
+                    <a href="https://github.com/M5rkn" class="social-icon" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5229 6.47715 22 12 22C17.5229 22 22 17.5229 22 12C22 6.47715 17.5229 2 12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14.3333 19V17.137C14.3583 16.8275 14.3154 16.5163 14.2073 16.2242C14.0993 15.9321 13.9286 15.6657 13.7067 15.4428C15.8 15.2156 18 14.4431 18 10.8989C17.9998 9.99256 17.6418 9.12101 17 8.46461C17.3039 7.67171 17.2824 6.79528 16.94 6.01739C16.94 6.01739 16.1533 5.7902 14.3333 6.97248C12.8053 6.57298 11.1947 6.57298 9.66666 6.97248C7.84666 5.7902 7.05999 6.01739 7.05999 6.01739C6.71757 6.79528 6.69609 7.67171 6.99999 8.46461C6.35341 9.12588 5.99501 10.0053 5.99999 10.9183C5.99999 14.4366 8.19999 15.2091 10.2933 15.4622C10.074 15.6829 9.90483 15.9461 9.79686 16.2347C9.68889 16.5232 9.64453 16.8306 9.66666 17.137V19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9.66667 17.7018C7.66667 18.3335 6 17.7018 5 16.0684" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <a href="https://t.me/Marklill" class="social-icon" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 4.5V11.5M22 4.5L15 11.5M22 4.5H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 14L14.5 11.5L21.5 18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 14.5V19.5M16.5 17H21.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 14L9.5 11.5L2.5 18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M5 14.5V19.5M2.5 17H7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                    <a href="https://www.instagram.com/m5rkn/" class="social-icon" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16Z" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M17.5 6.51L17.51 6.49889" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 TechPortal. Все права защищены.</p>
+                <p class="footer-links">
+                    <a href="privacy-policy.html" class="footer-link">Политика конфиденциальности</a>
+                    <a href="#" class="footer-link">Условия использования</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    
+    <!-- Main script -->
+    <script src="script.js"></script>
+</body>
+</html>
