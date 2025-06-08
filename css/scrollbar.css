@@ -343,10 +343,7 @@ html {
 .calculator-content,
 .calc-section,
 .calc-options,
-.cost-calculator * {
-    scrollbar-width: thin;
-    scrollbar-color: #4facfe rgba(0, 0, 0, 0.3);
-}
+
 
 /* ========== МОБИЛЬНАЯ АДАПТАЦИЯ ========== */
 @media (max-width: 768px) {
