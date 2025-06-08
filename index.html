@@ -480,49 +480,103 @@
 
 
     
-    <!-- Fallback Calculator JS для Railway.com -->
+    <!-- Railway.com Calculator Fix -->
     <script>
-        // Резервная инициализация калькулятора
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                const toggle = document.getElementById('calculatorToggle');
-                const window_el = document.getElementById('calculatorWindow');
-                
-                if (toggle && window_el && !window.calculatorFallbackInitialized) {
-                    console.log('🚂 Railway fallback calculator init');
+        // Проверяем, это Railway.com или нет
+        const isRailway = window.location.hostname.includes('railway.app');
+        
+        if (isRailway) {
+            console.log('🚂 Railway.com detected - applying fixes');
+            
+            // Блокируем основную инициализацию модуля
+            window.calculatorInitialized = true;
+            
+            // Резервная инициализация для Railway
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(function() {
+                    const toggle = document.getElementById('calculatorToggle');
+                    const window_el = document.getElementById('calculatorWindow');
                     
-                    // Удаляем существующие обработчики
-                    const newToggle = toggle.cloneNode(true);
-                    toggle.parentNode.replaceChild(newToggle, toggle);
-                    
-                    // Простой обработчик
-                    newToggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                    if (toggle && window_el) {
+                        console.log('🔧 Railway calculator fix applied');
                         
-                        const isActive = window_el.classList.contains('active');
+                        // ПОЛНАЯ очистка всех обработчиков
+                        const newToggle = toggle.cloneNode(true);
+                        toggle.parentNode.replaceChild(newToggle, toggle);
                         
-                        if (isActive) {
-                            window_el.classList.remove('active');
-                        } else {
-                            window_el.classList.add('active');
-                        }
-                    });
-                    
-                    // Обработчик закрытия
-                    const close_el = document.getElementById('calculatorClose');
-                    if (close_el) {
-                        close_el.addEventListener('click', function(e) {
+                        // Единственный обработчик для Railway
+                        newToggle.onclick = function(e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            window_el.classList.remove('active');
+                            e.stopImmediatePropagation();
+                            
+                            console.log('🎯 Railway toggle clicked');
+                            
+                            const isActive = window_el.classList.contains('active');
+                            console.log('Current state:', isActive);
+                            
+                            if (isActive) {
+                                window_el.classList.remove('active');
+                                console.log('❌ Closed');
+                            } else {
+                                window_el.classList.add('active');
+                                console.log('✅ Opened');
+                            }
+                            
+                            return false;
+                        };
+                        
+                        // Обработчик закрытия
+                        const close_el = document.getElementById('calculatorClose');
+                        if (close_el) {
+                            const newClose = close_el.cloneNode(true);
+                            close_el.parentNode.replaceChild(newClose, close_el);
+                            
+                            newClose.onclick = function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window_el.classList.remove('active');
+                                console.log('🚪 Railway close clicked');
+                                return false;
+                            };
+                        }
+                        
+                        // Простой расчет стоимости
+                        function calculateCost() {
+                            let total = 0;
+                            
+                            const projectType = document.querySelector('input[name="projectType"]:checked');
+                            if (projectType) {
+                                total += parseInt(projectType.dataset.cost) || 0;
+                            }
+                            
+                            const features = document.querySelectorAll('input[name="features"]:checked');
+                            features.forEach(feature => {
+                                total += parseInt(feature.dataset.cost) || 0;
+                            });
+                            
+                            const totalElement = document.getElementById('totalCost');
+                            if (totalElement) {
+                                totalElement.textContent = total + '€';
+                            }
+                        }
+                        
+                        // Обработчики расчета
+                        document.querySelectorAll('input[name="projectType"]').forEach(input => {
+                            input.addEventListener('change', calculateCost);
                         });
+                        
+                        document.querySelectorAll('input[name="features"]').forEach(input => {
+                            input.addEventListener('change', calculateCost);
+                        });
+                        
+                        calculateCost(); // Инициальный расчет
+                        
+                        console.log('✅ Railway calculator fully initialized');
                     }
-                    
-                    window.calculatorFallbackInitialized = true;
-                }
-            }, 1000); // Ждем 1 секунду после загрузки DOM
-        });
+                }, 2000); // Увеличиваем задержку до 2 секунд
+            });
+        }
     </script>
     
     <!-- JavaScript modules loaded in <head> for better performance -->

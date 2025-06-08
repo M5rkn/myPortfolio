@@ -380,12 +380,21 @@ async function generatePDF() {
 function initializeCalculator() {
     // Защита от повторной инициализации
     if (window.calculatorInitialized) {
+        console.log('⚠️ Calculator already initialized, skipping module init');
+        return;
+    }
+    
+    // Проверяем, это Railway.com или нет
+    const isRailway = window.location.hostname.includes('railway.app');
+    if (isRailway) {
+        console.log('🚂 Railway detected - module init skipped, using fallback');
         return;
     }
     
     initializeCostCalculator();
     
     window.calculatorInitialized = true;
+    console.log('🔢 Calculator module initialized');
 }
 
 // Export functions for other modules
