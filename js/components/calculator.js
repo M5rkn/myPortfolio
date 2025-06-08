@@ -12,16 +12,35 @@ function initializeCostCalculator() {
         return;
     }
     
-    // Toggle calculator window
-    calculatorToggle.addEventListener('click', () => {
+    // Удаляем все существующие обработчики
+    const newToggle = calculatorToggle.cloneNode(true);
+    calculatorToggle.parentNode.replaceChild(newToggle, calculatorToggle);
+    
+    // Toggle calculator window - ЕДИНСТВЕННЫЙ обработчик
+    newToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
         calculatorWindow.classList.toggle('active');
-    });
+        
+        return false;
+    }, { once: false, passive: false });
     
     // Close calculator
     if (calculatorClose) {
-        calculatorClose.addEventListener('click', () => {
+        const newClose = calculatorClose.cloneNode(true);
+        calculatorClose.parentNode.replaceChild(newClose, calculatorClose);
+        
+        newClose.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
             calculatorWindow.classList.remove('active');
-        });
+            
+            return false;
+        }, { once: false, passive: false });
     }
     
     // Initialize calculation logic
@@ -46,7 +65,7 @@ function initializeCalculationLogic() {
     });
     
     // Add event listener to quote button
-    const quoteButton = secureGetElementById('requestQuote');
+    const quoteButton = document.getElementById('requestQuote');
     if (quoteButton) {
         quoteButton.addEventListener('click', handleQuoteRequest);
     }
@@ -73,7 +92,7 @@ function calculateCost() {
         });
         
         // Update display
-        const totalCostElement = secureGetElementById('totalCost');
+        const totalCostElement = document.getElementById('totalCost');
         if (totalCostElement) {
             totalCostElement.textContent = `${totalCost}€`;
         }
@@ -82,7 +101,7 @@ function calculateCost() {
         
     } catch (error) {
         console.error('Calculation error:', error);
-        const resultElement = secureGetElementById('totalCost');
+        const resultElement = document.getElementById('totalCost');
         if (resultElement) {
             resultElement.textContent = 'Ошибка расчета';
         }
@@ -94,7 +113,7 @@ function calculateCost() {
 function handleQuoteRequest() {
     const projectTypeInput = document.querySelector('input[name="projectType"]:checked');
     const featureInputs = document.querySelectorAll('input[name="features"]:checked');
-    const totalCostElement = secureGetElementById('totalCost');
+    const totalCostElement = document.getElementById('totalCost');
     
     if (!projectTypeInput) {
         window.FormsModule.showNotification('Выберите тип проекта', 'error');
@@ -108,7 +127,7 @@ function handleQuoteRequest() {
     const totalCost = totalCostElement.textContent;
     
     // Заполнить форму контакта с информацией о расчете
-    const messageTextarea = secureGetElementById('message');
+    const messageTextarea = document.getElementById('message');
     if (messageTextarea) {
         const calculationDetails = `
 Запрос расчета стоимости проекта:
@@ -123,7 +142,7 @@ ${features.length > 0 ? `Дополнительные опции: ${features.joi
         messageTextarea.value = calculationDetails;
         
         // Прокрутить к форме контакта
-        const contactSection = secureGetElementById('contact');
+        const contactSection = document.getElementById('contact');
         if (contactSection) {
             contactSection.scrollIntoView({ behavior: 'smooth' });
             
@@ -139,9 +158,11 @@ ${features.length > 0 ? `Дополнительные опции: ${features.joi
     }
     
     // Закрыть калькулятор
-    const calculatorWindow = secureGetElementById('calculatorWindow');
-    if (calculatorWindow) {
+    const calculatorWindow = document.getElementById('calculatorWindow');
+    const costCalculator = document.getElementById('costCalculator');
+    if (calculatorWindow && costCalculator) {
         calculatorWindow.classList.remove('active');
+        costCalculator.classList.remove('active');
     }
     
     window.FormsModule.showNotification('Данные перенесены в форму контакта!', 'success');
@@ -228,7 +249,7 @@ function generateCostBreakdown(totalCost, params) {
 
 // Update timeline estimate
 function updateTimelineEstimate(params) {
-    const timelineElement = secureGetElementById('calc-timeline');
+    const timelineElement = document.getElementById('calc-timeline');
     if (!timelineElement) return;
     
     const baseTimelines = {
@@ -254,7 +275,7 @@ function updateTimelineEstimate(params) {
 
 // Setup PDF generation with lazy loading
 function setupPDFGeneration() {
-    const pdfButton = secureGetElementById('download-pdf');
+    const pdfButton = document.getElementById('download-pdf');
     if (!pdfButton) return;
     
     pdfButton.addEventListener('click', async () => {
@@ -305,9 +326,9 @@ async function generatePDF() {
     const doc = new window.jsPDF();
     
     // Get calculation data
-    const resultElement = secureGetElementById('calc-result');
-    const detailsElement = secureGetElementById('calc-details');
-    const timelineElement = secureGetElementById('calc-timeline');
+    const resultElement = document.getElementById('calc-result');
+    const detailsElement = document.getElementById('calc-details');
+    const timelineElement = document.getElementById('calc-timeline');
     
     const totalCost = resultElement?.textContent || '0 ₽';
     const timeline = timelineElement?.textContent || 'Не указано';
@@ -357,9 +378,14 @@ async function generatePDF() {
 
 // Initialize calculator module
 function initializeCalculator() {
+    // Защита от повторной инициализации
+    if (window.calculatorInitialized) {
+        return;
+    }
+    
     initializeCostCalculator();
     
-    console.log('🔢 Calculator module initialized');
+    window.calculatorInitialized = true;
 }
 
 // Export functions for other modules
