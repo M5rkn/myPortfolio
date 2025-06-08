@@ -629,6 +629,104 @@
                 transform: translate(-50%, 0);
             }
         }
+
+        /* Mobile Navigation */
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                height: 100vh;
+                background: var(--color-bg-card);
+                padding: var(--spacing-2xl) var(--spacing-xl);
+                transition: 0.3s ease;
+                z-index: 1000;
+                display: flex;
+                flex-direction: column;
+                gap: var(--spacing-lg);
+            }
+
+            .nav-menu.active {
+                right: 0;
+            }
+
+            .burger {
+                display: block;
+                z-index: 1001;
+                cursor: pointer;
+            }
+
+            .nav-link {
+                font-size: var(--font-size-lg);
+                padding: var(--spacing-md);
+            }
+
+            /* Form Adaptations */
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+
+            .form-section {
+                padding: var(--spacing-lg);
+            }
+
+            /* Cards Adaptations */
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-type-card {
+                padding: var(--spacing-lg);
+            }
+
+            /* Features Grid */
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Result Section */
+            .tz-content {
+                padding: var(--spacing-lg);
+                margin: var(--spacing-md);
+            }
+
+            /* Header Adaptations */
+            .header-content {
+                padding: var(--spacing-xl) var(--spacing-lg);
+            }
+
+            .header-title {
+                font-size: var(--font-size-2xl);
+            }
+
+            /* Inputs and Buttons */
+            input, select, textarea {
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: var(--spacing-md);
+            }
+
+            .btn {
+                width: 100%;
+                margin: var(--spacing-sm) 0;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            .container {
+                padding: var(--spacing-md);
+            }
+
+            .header-title {
+                font-size: var(--font-size-xl);
+            }
+
+            .form-section {
+                padding: var(--spacing-md);
+            }
+        }
     </style>
 </head>
 <body>
@@ -1453,6 +1551,26 @@
                 }, 500);
             }
         }, 5000);
+    </script>
+
+    <script>
+        // Исправленный обработчик для бургер-меню
+        document.querySelector('.burger').addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.classList.toggle('active');
+            document.querySelector('.nav-menu').classList.toggle('active');
+        }, { passive: false });
+
+        // Закрытие меню при клике вне его
+        document.addEventListener('click', function(e) {
+            const menu = document.querySelector('.nav-menu');
+            const burger = document.querySelector('.burger');
+            if (menu.classList.contains('active') && !menu.contains(e.target) && !burger.contains(e.target)) {
+                menu.classList.remove('active');
+                burger.classList.remove('active');
+            }
+        });
     </script>
 </body>
 </html> 

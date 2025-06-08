@@ -182,6 +182,47 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Mobile Adaptations */
+        @media (max-width: 768px) {
+            .login-container {
+                width: 90%;
+                max-width: none;
+                margin: var(--spacing-lg);
+                padding: var(--spacing-xl);
+            }
+
+            .login-form {
+                gap: var(--spacing-lg);
+            }
+
+            .form-group {
+                margin-bottom: var(--spacing-lg);
+            }
+
+            input {
+                font-size: 16px;
+                padding: var(--spacing-md);
+            }
+
+            .btn {
+                width: 100%;
+                padding: var(--spacing-md);
+                font-size: var(--font-size-md);
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: var(--spacing-lg);
+                margin: var(--spacing-md);
+            }
+
+            h1 {
+                font-size: var(--font-size-xl);
+            }
+        }
     </style>
 </head>
 <body>
