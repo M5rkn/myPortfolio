@@ -62,179 +62,53 @@
     
     <!-- Критические инлайн стили для Railway -->
     <style>
-        /* Критические переменные */
-        :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #1a1a1a;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b0b0;
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --spacing-sm: 1rem;
-            --spacing-md: 2rem;
-            --spacing-lg: 4rem;
-            --spacing-xl: 8rem;
-        }
-
-        /* Базовые стили */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-            background: var(--bg-primary) !important;
-            color: var(--text-primary) !important;
-            line-height: 1.6 !important;
-            min-height: 100vh !important;
-        }
-
-        /* Навигация */
-        .navbar {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100% !important;
-            background: rgba(10, 10, 10, 0.95) !important;
-            backdrop-filter: blur(20px) !important;
-            z-index: 1000 !important;
+            font-family: 'Inter', sans-serif !important;
+            background: #0a0a0a !important;
+            color: #ffffff !important;
+            margin: 0 !important;
             padding: 0 !important;
         }
 
-        .nav-container {
-            max-width: 1200px !important;
-            margin: 0 auto !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            padding: 1rem !important;
-        }
-
-        .nav-logo h2 {
-            background: var(--primary-gradient) !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-            background-clip: text !important;
-            font-weight: 700 !important;
-            font-size: 1.5rem !important;
-            margin: 0 !important;
-        }
-
-        .nav-menu {
-            display: flex !important;
-            list-style: none !important;
-            gap: 2rem !important;
-            margin: 0 !important;
-        }
-
-        .nav-link {
-            color: var(--text-primary) !important;
-            text-decoration: none !important;
-            font-weight: 500 !important;
-            transition: color 0.3s ease !important;
-        }
-
-        .nav-link:hover {
-            color: #667eea !important;
-        }
-
-        /* Hero секция */
         .hero {
             min-height: 100vh !important;
             display: flex !important;
             align-items: center !important;
-            position: relative !important;
-            padding-top: 80px !important;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
-            overflow: hidden !important;
-        }
-
-        .hero-container {
-            max-width: 1200px !important;
-            margin: 0 auto !important;
-            padding: 0 2rem !important;
-            position: relative !important;
-            z-index: 2 !important;
-        }
-
-        .hero-text {
-            text-align: left !important;
-            max-width: 800px !important;
+            padding-top: 80px !important;
         }
 
         .hero-heading {
             font-size: 4rem !important;
             font-weight: 700 !important;
-            line-height: 1.1 !important;
+            color: #ffffff !important;
             margin-bottom: 2rem !important;
-            color: var(--text-primary) !important;
-            text-align: left !important;
         }
 
         .hero-desc {
             font-size: 1.25rem !important;
-            color: var(--text-secondary) !important;
-            margin-bottom: 4rem !important;
-            line-height: 1.6 !important;
-            text-align: left !important;
+            color: #b0b0b0 !important;
+            margin-bottom: 3rem !important;
         }
 
-        .hero-actions {
-            display: flex !important;
-            gap: 1rem !important;
-            flex-wrap: wrap !important;
-            justify-content: flex-start !important;
-        }
-
-        /* Кнопки */
         .btn {
             padding: 1rem 2rem !important;
             border-radius: 50px !important;
             text-decoration: none !important;
             font-weight: 600 !important;
-            transition: all 0.3s ease !important;
-            border: none !important;
-            cursor: pointer !important;
             display: inline-block !important;
+            margin-right: 1rem !important;
         }
 
         .btn-primary {
-            background: var(--primary-gradient) !important;
-            color: var(--text-primary) !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: #ffffff !important;
         }
 
         .btn-secondary {
             background: transparent !important;
-            color: var(--text-primary) !important;
+            color: #ffffff !important;
             border: 2px solid rgba(255, 255, 255, 0.2) !important;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px) !important;
-        }
-
-        /* Контейнер */
-        .container {
-            max-width: 1200px !important;
-            margin: 0 auto !important;
-            padding: 0 1rem !important;
-        }
-
-        /* Мобильные стили */
-        @media (max-width: 768px) {
-            .hero-heading {
-                font-size: 2.5rem !important;
-            }
-            
-            .hero-desc {
-                font-size: 1rem !important;
-            }
-            
-            .nav-menu {
-                display: none !important;
-            }
-            
-            .hero-container {
-                padding: 0 1rem !important;
-            }
         }
     </style>
     
@@ -543,120 +417,34 @@
     <!-- Скрипт для проверки загрузки стилей на railway.app -->
     <script>
         (function() {
-            // Проверяем, находимся ли мы на railway.app
             const isRailway = window.location.hostname.includes('railway');
             
-            function forceApplyStyles() {
-                // Принудительно применяем критические стили
-                const heroHeading = document.querySelector('.hero-heading');
-                const heroDesc = document.querySelector('.hero-desc');
-                const navbar = document.querySelector('.navbar');
-                const hero = document.querySelector('.hero');
-                
-                if (heroHeading) {
-                    heroHeading.style.fontSize = '4rem';
-                    heroHeading.style.fontWeight = '700';
-                    heroHeading.style.color = '#ffffff';
-                    heroHeading.style.lineHeight = '1.1';
-                    heroHeading.style.marginBottom = '2rem';
-                }
-                
-                if (heroDesc) {
-                    heroDesc.style.fontSize = '1.25rem';
-                    heroDesc.style.color = '#b0b0b0';
-                    heroDesc.style.marginBottom = '4rem';
-                    heroDesc.style.lineHeight = '1.6';
-                }
-                
-                if (navbar) {
-                    navbar.style.position = 'fixed';
-                    navbar.style.top = '0';
-                    navbar.style.left = '0';
-                    navbar.style.right = '0';
-                    navbar.style.width = '100%';
-                    navbar.style.background = 'rgba(10, 10, 10, 0.95)';
-                    navbar.style.backdropFilter = 'blur(20px)';
-                    navbar.style.zIndex = '1000';
-                }
-                
-                if (hero) {
-                    hero.style.minHeight = '100vh';
-                    hero.style.display = 'flex';
-                    hero.style.alignItems = 'center';
-                    hero.style.position = 'relative';
-                    hero.style.paddingTop = '80px';
-                    hero.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)';
-                    hero.style.overflow = 'hidden';
-                }
-                
-                // Применяем стили к кнопкам
-                const buttons = document.querySelectorAll('.btn');
-                buttons.forEach(btn => {
-                    btn.style.padding = '1rem 2rem';
-                    btn.style.borderRadius = '50px';
-                    btn.style.textDecoration = 'none';
-                    btn.style.fontWeight = '600';
-                    btn.style.border = 'none';
-                    btn.style.cursor = 'pointer';
-                    btn.style.display = 'inline-block';
-                    
-                    if (btn.classList.contains('btn-primary')) {
-                        btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                        btn.style.color = '#ffffff';
-                    }
-                    
-                    if (btn.classList.contains('btn-secondary')) {
-                        btn.style.background = 'transparent';
-                        btn.style.color = '#ffffff';
-                        btn.style.border = '2px solid rgba(255, 255, 255, 0.2)';
-                    }
-                });
-                
-                console.log('✅ Принудительно применены критические стили');
-            }
-            
             if (isRailway) {
-                // Проверяем, успешно ли загрузились стили
                 window.addEventListener('DOMContentLoaded', function() {
                     setTimeout(function() {
+                        // Принудительно применяем критические стили
                         const heroHeading = document.querySelector('.hero-heading');
+                        const heroDesc = document.querySelector('.hero-desc');
+                        const hero = document.querySelector('.hero');
                         
-                        // Принудительно применяем стили в любом случае на Railway
-                        forceApplyStyles();
-                        
-                        // Проверяем стили по размеру шрифта героя
                         if (heroHeading) {
-                            const headingStyle = window.getComputedStyle(heroHeading);
-                            const fontSize = parseFloat(headingStyle.fontSize);
-                            
-                            // Если стили не загрузились корректно, загружаем единый CSS файл
-                            if (!fontSize || fontSize < 30) {
-                                console.log('🔄 Загрузка единого CSS файла для Railway');
-                                
-                                // Создаем ссылку на единый CSS файл
-                                const currentPath = window.location.protocol + '//' + window.location.host;
-                                const link = document.createElement('link');
-                                link.rel = 'stylesheet';
-                                link.href = currentPath + '/css/complete.css?v=20250608&railway=fallback';
-                                link.onload = function() {
-                                    console.log('✅ Единый CSS файл загружен успешно');
-                                    // Еще раз применяем стили после загрузки CSS
-                                    setTimeout(forceApplyStyles, 100);
-                                };
-                                link.onerror = function() {
-                                    console.warn('❌ Не удалось загрузить единый CSS файл');
-                                    // Применяем стили принудительно
-                                    forceApplyStyles();
-                                };
-                                document.head.appendChild(link);
-                            } else {
-                                console.log('✅ Стили загружены корректно на Railway');
-                            }
+                            heroHeading.style.fontSize = '4rem';
+                            heroHeading.style.fontWeight = '700';
+                            heroHeading.style.color = '#ffffff';
                         }
-                    }, 500); // Проверяем через полсекунды после загрузки
-                    
-                    // Дополнительная проверка через 2 секунды
-                    setTimeout(forceApplyStyles, 2000);
+                        
+                        if (heroDesc) {
+                            heroDesc.style.fontSize = '1.25rem';
+                            heroDesc.style.color = '#b0b0b0';
+                        }
+                        
+                        if (hero) {
+                            hero.style.minHeight = '100vh';
+                            hero.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)';
+                        }
+                        
+                        console.log('✅ Стили применены для Railway');
+                    }, 500);
                 });
             }
         })();

@@ -82,7 +82,7 @@
     left: 0;
     width: 0;
     height: 3px;
-    background: var(--primary-gradient);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     z-index: 10000;
     transition: width 0.1s ease;
 }
@@ -90,7 +90,7 @@
 .animate-on-scroll {
     opacity: 0;
     transform: translateY(30px) rotateX(20deg);
-    transition: all 0.8s var(--transition-slow);
+    transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .animate-on-scroll.animate {
@@ -118,7 +118,7 @@
     height: 0;
     background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 70%);
     transform: translate(-50%, -50%);
-    transition: all var(--transition-normal);
+    transition: all 0.3s ease;
     pointer-events: none;
 }
 
@@ -140,7 +140,7 @@
     top: 0;
     left: 0;
     opacity: 0;
-    transition: opacity var(--transition-normal);
+    transition: opacity 0.3s ease;
 }
 
 .glitch-text:hover::before {
@@ -570,7 +570,7 @@
 }
 
 .smooth-transition {
-    transition: all var(--transition-normal);
+    transition: all 0.3s ease;
     transform-style: preserve-3d;
     backface-visibility: hidden;
 }
