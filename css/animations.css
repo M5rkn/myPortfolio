@@ -13,9 +13,7 @@
     backface-visibility: hidden;
 }
 
-.hero-content {
-    backface-visibility: hidden;
-}
+
 
 .portfolio-item:hover,
 .service-item:hover,
@@ -49,9 +47,7 @@
     contain: layout style;
 }
 
-.hero-visual .card {
-    transform: translate3d(0, 0, 0);
-}
+
 
 /* ========== SCROLL ANIMATIONS ========== */
 .scroll-progress {

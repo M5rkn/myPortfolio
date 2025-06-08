@@ -1,17 +1,11 @@
 /* ========== TABLET STYLES ========== */
 @media (min-width: 481px) and (max-width: 768px) {
-    .hero-container {
-        grid-template-columns: 1fr;
-        text-align: center;
-        gap: var(--spacing-md);
+    .hero-heading {
+        font-size: 3rem;
     }
     
-    .hero-visual {
-        height: 300px;
-    }
-    
-    .hero-title {
-        font-size: var(--font-3xl);
+    .hero-desc {
+        font-size: 1.1rem;
     }
     
     .section-title {
@@ -48,6 +42,19 @@
 
 /* ========== MOBILE STYLES ========== */
 @media (max-width: 768px) {
+    .hero-heading {
+        font-size: 2.5rem;
+    }
+    
+    .hero-desc {
+        font-size: 1rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
     .hamburger {
         display: flex;
         width: 35px;
@@ -74,9 +81,7 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
     
-    .hero-buttons {
-        justify-content: center;
-    }
+
     
     .btn {
         padding: var(--spacing-sm) var(--spacing-md);
@@ -92,14 +97,16 @@
         padding: 0 15px;
     }
     
-    .hero-title {
-        font-size: var(--font-2xl) !important;
-        line-height: 1.2 !important;
+    .hero-heading {
+        font-size: 2rem;
     }
     
-    .hero-description {
-        font-size: var(--font-lg) !important;
-        line-height: 1.5 !important;
+    .hero-desc {
+        font-size: 0.9rem;
+    }
+    
+    .hero-container {
+        padding: 0 var(--spacing-sm);
     }
     
     .section-title {
@@ -222,9 +229,7 @@
         right: 5px !important;
     }
     
-    .hero-title {
-        font-size: var(--font-2xl) !important;
-    }
+
     
     .btn {
         padding: 0.8rem 1.5rem !important;
@@ -239,13 +244,7 @@
         max-height: 400px !important;
     }
     
-    .hero {
-        padding: var(--spacing-md) 0 !important;
-    }
-    
-    .hero-title {
-        font-size: 2.2rem !important;
-    }
+
 }
 
 /* ========== LARGE DESKTOP STYLES ========== */
@@ -315,11 +314,7 @@
         animation: none !important;
     }
     
-    .hero-visual,
-    .floating-cards,
-    #particles-js {
-        display: none !important;
-    }
+
     
     .portfolio-item,
     .service-item {
