@@ -60,58 +60,6 @@
     <!-- Fallback для Railway.app - единый CSS файл -->
     <link rel="stylesheet" href="css/complete.css?v=20250608" media="screen" onerror="this.onload=null;this.removeAttribute('media');">
     
-    <!-- Критические инлайн стили для Railway -->
-    <style>
-        body {
-            font-family: 'Inter', sans-serif !important;
-            background: #0a0a0a !important;
-            color: #ffffff !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .hero {
-            min-height: 100vh !important;
-            display: flex !important;
-            align-items: center !important;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
-            padding-top: 80px !important;
-        }
-
-        .hero-heading {
-            font-size: 4rem !important;
-            font-weight: 700 !important;
-            color: #ffffff !important;
-            margin-bottom: 2rem !important;
-        }
-
-        .hero-desc {
-            font-size: 1.25rem !important;
-            color: #b0b0b0 !important;
-            margin-bottom: 3rem !important;
-        }
-
-        .btn {
-            padding: 1rem 2rem !important;
-            border-radius: 50px !important;
-            text-decoration: none !important;
-            font-weight: 600 !important;
-            display: inline-block !important;
-            margin-right: 1rem !important;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: #ffffff !important;
-        }
-
-        .btn-secondary {
-            background: transparent !important;
-            color: #ffffff !important;
-            border: 2px solid rgba(255, 255, 255, 0.2) !important;
-        }
-    </style>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -420,32 +368,7 @@
             const isRailway = window.location.hostname.includes('railway');
             
             if (isRailway) {
-                window.addEventListener('DOMContentLoaded', function() {
-                    setTimeout(function() {
-                        // Принудительно применяем критические стили
-                        const heroHeading = document.querySelector('.hero-heading');
-                        const heroDesc = document.querySelector('.hero-desc');
-                        const hero = document.querySelector('.hero');
-                        
-                        if (heroHeading) {
-                            heroHeading.style.fontSize = '4rem';
-                            heroHeading.style.fontWeight = '700';
-                            heroHeading.style.color = '#ffffff';
-                        }
-                        
-                        if (heroDesc) {
-                            heroDesc.style.fontSize = '1.25rem';
-                            heroDesc.style.color = '#b0b0b0';
-                        }
-                        
-                        if (hero) {
-                            hero.style.minHeight = '100vh';
-                            hero.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)';
-                        }
-                        
-                        console.log('✅ Стили применены для Railway');
-                    }, 500);
-                });
+                console.log('✅ Сайт запущен на Railway, стили загружены из CSS файлов');
             }
         })();
     </script>
