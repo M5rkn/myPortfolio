@@ -139,41 +139,42 @@ function initParticles() {
     console.log('🌟 Particles initialized with performance optimization');
 }
 
-// Monitor particles performance and adjust if needed
+// Monitor particles performance and adjust if needed (silent mode)
 function monitorParticlesPerformance() {
-    let frameCount = 0;
-    let lastTime = performance.now();
-    let hasReducedParticles = false; // Флаг для предотвращения спама
+    let hasOptimized = false;
+    let checkCount = 0;
+    const maxChecks = 5; // Проверяем только 5 раз
     
     function checkFPS() {
-        const currentTime = performance.now();
-        frameCount++;
+        checkCount++;
         
-        if (currentTime - lastTime >= 1000) {
-            const fps = frameCount;
-            frameCount = 0;
-            lastTime = currentTime;
+        // Останавливаем после 5 проверок или если уже оптимизировали
+        if (checkCount >= maxChecks || hasOptimized) {
+            return;
+        }
+        
+        // Проверяем FPS через производительность
+        const now = performance.now();
+        requestAnimationFrame(() => {
+            const frameDuration = performance.now() - now;
             
-            // If FPS is too low, reduce particles (только один раз)
-            if (fps < 30 && window.pJSDom && window.pJSDom[0] && !hasReducedParticles) {
+            // Если кадр долгий (> 33ms = < 30fps), оптимизируем
+            if (frameDuration > 33 && window.pJSDom && window.pJSDom[0] && !hasOptimized) {
                 const pJS = window.pJSDom[0].pJS;
                 if (pJS.particles.array.length > 20) {
-                    // Remove some particles
                     pJS.particles.array.splice(0, 10);
-                    console.warn('🌌 Particles optimized for better performance');
-                    hasReducedParticles = true; // Больше не будем оптимизировать
-                    return; // Останавливаем мониторинг
+                    hasOptimized = true;
+                    return; // Больше не проверяем
                 }
             }
-        }
-        
-        // Останавливаем мониторинг через 10 секунд для экономии ресурсов
-        if (currentTime - performance.now() < 10000) {
-            requestAnimationFrame(checkFPS);
-        }
+            
+            // Следующая проверка через 2 секунды
+            setTimeout(checkFPS, 2000);
+        });
     }
     
-    requestAnimationFrame(checkFPS);
+    // Начинаем проверку через 3 секунды после загрузки
+    setTimeout(checkFPS, 3000);
 }
 
 // Create enhanced fallback particles if particles.js fails
