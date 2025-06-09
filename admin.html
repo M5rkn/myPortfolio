@@ -257,14 +257,14 @@
         
         // Secure redirect to login
         function redirectToLogin() {
-            window.location.replace('/login');
+            window.location.replace('/login.html');
         }
 
         // Logout function
         function logout() {
             sessionStorage.removeItem('adminToken');
             sessionStorage.clear();
-            window.location.replace('/login');
+            window.location.replace('/login.html');
         }
 
         // Telegram functions
@@ -369,8 +369,19 @@
 
         // Load CRM status
         async function loadCRMStatus() {
+            const token = checkAuth();
+            if (!token) return;
+            
             try {
-                const response = await fetch('/api/admin/crm/status');
+                const response = await fetch('/api/admin/crm/status', {
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.status === 401) {
+                    logout();
+                    return;
+                }
+                
                 if (!response.ok) throw new Error('Failed to load CRM status');
                 
                 const data = await response.json();
