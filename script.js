@@ -43,7 +43,7 @@ function showToast(type, message) {
     toast.innerHTML = `
         <div class="toast-content">
             <span class="toast-icon">${type === 'success' ? '✅' : '❌'}</span>
-            <span class="toast-message">${message}</span>
+            <span class="toast-message">${message.replace(/\n/g, '<br>')}</span>
         </div>
     `;
     
@@ -646,6 +646,28 @@ function initContactForm() {
         
         try {
             const formData = new FormData(form);
+            const name = formData.get('name');
+            const email = formData.get('email'); 
+            const message = formData.get('message');
+            
+            // Клиентская валидация для лучшего UX
+            const clientErrors = [];
+            
+            if (!name || name.trim().length < 2 || name.trim().length > 50) {
+                clientErrors.push('Имя должно содержать от 2 до 50 символов');
+            }
+            
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+                clientErrors.push('Введите корректный email адрес');
+            }
+            
+            if (!message || message.trim().length < 10 || message.trim().length > 1000) {
+                clientErrors.push('Сообщение должно содержать от 10 до 1000 символов');
+            }
+            
+            if (clientErrors.length > 0) {
+                throw new Error(clientErrors.join('\n'));
+            }
             
             const headers = {
                 'Accept': 'application/json',
@@ -661,16 +683,21 @@ function initContactForm() {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify({
-                    name: formData.get('name'),
-                    email: formData.get('email'),
-                    message: formData.get('message')
+                    name: name.trim(),
+                    email: email.trim(),
+                    message: message.trim()
                 })
             });
             
             const data = await response.json();
             
             if (!response.ok) {
-                throw new Error(data.message || 'Network response was not ok');
+                // Если есть ошибки валидации, показываем их подробно
+                if (data.errors && Array.isArray(data.errors)) {
+                    const errorMessage = data.errors.join('\n');
+                    throw new Error(errorMessage);
+                }
+                throw new Error(data.message || 'Ошибка отправки');
             }
             
             showToast('success', data.message || 'Сообщение отправлено!');
@@ -754,7 +781,7 @@ function getProjectData(projectId) {
             description: 'Многопользовательский блог с ролями и редактором контента',
             about: 'Полнофункциональный корпоративный блог с системой ролей, богатым редактором контента и модерацией комментариев.',
             tags: ['React', 'Node.js'],
-            techStack: ['React', 'Node.js', 'MongoDB', 'Redux', 'Draft.js'],
+            techStack: ['React', 'Node.js', 'MongoDB', 'Redux'],
             features: [
                 'Многопользовательский доступ',
                 'Система ролей и прав',
@@ -771,7 +798,7 @@ function getProjectData(projectId) {
             description: 'Уникальная тема с нестандартными блоками и интеграциями',
             about: 'Кастомная WordPress тема с использованием Advanced Custom Fields и собственных типов записей для создания гибкого и расширяемого сайта.',
             tags: ['WordPress', 'Custom Theme'],
-            techStack: ['WordPress', 'PHP', 'JavaScript', 'ACF Pro', 'SCSS', 'Gulp'],
+            techStack: ['WordPress', 'JavaScript', 'ACF Pro', 'SCSS', 'Gulp'],
             features: [
                 'Гибкий конструктор блоков',
                 'Пользовательские типы записей',

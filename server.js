@@ -653,11 +653,11 @@ app.post('/api/contact', apiLimiter, validateCSRFToken, async (req, res) => {
             });
         }
         
-        // Save to database with additional security
+        // Save to database with additional security (данные уже санитизированы в middleware)
         const contact = new Contact({
-            name: validator.escape(name.trim()).slice(0, 50),
-            email: validator.normalizeEmail(email.trim()).slice(0, 254),
-            message: validator.escape(message.trim()).slice(0, 1000),
+            name: name.trim().slice(0, 50),
+            email: validator.normalizeEmail(email.trim()).slice(0, 254), 
+            message: message.trim().slice(0, 1000),
             ipAddress: clientIP
         });
 
