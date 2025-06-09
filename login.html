@@ -440,7 +440,7 @@
                 clearTimeout(timeoutId);
 
                 if (response.ok) {
-                    window.location.replace('/admin.html');
+                    window.location.replace('/admin');
                     return true;
                 } else {
                     sessionStorage.removeItem('adminToken');
@@ -533,7 +533,7 @@
                     
                     // Secure redirect after short delay
                     setTimeout(() => {
-                        window.location.replace('/admin.html');
+                        window.location.replace('/admin');
                     }, 1000);
                 } else {
                     // Increment failed attempts
