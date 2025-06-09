@@ -548,31 +548,31 @@ button {
   position: fixed;
   top: 0;
   left: 0;
-  width: 80px;
-  height: 100vh;
+  width: 100%; /* На всю ширину экрана */
+  height: 60px; /* Фиксированная высота */
   background-color: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: var(--z-header);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-  transition: width var(--transition-normal);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Граница снизу вместо справа */
+  transition: height var(--transition-normal); /* Изменение по высоте вместо ширины */
   overflow: hidden;
 }
 
 .side-nav:hover {
-  width: 220px;
+  height: 250px; /* Увеличиваем высоту при наведении */
 }
 
 .side-nav-content {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: var(--spacing-xl) 0;
+  padding: var(--spacing-sm) 0;
 }
 
 .side-nav-logo {
   padding: 0 var(--spacing-md);
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--spacing-sm);
   font-size: var(--font-size-2xl);
   font-weight: 700;
   text-align: center;
@@ -580,10 +580,11 @@ button {
 
 .side-nav-menu {
   display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+  flex-direction: row; /* Горизонтальное расположение меню */
+  justify-content: center; /* Центрирование пунктов меню */
+  flex-wrap: wrap;
   gap: var(--spacing-lg);
-  padding: 0 var(--spacing-md);
+  padding: 0 var(--spacing-xl);
 }
 
 .side-nav-link {
@@ -628,7 +629,7 @@ button {
 .mobile-nav-toggle {
   position: fixed;
   top: 20px;
-  right: 20px;
+  left: 20px; /* Изменено с right: 20px на left: 20px */
   width: 50px;
   height: 50px;
   background: var(--gradient-primary);
@@ -669,18 +670,18 @@ button {
 .mobile-nav {
   position: fixed;
   top: 0;
-  right: -100%;
+  left: -100%; /* Изменено с right: -100% на left: -100% */
   width: 80%;
   height: 100vh;
   background: var(--color-bg-primary);
   padding: 80px 20px 20px;
   transition: all 0.3s ease;
   z-index: 1001;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2); /* Изменено с -2px на 2px для тени справа */
 }
 
 .mobile-nav.active {
-  right: 0;
+  left: 0; /* Изменено с right: 0 на left: 0 */
 }
 
 .mobile-nav-header {
@@ -2290,3 +2291,45 @@ button {
     height: 16px;
   }
 } 
+
+/* Стили для кнопок экспорта ТЗ */
+.tz-export {
+  margin-top: var(--spacing-2xl);
+}
+
+.export-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg) 0;
+}
+
+.export-buttons .btn {
+  min-width: 180px;
+  margin: var(--spacing-sm);
+}
+
+/* Адаптивные стили для кнопок экспорта */
+@media (max-width: 768px) {
+  .export-buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+  
+  .export-buttons .btn {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .export-buttons .btn {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    min-width: auto;
+    width: 100%;
+    max-width: 250px;
+  }
+}

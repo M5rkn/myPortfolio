@@ -62,10 +62,7 @@
             .scroll-indicator {
                 display: none;
             }
-
-            .works-filter {
-                display: none;
-            }
+            
 
             .work-item {
                 background: var(--color-bg-card);
@@ -155,18 +152,6 @@
 
         /* Планшеты */
         @media (min-width: 769px) and (max-width: 1024px) {
-            .works-filter {
-                display: flex;
-                flex-wrap: wrap;
-                gap: var(--spacing-md);
-                justify-content: center;
-                margin-bottom: var(--spacing-xl);
-            }
-
-            .filter-button {
-                padding: var(--spacing-md) var(--spacing-lg);
-                font-size: var(--font-size-sm);
-            }
 
             .work-item {
                 background: var(--color-bg-card);
@@ -278,6 +263,7 @@
         </svg>
     </div>
     
+    
     <div class="mobile-nav" id="mobileNav">
         <div class="mobile-nav-header">
             <div class="mobile-nav-logo">
@@ -387,12 +373,6 @@
                     <p class="section-subtitle">Избранные проекты из моего портфолио</p>
                 </div>
                 
-                <div class="works-filter" data-aos="fade-up" data-aos-delay="200">
-                    <button class="filter-button active" data-filter="all">Все</button>
-                    <button class="filter-button" data-filter="landing">Лендинги</button>
-                    <button class="filter-button" data-filter="ecommerce">E-commerce</button>
-                    <button class="filter-button" data-filter="app">Веб-приложения</button>
-                </div>
                 
                 <div class="works-grid" data-aos="fade-up" data-aos-delay="300">
                     <div class="work-item" data-category="landing">

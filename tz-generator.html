@@ -342,6 +342,37 @@
             width: 20px;
             height: 20px;
         }
+
+        .btn:disabled,
+        .btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .btn:disabled:hover,
+        .btn.disabled:hover {
+            transform: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .btn-primary:disabled::before,
+        .btn-primary.disabled::before {
+            opacity: 0 !important;
+        }
+
+        .error {
+            border: 2px solid #ff4757 !important;
+            background-color: rgba(255, 71, 87, 0.1) !important;
+        }
+
+        .error-message {
+            color: #ff4757;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
         
         .result-section {
             margin-top: var(--spacing-2xl);
@@ -802,7 +833,7 @@
                     <h2 class="step-title">3. Кто ваша целевая аудитория?</h2>
                     <div class="form-group">
                         <label class="form-label">Возраст аудитории *</label>
-                        <select class="form-select" id="targetAge">
+                        <select class="form-select" id="targetAge" required>
                             <option value="">Выберите возрастную группу</option>
                             <option value="18-25">18-25 лет (студенты, молодые специалисты)</option>
                             <option value="25-35">25-35 лет (молодые семьи, карьеристы)</option>
@@ -813,7 +844,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Уровень технической грамотности *</label>
-                        <select class="form-select" id="techLevel">
+                        <select class="form-select" id="techLevel" required>
                             <option value="">Выберите уровень</option>
                             <option value="low">Низкий (простой интерфейс, минимум функций)</option>
                             <option value="medium">Средний (стандартный функционал)</option>
@@ -853,7 +884,7 @@
                     <h2 class="step-title">5. Дизайн и технические требования</h2>
                     <div class="form-group">
                         <label class="form-label">Стиль дизайна *</label>
-                        <select class="form-select" id="designStyle">
+                        <select class="form-select" id="designStyle" required>
                             <option value="">Выберите стиль</option>
                             <option value="modern">Современный (минимализм, чистые линии)</option>
                             <option value="corporate">Корпоративный (строгий, деловой)</option>
@@ -880,7 +911,7 @@
                     <h2 class="step-title">6. Бюджет и временные рамки</h2>
                     <div class="form-group">
                         <label class="form-label">Планируемый бюджет *</label>
-                        <select class="form-select" id="budget">
+                        <select class="form-select" id="budget" required>
                             <option value="">Выберите диапазон</option>
                             <option value="small">50€ - 150€ (простой проект)</option>
                             <option value="medium">150€ - 400€ (средний проект)</option>
@@ -890,7 +921,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Когда нужно завершить проект? *</label>
-                        <select class="form-select" id="deadline">
+                        <select class="form-select" id="deadline" required>
                             <option value="">Выберите срок</option>
                             <option value="urgent">Срочно (1-2 недели)</option>
                             <option value="normal">Стандартно (1-2 месяца)</option>
@@ -920,7 +951,6 @@
                     
                     <div class="tz-export">
                         <div class="export-buttons">
-                            <button class="btn btn-primary" onclick="downloadPDF()">📄 Скачать PDF</button>
                             <button class="btn btn-secondary" onclick="copyToClipboard()">📋 Копировать текст</button>
                             <button class="btn btn-secondary" onclick="startOver()">🔄 Создать новое ТЗ</button>
                         </div>
@@ -930,27 +960,7 @@
         </div>
     </div>
 
-    <script>
-        let jsPDFLoaded = false;
-        
-        function loadJsPDF() {
-            return new Promise((resolve, reject) => {
-                if (jsPDFLoaded) {
-                    resolve();
-                    return;
-                }
-                
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-                script.onload = () => {
-                    jsPDFLoaded = true;
-                    resolve();
-                };
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
-        }
-        
+    <script>        
         const PRICING_CONFIG = {
             projectTypes: {
                 'landing': { min: 50, max: 150, name: 'Лендинг' },
@@ -991,10 +1001,6 @@
                 return 'enterprise';
             }
         };
-
-        if (typeof window.jspdf === 'undefined') {
-            console.warn('jsPDF не загружен, PDF экспорт недоступен');
-        }
     </script>
     <script>
         // Глобальные переменные для управления шагами
@@ -1008,7 +1014,89 @@
             setupOptionCards();
             hideResultSection();
             updateNavigation();
+            setupFieldValidation();
         });
+
+        // Настройка валидации полей в реальном времени
+        function setupFieldValidation() {
+            // Находим все поля ввода и select
+            const allFields = document.querySelectorAll('input[required], textarea[required], select[required]');
+            
+            allFields.forEach(field => {
+                field.addEventListener('input', function() {
+                    // Убираем ошибку при начале ввода
+                    this.classList.remove('error');
+                    hideFieldError(this);
+                    
+                    // Проверяем состояние кнопки "Далее"
+                    updateNextButtonState();
+                });
+
+                field.addEventListener('change', function() {
+                    // Убираем ошибку при изменении
+                    this.classList.remove('error');
+                    hideFieldError(this);
+                    
+                    // Проверяем состояние кнопки "Далее"
+                    updateNextButtonState();
+                });
+            });
+
+            // Для чекбоксов
+            const checkboxes = document.querySelectorAll('#functionalityList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateNextButtonState();
+                });
+            });
+        }
+
+        // Обновление состояния кнопки "Далее"
+        function updateNextButtonState() {
+            const nextBtn = document.getElementById('nextBtn');
+            const currentStep = document.getElementById(`step${currentStepIndex}`);
+            
+            if (currentStepIndex === 1) {
+                // Для первого шага проверяем выбор типа проекта
+                nextBtn.disabled = !formData.projectType;
+                if (formData.projectType) {
+                    nextBtn.classList.remove('disabled');
+                } else {
+                    nextBtn.classList.add('disabled');
+                }
+                return;
+            }
+
+            if (currentStepIndex === 4) {
+                // Для четвертого шага проверяем чекбоксы
+                const checkedBoxes = currentStep.querySelectorAll('input[type="checkbox"]:checked');
+                nextBtn.disabled = checkedBoxes.length === 0;
+                if (checkedBoxes.length > 0) {
+                    nextBtn.classList.remove('disabled');
+                } else {
+                    nextBtn.classList.add('disabled');
+                }
+                return;
+            }
+
+            // Для остальных шагов проверяем обязательные поля
+            const requiredFields = currentStep.querySelectorAll('[required]');
+            let allFilled = true;
+            
+            requiredFields.forEach(field => {
+                const value = field.value ? field.value.trim() : '';
+                if (!value) {
+                    allFilled = false;
+                }
+            });
+
+            nextBtn.disabled = !allFilled;
+            if (allFilled) {
+                nextBtn.classList.remove('disabled');
+            } else {
+                nextBtn.classList.add('disabled');
+            }
+        }
 
         // Настройка карточек с опциями
         function setupOptionCards() {
@@ -1091,51 +1179,94 @@
             
             // Меняем текст кнопки "Далее" на последнем шаге
             nextBtn.textContent = currentStepIndex === totalSteps ? 'Сгенерировать ТЗ' : 'Далее';
+            
+            // Обновляем состояние кнопки "Далее"
+            updateNextButtonState();
         }
 
         // Валидация текущего шага
         function validateCurrentStep() {
             const currentStep = document.getElementById(`step${currentStepIndex}`);
             let isValid = true;
+            let errors = [];
+
+            // Очищаем предыдущие ошибки
+            clearFieldErrors(currentStep);
 
             // Проверка первого шага (выбор типа проекта)
             if (currentStepIndex === 1) {
                 if (!formData.projectType) {
                     showError('Пожалуйста, выберите тип проекта');
-                        return false;
-                    }
+                    return false;
+                }
+                return true;
+            }
+
+            // Проверка четвертого шага (функциональность)
+            if (currentStepIndex === 4) {
+                const checkedBoxes = currentStep.querySelectorAll('input[type="checkbox"]:checked');
+                if (checkedBoxes.length === 0) {
+                    showError('Выберите хотя бы одну функцию для проекта');
+                    return false;
+                }
                 return true;
             }
 
             // Проверка остальных шагов
             const requiredFields = currentStep.querySelectorAll('[required]');
             requiredFields.forEach(field => {
-                if (!field.value.trim()) {
+                let fieldValue = field.value ? field.value.trim() : '';
+                
+                if (!fieldValue) {
                     field.classList.add('error');
                     isValid = false;
                     
                     // Показываем сообщение об ошибке под полем
-                    let errorMsg = field.nextElementSibling;
-                    if (!errorMsg || !errorMsg.classList.contains('error-message')) {
-                        errorMsg = document.createElement('div');
-                        errorMsg.className = 'error-message';
-                        field.parentNode.insertBefore(errorMsg, field.nextSibling);
+                    showFieldError(field, 'Это поле обязательно для заполнения');
+                    
+                    // Получаем название поля для общего сообщения
+                    const label = field.parentNode.querySelector('.form-label');
+                    if (label) {
+                        errors.push(label.textContent.replace(' *', ''));
                     }
-                    errorMsg.textContent = 'Это поле обязательно для заполнения';
                 } else {
                     field.classList.remove('error');
-                    const errorMsg = field.nextElementSibling;
-                    if (errorMsg && errorMsg.classList.contains('error-message')) {
-                        errorMsg.remove();
-                    }
+                    hideFieldError(field);
                 }
             });
 
             if (!isValid) {
-                showError('Пожалуйста, заполните все обязательные поля');
+                showError(`Заполните обязательные поля: ${errors.join(', ')}`);
             }
 
             return isValid;
+        }
+
+        // Вспомогательные функции для работы с ошибками
+        function showFieldError(field, message) {
+            let errorMsg = field.parentNode.querySelector('.error-message');
+            if (!errorMsg) {
+                errorMsg = document.createElement('div');
+                errorMsg.className = 'error-message';
+                errorMsg.style.cssText = 'color: #ff4757; font-size: 0.85rem; margin-top: 0.25rem;';
+                field.parentNode.appendChild(errorMsg);
+            }
+            errorMsg.textContent = message;
+        }
+
+        function hideFieldError(field) {
+            const errorMsg = field.parentNode.querySelector('.error-message');
+            if (errorMsg) {
+                errorMsg.remove();
+            }
+        }
+
+        function clearFieldErrors(step) {
+            const errorMessages = step.querySelectorAll('.error-message');
+            errorMessages.forEach(msg => msg.remove());
+            
+            const errorFields = step.querySelectorAll('.error');
+            errorFields.forEach(field => field.classList.remove('error'));
         }
 
         // Сохранение данных текущего шага
@@ -1186,6 +1317,40 @@
         // Скрытие секции с результатом
         function hideResultSection() {
             document.getElementById('resultSection').style.display = 'none';
+        }
+
+        // Генерация технических требований на основе выбранных функций
+        function generateTechnicalRequirements(features) {
+            const technicalReqs = [];
+            
+            // Базовые требования для всех проектов
+            technicalReqs.push('Кроссбраузерная совместимость');
+            technicalReqs.push('Оптимизация скорости загрузки');
+            technicalReqs.push('Безопасность и защита данных');
+            
+            // Добавляем требования на основе выбранных функций
+            if (features.includes('responsive')) {
+                technicalReqs.push('Адаптивная верстка для всех устройств (мобильные, планшеты, десктоп)');
+            }
+            
+            if (features.includes('seo')) {
+                technicalReqs.push('SEO-оптимизация (метатеги, семантическая разметка, sitemap.xml)');
+            }
+            
+            if (features.includes('analytics')) {
+                technicalReqs.push('Интеграция с системами аналитики (Google Analytics, Яндекс.Метрика)');
+            }
+            
+            if (features.includes('contact-form')) {
+                technicalReqs.push('Защита форм от спама и валидация данных');
+            }
+            
+            // Формируем HTML
+            if (technicalReqs.length > 0) {
+                return `<ul>${technicalReqs.map(req => `<li>${req}</li>`).join('')}</ul>`;
+            } else {
+                return '<p>Базовые технические требования будут определены при разработке.</p>';
+            }
         }
 
         function generateTZ() {
@@ -1259,7 +1424,15 @@
                     <div class="tz-section">
                         <h2>3. Функциональные требования</h2>
                 <ul>
-                            ${formData.features.map(feature => `<li>${feature}</li>`).join('')}
+                            ${formData.features.map(feature => {
+                                const featureNames = {
+                                    'responsive': 'Адаптивная верстка',
+                                    'seo': 'SEO оптимизация',
+                                    'analytics': 'Системы аналитики',
+                                    'contact-form': 'Форма обратной связи'
+                                };
+                                return `<li>${featureNames[feature] || feature}</li>`;
+                            }).join('')}
                 </ul>
                     </div>
                 
@@ -1272,18 +1445,12 @@
                 
                     <div class="tz-section">
                         <h2>5. Технические требования</h2>
-                <ul>
-                    <li>Адаптивная верстка для всех устройств</li>
-                    <li>Кроссбраузерная совместимость</li>
-                    <li>Оптимизация скорости загрузки</li>
-                    <li>SEO-оптимизация</li>
-                    <li>Безопасность и защита данных</li>
-                </ul>
-                </div>
+                        ${generateTechnicalRequirements(formData.features)}
+                    </div>
 
                     <div class="tz-section">
                         <h2>6. Сроки и бюджет</h2>
-                        <p><strong>Бюджет:</strong> ${formData.budget}</p>
+                        <p><strong>Бюджет:</strong> ${PRICING_CONFIG.budgetRanges[formData.budget] || formData.budget}</p>
                         <p><strong>Сроки:</strong> ${deadlineOptions[formData.deadline]}</p>
                         ${formData.additionalReqs ? `<p><strong>Дополнительные требования:</strong> ${formData.additionalReqs}</p>` : ''}
                     </div>
@@ -1355,114 +1522,6 @@
             resultSection.scrollIntoView({ behavior: 'smooth' });
         }
         
-        async function downloadPDF() {
-            const btn = event.target;
-            const originalText = btn.textContent;
-            btn.textContent = '⏳ Загружаем PDF...';
-            btn.disabled = true;
-            
-            try {
-                await loadJsPDF();
-                
-            if (typeof window.jspdf === 'undefined') {
-                    throw new Error('jsPDF не загружен');
-                }
-            } catch (error) {
-                alert('Ошибка загрузки PDF библиотеки. Попробуйте скопировать текст.');
-                btn.textContent = originalText;
-                btn.disabled = false;
-                return;
-            }
-            
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            doc.setFont('helvetica');
-            
-            let yPosition = 20;
-            const lineHeight = 7;
-            const pageHeight = 280;
-            
-            doc.setFontSize(16);
-            doc.text(`Техническое задание: ${formData.projectName}`, 20, yPosition);
-            yPosition += lineHeight * 2;
-            
-            const content = [
-                {
-                    title: '1. Общая информация',
-                    items: [
-                        `Тип проекта: ${getProjectTypeName(formData.projectType)}`,
-                        `Описание: ${formData.projectDescription}`,
-                        formData.competitors ? `Конкуренты: ${formData.competitors}` : null
-                    ]
-                },
-                {
-                    title: '2. Целевая аудитория',
-                    items: [
-                        `Возраст: ${formData.targetAge}`,
-                        `Технический уровень: ${formData.techLevel}`,
-                        formData.userNeeds ? `Потребности: ${formData.userNeeds}` : null
-                    ]
-                },
-                {
-                    title: '3. Функциональность',
-                    items: formData.features.map(f => getFeatureName(f))
-                },
-                {
-                    title: '4. Дизайн',
-                    items: [
-                        `Стиль: ${getDesignStyleName(formData.designStyle)}`,
-                        formData.colorPrefs ? `Цвета: ${formData.colorPrefs}` : null,
-                        formData.branding ? `Фирменный стиль: ${getBrandingText(formData.branding)}` : null
-                    ]
-                },
-                {
-                    title: '5. Бюджет и сроки',
-                    items: [
-                        `Бюджет: ${getBudgetText(formData.budget)}`,
-                        `Сроки: ${getDeadlineText(formData.deadline)}`,
-                        formData.additionalReqs ? `Дополнительно: ${formData.additionalReqs}` : null
-                    ]
-                }
-            ];
-            
-            doc.setFontSize(12);
-            
-            content.forEach(section => {
-                if (yPosition > pageHeight - 40) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                doc.setFont('helvetica', 'bold');
-                doc.text(section.title, 20, yPosition);
-                yPosition += lineHeight;
-                
-                doc.setFont('helvetica', 'normal');
-                section.items.forEach(item => {
-                    if (item) {
-                        const splitText = doc.splitTextToSize(item, 170);
-                        splitText.forEach(line => {
-                            if (yPosition > pageHeight - 20) {
-                                doc.addPage();
-                                yPosition = 20;
-                            }
-                            doc.text(line, 25, yPosition);
-                            yPosition += lineHeight;
-                        });
-                    }
-                });
-                yPosition += lineHeight;
-            });
-            
-            // Save PDF
-            doc.save(`TZ_${formData.projectName.replace(/[^a-zа-я0-9]/gi, '_')}.pdf`);
-            
-            // Восстанавливаем кнопку
-            btn.textContent = originalText;
-            btn.disabled = false;
-        }
-        
         function copyToClipboard() {
             const tzText = document.getElementById('tzPreview').innerText;
             navigator.clipboard.writeText(tzText).then(() => {
@@ -1477,25 +1536,7 @@
                 location.reload();
             }
         }
-        
-        // Helper functions for PDF
-        function getProjectTypeName(type) {
-            return PRICING_CONFIG.projectTypes[type]?.name || type;
-        }
-        
-        function getDesignStyleName(style) {
-            const styles = {
-                'modern': 'Современный минимализм',
-                'corporate': 'Корпоративный стиль',
-                'creative': 'Креативный дизайн',
-                'classic': 'Классический стиль'
-            };
-            return styles[style] || style;
-        }
-        
-        function getBudgetText(budget) {
-            return PRICING_CONFIG.budgetRanges[budget] || budget;
-        }
+
     </script>
 
     <script>
