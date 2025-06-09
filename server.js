@@ -10,6 +10,11 @@ const crypto = require('crypto');
 const validator = require('validator');
 const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
+const nodemailer = require('nodemailer');
+const TelegramBot = require('node-telegram-bot-api');
+const { body, validationResult } = require('express-validator');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { JWT } = require('google-auth-library');
 require('dotenv').config();
 
 // Telegram integration
@@ -17,6 +22,166 @@ const telegramService = require('./telegramService');
 
 // Email integration
 const emailService = require('./emailService');
+
+// Google Sheets CRM Service
+class GoogleSheetsService {
+    constructor() {
+        this.spreadsheetId = process.env.GOOGLE_SHEET_ID;
+        this.serviceAccountAuth = null;
+        
+        if (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
+            this.serviceAccountAuth = new JWT({
+                email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+                key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+                scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+            });
+        }
+    }
+
+    isAvailable() {
+        return !!(this.spreadsheetId && this.serviceAccountAuth);
+    }
+
+    async saveToSheet(data) {
+        if (!this.isAvailable()) {
+            console.log('Google Sheets CRM не настроен, пропускаем сохранение');
+            return false;
+        }
+
+        try {
+            const doc = new GoogleSpreadsheet(this.spreadsheetId, this.serviceAccountAuth);
+            await doc.loadInfo();
+
+            // Получаем или создаем лист "Заявки"
+            let sheet = doc.sheetsByTitle['Заявки'];
+            if (!sheet) {
+                sheet = await doc.addSheet({ 
+                    title: 'Заявки',
+                    headerValues: ['Дата', 'Время', 'Имя', 'Email', 'Сообщение', 'IP', 'User Agent', 'Статус']
+                });
+            }
+
+            // Добавляем новую строку
+            const currentDate = new Date();
+            await sheet.addRow({
+                'Дата': currentDate.toLocaleDateString('ru-RU'),
+                'Время': currentDate.toLocaleTimeString('ru-RU'),
+                'Имя': data.name,
+                'Email': data.email,
+                'Сообщение': data.message,
+                'IP': data.ip || 'Неизвестно',
+                'User Agent': data.userAgent || 'Неизвестно',
+                'Статус': 'Новая'
+            });
+
+            console.log('✅ Заявка сохранена в Google Sheets CRM');
+            return true;
+        } catch (error) {
+            console.error('❌ Ошибка сохранения в Google Sheets:', error.message);
+            return false;
+        }
+    }
+}
+
+const crmService = new GoogleSheetsService();
+
+// Airtable CRM Service (альтернатива)
+class AirtableService {
+    constructor() {
+        this.apiKey = process.env.AIRTABLE_API_KEY;
+        this.baseId = process.env.AIRTABLE_BASE_ID;
+        this.tableName = process.env.AIRTABLE_TABLE_NAME || 'Leads';
+    }
+
+    isAvailable() {
+        return !!(this.apiKey && this.baseId);
+    }
+
+    async saveToAirtable(data) {
+        if (!this.isAvailable()) return false;
+
+        try {
+            const Airtable = require('airtable');
+            const base = new Airtable({ apiKey: this.apiKey }).base(this.baseId);
+
+            await base(this.tableName).create([{
+                fields: {
+                    'Имя': data.name,
+                    'Email': data.email,
+                    'Сообщение': data.message,
+                    'IP': data.ip,
+                    'User Agent': data.userAgent,
+                    'Дата': new Date().toISOString(),
+                    'Статус': 'Новая'
+                }
+            }]);
+
+            console.log('✅ Заявка сохранена в Airtable CRM');
+            return true;
+        } catch (error) {
+            console.error('❌ Ошибка сохранения в Airtable:', error.message);
+            return false;
+        }
+    }
+}
+
+// Webhook CRM Service (для внешних систем)
+class WebhookCRMService {
+    constructor() {
+        this.webhookUrl = process.env.CRM_WEBHOOK_URL;
+        this.secret = process.env.CRM_WEBHOOK_SECRET;
+    }
+
+    isAvailable() {
+        return !!this.webhookUrl;
+    }
+
+    async sendToWebhook(data) {
+        if (!this.isAvailable()) return false;
+
+        try {
+            const payload = {
+                ...data,
+                timestamp: new Date().toISOString(),
+                source: 'portfolio_website'
+            };
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'User-Agent': 'PortfolioCRM/1.0'
+            };
+
+            if (this.secret) {
+                const crypto = require('crypto');
+                const signature = crypto
+                    .createHmac('sha256', this.secret)
+                    .update(JSON.stringify(payload))
+                    .digest('hex');
+                headers['X-Webhook-Signature'] = `sha256=${signature}`;
+            }
+
+            const response = await fetch(this.webhookUrl, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                console.log('✅ Заявка отправлена в внешнюю CRM через webhook');
+                return true;
+            } else {
+                console.error('❌ Webhook CRM ошибка:', response.status);
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ Ошибка webhook CRM:', error.message);
+            return false;
+        }
+    }
+}
+
+const airtableCRM = new AirtableService();
+const webhookCRM = new WebhookCRMService();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -663,6 +828,38 @@ app.post('/api/contact', apiLimiter, validateCSRFToken, async (req, res) => {
 
         await contact.save();
         
+        // Prepare data for CRM integration
+        const leadData = {
+            name: contact.name,
+            email: contact.email,
+            message: contact.message,
+            ip: clientIP,
+            userAgent: req.get('User-Agent') || 'Неизвестно'
+        };
+
+        // Save to CRM systems (async, don't wait for completion)
+        const crmPromises = [];
+        
+        if (crmService.isAvailable()) {
+            crmPromises.push(crmService.saveToSheet(leadData));
+        }
+        
+        if (airtableCRM.isAvailable()) {
+            crmPromises.push(airtableCRM.saveToAirtable(leadData));
+        }
+        
+        if (webhookCRM.isAvailable()) {
+            crmPromises.push(webhookCRM.sendToWebhook(leadData));
+        }
+
+        // Выполняем все CRM операции параллельно без ожидания
+        if (crmPromises.length > 0) {
+            Promise.allSettled(crmPromises).then(results => {
+                const successful = results.filter(r => r.status === 'fulfilled').length;
+                console.log(`📊 CRM интеграции: ${successful}/${results.length} успешно`);
+            });
+        }
+        
         // Отправка уведомления в Telegram
         telegramService.notifyNewContact(contact);
         
@@ -1007,6 +1204,102 @@ app.post('/api/admin/email/test', authenticateAdmin, async (req, res) => {
     } catch (error) {
         console.error('Ошибка отправки тестового письма:', error.message);
         handleError(res, error, 'Ошибка отправки тестового письма');
+    }
+});
+
+// CRM Status API endpoint
+app.get('/api/admin/crm/status', authenticateAdmin, async (req, res) => {
+    try {
+        const crmStatus = {
+            googleSheets: {
+                enabled: crmService.isAvailable(),
+                configured: !!(process.env.GOOGLE_SHEET_ID && process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL),
+                name: 'Google Sheets CRM'
+            },
+            airtable: {
+                enabled: airtableCRM.isAvailable(),
+                configured: !!(process.env.AIRTABLE_API_KEY && process.env.AIRTABLE_BASE_ID),
+                name: 'Airtable CRM'
+            },
+            webhook: {
+                enabled: webhookCRM.isAvailable(),
+                configured: !!process.env.CRM_WEBHOOK_URL,
+                name: 'Webhook CRM'
+            }
+        };
+
+        const totalActive = Object.values(crmStatus).filter(crm => crm.enabled).length;
+
+        res.json({
+            success: true,
+            crm: crmStatus,
+            summary: {
+                totalSystems: 3,
+                activeSystems: totalActive,
+                status: totalActive > 0 ? 'active' : 'inactive'
+            }
+        });
+    } catch (error) {
+        handleError(res, error);
+    }
+});
+
+// Test CRM integration
+app.post('/api/admin/crm/test', authenticateAdmin, async (req, res) => {
+    try {
+        const testData = {
+            name: 'Тестовый клиент',
+            email: 'test@example.com',
+            message: 'Это тестовая заявка для проверки CRM интеграции',
+            ip: '127.0.0.1',
+            userAgent: 'CRM-Test/1.0'
+        };
+
+        const results = [];
+        
+        if (crmService.isAvailable()) {
+            try {
+                await crmService.saveToSheet(testData);
+                results.push({ system: 'Google Sheets', status: 'success' });
+            } catch (error) {
+                results.push({ system: 'Google Sheets', status: 'error', error: error.message });
+            }
+        }
+
+        if (airtableCRM.isAvailable()) {
+            try {
+                await airtableCRM.saveToAirtable(testData);
+                results.push({ system: 'Airtable', status: 'success' });
+            } catch (error) {
+                results.push({ system: 'Airtable', status: 'error', error: error.message });
+            }
+        }
+
+        if (webhookCRM.isAvailable()) {
+            try {
+                await webhookCRM.sendToWebhook(testData);
+                results.push({ system: 'Webhook', status: 'success' });
+            } catch (error) {
+                results.push({ system: 'Webhook', status: 'error', error: error.message });
+            }
+        }
+
+        if (results.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Ни одна CRM система не настроена'
+            });
+        }
+
+        const successful = results.filter(r => r.status === 'success').length;
+
+        res.json({
+            success: successful > 0,
+            message: `Тест CRM завершён: ${successful}/${results.length} успешно`,
+            results
+        });
+    } catch (error) {
+        handleError(res, error);
     }
 });
 
@@ -1611,39 +1904,25 @@ const server = app.listen(PORT, () => {
     console.log(`⚡ CSRF защита: ✅ ${isRailway ? '(Railway Mode)' : '(Dev Mode)'}`);
     console.log(`⚡ CORS Policy: ${isRailway ? 'Railway Flexible' : 'Strict Whitelist'}`);
     console.log(`⚡ Rate Limiting: ✅`);
-    console.log(`⚡ Input Validation: ✅`);
-    console.log(`⚡ MongoDB Sanitization: ✅`);
-    console.log(`⚡ JWT Security: ✅`);
-    console.log(`⚡ Helmet Protection: ✅`);
     
-    if (isRailway) {
-        console.log(`🔧 Railway CSRF Tokens: Persistent mode enabled`);
-        console.log(`🔧 Cache Duration: 10 minutes`);
-        console.log(`🔧 CSRF Fallback: Enabled for Railway`);
+    // CRM integration status
+    const crmCount = [crmService, airtableCRM, webhookCRM].filter(crm => crm.isAvailable()).length;
+    console.log(`📊 CRM интеграции: ${crmCount}/3 активны`);
+    
+    if (crmService.isAvailable()) {
+        console.log('✅ Google Sheets CRM активна');
+    }
+    if (airtableCRM.isAvailable()) {
+        console.log('✅ Airtable CRM активна');
+    }
+    if (webhookCRM.isAvailable()) {
+        console.log('✅ Webhook CRM активна');
     }
     
-    // Setup Telegram webhook in production
-    if (process.env.NODE_ENV === 'production' && railwayUrl) {
-        setTimeout(() => {
-            telegramService.setupWebhook(railwayUrl);
-        }, 5000); // Wait 5 seconds after server start
+    if (crmCount === 0) {
+        console.log('ℹ️  CRM не настроена - заявки сохраняются только в MongoDB');
+        console.log('ℹ️  Для настройки CRM см. файл CRM_SETUP.md');
     }
     
-    // Log integration status
-    setTimeout(() => {
-        if (telegramService.isAvailable()) {
-            console.log('✅ Telegram Bot интеграция активна');
-        } else {
-            console.log('ℹ️  Telegram интеграция отключена (настройте TELEGRAM_BOT_TOKEN и TELEGRAM_ADMIN_CHAT_ID)');
-        }
-        
-        if (emailService.isAvailable()) {
-            console.log('✅ Email сервис активен');
-        } else {
-            console.log('ℹ️  Email сервис отключен (настройте SMTP параметры)');
-        }
-    }, 2000);
+    console.log('🎯 Сервер готов к работе!');
 });
-
-// Security timeout for server
-server.timeout = 30000; // 30 seconds timeout 

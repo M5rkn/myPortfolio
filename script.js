@@ -111,7 +111,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initPortfolioFilter();
     initLazyLoading();
     initScrollAnimations();
+    initCalculator();
     initModal();
+    initFAQ();
     initCVDownload();
     registerServiceWorker();
     
@@ -125,6 +127,175 @@ async function initCSRFAndForm() {
     await initCSRF();
     // Затем инициализируем форму
     initContactForm();
+}
+
+// Калькулятор стоимости
+function initCalculator() {
+    const packageCards = document.querySelectorAll('.package-card');
+    const serviceCheckboxes = document.querySelectorAll('.service-option input[type="checkbox"]');
+    const costBreakdown = document.getElementById('costBreakdown');
+    const totalPrice = document.getElementById('totalPrice');
+    const sendToFormBtn = document.getElementById('sendToFormBtn');
+    const resetCalculatorBtn = document.getElementById('resetCalculatorBtn');
+    
+    if (!packageCards.length || !costBreakdown || !totalPrice) return;
+    
+    let selectedPackage = null;
+    let selectedServices = [];
+    
+    // Обработчики для пакетов услуг
+    packageCards.forEach(card => {
+        card.addEventListener('click', () => {
+            // Убираем выделение с других карточек
+            packageCards.forEach(c => c.classList.remove('selected'));
+            
+            // Выделяем текущую карточку
+            card.classList.add('selected');
+            
+            // Сохраняем выбранный пакет
+            selectedPackage = {
+                name: card.querySelector('.package-title').textContent,
+                price: parseInt(card.dataset.price),
+                type: card.dataset.package
+            };
+            
+            updateCalculation();
+        });
+    });
+    
+    // Обработчики для дополнительных услуг
+    serviceCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            const serviceName = checkbox.parentNode.querySelector('.service-name').textContent;
+            const servicePrice = parseInt(checkbox.dataset.price);
+            const serviceType = checkbox.dataset.service;
+            
+            if (checkbox.checked) {
+                selectedServices.push({
+                    name: serviceName,
+                    price: servicePrice,
+                    type: serviceType
+                });
+            } else {
+                selectedServices = selectedServices.filter(service => service.type !== serviceType);
+            }
+            
+            updateCalculation();
+        });
+    });
+    
+    // Функция обновления расчета
+    function updateCalculation() {
+        let breakdown = '';
+        let total = 0;
+        
+        if (selectedPackage) {
+            breakdown += `
+                <div class="breakdown-item">
+                    <span>${selectedPackage.name}</span>
+                    <span>${formatPrice(selectedPackage.price)}</span>
+                </div>
+            `;
+            total += selectedPackage.price;
+        } else {
+            breakdown = `
+                <div class="breakdown-item">
+                    <span>Выберите тип проекта</span>
+                    <span>—</span>
+                </div>
+            `;
+        }
+        
+        selectedServices.forEach(service => {
+            breakdown += `
+                <div class="breakdown-item">
+                    <span>${service.name}</span>
+                    <span>+${formatPrice(service.price)}</span>
+                </div>
+            `;
+            total += service.price;
+        });
+        
+        costBreakdown.innerHTML = breakdown;
+        totalPrice.textContent = formatPrice(total);
+        
+        // Активируем/деактивируем кнопку отправки
+        if (sendToFormBtn) {
+            sendToFormBtn.disabled = !selectedPackage;
+        }
+    }
+    
+    // Функция форматирования цены
+    function formatPrice(price) {
+        return new Intl.NumberFormat('en-DE').format(price) + ' €';
+    }
+    
+    // Функция генерации текста для формы
+    function generateCalculationText() {
+        if (!selectedPackage) return '';
+        
+        let text = `🧮 РАСЧЕТ СТОИМОСТИ ПРОЕКТА\n\n`;
+        text += `📋 Основной пакет:\n${selectedPackage.name} — ${formatPrice(selectedPackage.price)}\n\n`;
+        
+        if (selectedServices.length > 0) {
+            text += `🔧 Дополнительные услуги:\n`;
+            selectedServices.forEach(service => {
+                text += `• ${service.name} — ${formatPrice(service.price)}\n`;
+            });
+            text += `\n`;
+        }
+        
+        const total = selectedPackage.price + selectedServices.reduce((sum, service) => sum + service.price, 0);
+        text += `💰 ИТОГО: ${formatPrice(total)}\n\n`;
+        text += `* Окончательная стоимость может отличаться в зависимости от сложности проекта\n\n`;
+        text += `—————————————————————————\nСообщение от клиента:\n\n`;
+        
+        return text;
+    }
+    
+    // Отправка расчета в форму
+    if (sendToFormBtn) {
+        sendToFormBtn.addEventListener('click', () => {
+            const calculationText = generateCalculationText();
+            const messageTextarea = document.getElementById('message');
+            
+            if (messageTextarea) {
+                messageTextarea.value = calculationText;
+                messageTextarea.focus();
+                
+                // Плавная прокрутка к форме
+                const contactSection = document.getElementById('contact');
+                if (contactSection) {
+                    contactSection.scrollIntoView({ behavior: 'smooth' });
+                }
+                
+                showToast('success', 'Расчет добавлен в форму обратной связи');
+            }
+        });
+    }
+    
+    // Сброс калькулятора
+    if (resetCalculatorBtn) {
+        resetCalculatorBtn.addEventListener('click', () => {
+            // Сбрасываем выбранный пакет
+            packageCards.forEach(card => card.classList.remove('selected'));
+            selectedPackage = null;
+            
+            // Сбрасываем дополнительные услуги
+            serviceCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            selectedServices = [];
+            
+            // Обновляем расчет
+            updateCalculation();
+            
+            showToast('success', 'Калькулятор сброшен');
+        });
+    }
+    
+    // Инициальный расчет
+    updateCalculation();
 }
 
 // ===== Модули =====
@@ -935,5 +1106,34 @@ function initCVDownload() {
             // Показываем уведомление об успешном скачивании
             showToast('Скачивание началось', 'Ваш файл скачивается', 'success');
         }, 100);
+    });
+}
+
+// FAQ аккордеон
+function initFAQ() {
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    if (!faqItems.length) return;
+    
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        
+        question.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            
+            // Закрыть все открытые элементы
+            faqItems.forEach(otherItem => {
+                if (otherItem !== item) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Переключить текущий элемент
+            if (!isActive) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
     });
 }

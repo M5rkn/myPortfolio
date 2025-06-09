@@ -238,6 +238,18 @@
                     <span class="nav-dot"></span>
                     <span class="nav-text">Услуги</span>
                 </a>
+                <a href="#calculator" class="side-nav-link" data-section="calculator">
+                    <span class="nav-dot"></span>
+                    <span class="nav-text">Калькулятор</span>
+                </a>
+                <a href="#reviews" class="side-nav-link" data-section="reviews">
+                    <span class="nav-dot"></span>
+                    <span class="nav-text">Отзывы</span>
+                </a>
+                <a href="#faq" class="side-nav-link" data-section="faq">
+                    <span class="nav-dot"></span>
+                    <span class="nav-text">FAQ</span>
+                </a>
                 <a href="#about" class="side-nav-link" data-section="about">
                     <span class="nav-dot"></span>
                     <span class="nav-text">О себе</span>
@@ -277,6 +289,9 @@
             <a href="#hero" class="mobile-nav-link">Главная</a>
             <a href="#works" class="mobile-nav-link">Работы</a>
             <a href="#services" class="mobile-nav-link">Услуги</a>
+            <a href="#calculator" class="mobile-nav-link">Калькулятор</a>
+            <a href="#reviews" class="mobile-nav-link">Отзывы</a>
+            <a href="#faq" class="mobile-nav-link">FAQ</a>
             <a href="#about" class="mobile-nav-link">О себе</a>
             <a href="#contact" class="mobile-nav-link">Контакты</a>
             <a href="tz-generator.html" class="mobile-nav-link">ТЗ Генератор</a>
@@ -667,6 +682,443 @@
         </div>
     </section>
 
+    <!-- Calculator Section -->
+    <section id="calculator" class="section calculator-section">
+        <div class="container">
+            <div class="calculator-content" data-aos="fade-up">
+                <div class="calculator-header">
+                    <h2 class="section-title">Калькулятор стоимости</h2>
+                    <p class="section-subtitle">Рассчитайте примерную стоимость вашего проекта</p>
+                </div>
+                
+                <div class="calculator-main">
+                    <div class="calculator-form">
+                        <div class="calculator-section">
+                        <h3 class="calculator-section-title">
+                            <span class="section-number">1</span>
+                            Тип проекта
+                        </h3>
+                        <div class="service-packages">
+                            <div class="package-card" data-package="landing" data-price="50">
+                                <div class="package-header">
+                                    <h4 class="package-title">Лендинг</h4>
+                                    <div class="package-price">от 50 €</div>
+                                </div>
+                                <ul class="package-features">
+                                    <li>Адаптивная верстка</li>
+                                    <li>Оптимизация скорости</li>
+                                    <li>SEO базовая настройка</li>
+                                    <li>Контактная форма</li>
+                                </ul>
+                            </div>
+
+                            <div class="package-card" data-package="multipage" data-price="90">
+                                <div class="package-header">
+                                    <h4 class="package-title">Многостраничный сайт</h4>
+                                    <div class="package-price">от 90 €</div>
+                                </div>
+                                <ul class="package-features">
+                                    <li>До 10 страниц</li>
+                                    <li>Адаптивная верстка</li>
+                                    <li>CMS для управления</li>
+                                    <li>SEO оптимизация</li>
+                                </ul>
+                            </div>
+
+                            <div class="package-card" data-package="ecommerce" data-price="140">
+                                <div class="package-header">
+                                    <h4 class="package-title">Интернет-магазин</h4>
+                                    <div class="package-price">от 140 €</div>
+                                </div>
+                                <ul class="package-features">
+                                    <li>Каталог товаров</li>
+                                    <li>Корзина и оплата</li>
+                                    <li>Админ панель</li>
+                                    <li>Интеграции</li>
+                                </ul>
+                            </div>
+
+                            <div class="package-card" data-package="custom" data-price="110">
+                                <div class="package-header">
+                                    <h4 class="package-title">Кастомное решение</h4>
+                                    <div class="package-price">от 110 €</div>
+                                </div>
+                                <ul class="package-features">
+                                    <li>Уникальный функционал</li>
+                                    <li>API интеграции</li>
+                                    <li>Сложная логика</li>
+                                    <li>Масштабируемость</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="calculator-section">
+                        <h3 class="calculator-section-title">
+                            <span class="section-number">2</span>
+                            Дополнительные услуги
+                        </h3>
+                        <div class="additional-services">
+                            <label class="service-option">
+                                <input type="checkbox" data-service="design" data-price="40">
+                                <span class="service-checkmark"></span>
+                                <div class="service-info">
+                                    <span class="service-name">UI/UX Дизайн</span>
+                                    <span class="service-price">+40 €</span>
+                                </div>
+                            </label>
+
+                            <label class="service-option">
+                                <input type="checkbox" data-service="animation" data-price="30">
+                                <span class="service-checkmark"></span>
+                                <div class="service-info">
+                                    <span class="service-name">Анимации и микроинтеракции</span>
+                                    <span class="service-price">+30 €</span>
+                                </div>
+                            </label>
+
+                            <label class="service-option">
+                                <input type="checkbox" data-service="seo" data-price="25">
+                                <span class="service-checkmark"></span>
+                                <div class="service-info">
+                                    <span class="service-name">Продвинутое SEO</span>
+                                    <span class="service-price">+25 €</span>
+                                </div>
+                            </label>
+
+                            <label class="service-option">
+                                <input type="checkbox" data-service="analytics" data-price="15">
+                                <span class="service-checkmark"></span>
+                                <div class="service-info">
+                                    <span class="service-name">Аналитика и метрики</span>
+                                    <span class="service-price">+15 €</span>
+                                </div>
+                            </label>
+
+                            <label class="service-option">
+                                <input type="checkbox" data-service="support" data-price="35">
+                                <span class="service-checkmark"></span>
+                                <div class="service-info">
+                                    <span class="service-name">Техподдержка (6 мес)</span>
+                                    <span class="service-price">+35 €</span>
+                                </div>
+                            </label>
+
+                            <label class="service-option">
+                                <input type="checkbox" data-service="hosting" data-price="20">
+                                <span class="service-checkmark"></span>
+                                <div class="service-info">
+                                    <span class="service-name">Хостинг и домен (1 год)</span>
+                                    <span class="service-price">+20 €</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculator-result">
+                    <div class="result-card">
+                        <h3 class="result-title">Расчет стоимости</h3>
+                        <div class="result-breakdown" id="costBreakdown">
+                            <div class="breakdown-item">
+                                <span>Выберите тип проекта</span>
+                                <span>—</span>
+                            </div>
+                        </div>
+                        <div class="result-total">
+                            <span class="total-label">Итого:</span>
+                            <span class="total-price" id="totalPrice">0 €</span>
+                        </div>
+                        <div class="result-note">
+                            <p>* Окончательная стоимость может отличаться в зависимости от сложности проекта</p>
+                        </div>
+                        <div class="result-actions">
+                            <button id="sendToFormBtn" class="btn btn-primary" disabled>
+                                <span>Отправить расчет</span>
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5.00003 12.0001H19M19 12.0001L13 6M19 12.0001L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <button id="resetCalculatorBtn" class="btn btn-outline">
+                                <span>Сбросить</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" class="section reviews-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Отзывы клиентов</h2>
+                <p class="section-subtitle">Что говорят о моей работе</p>
+            </div>
+            
+            <div class="reviews-grid" data-aos="fade-up">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <img src="images/avatars/anna-petrova.jpg" alt="Анна Петрова">
+                            </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Анна Петрова</h4>
+                                <p class="reviewer-position">Директор маркетингового агентства</p>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <p class="review-text">"Профессиональный подход и внимание к деталям. Лендинг получился именно таким, как мы хотели. Конверсия выросла на 40% после запуска!"</p>
+                        <div class="review-project">Лендинг для маркетингового агентства</div>
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <img src="images/avatars/mikhail-volkov.jpg" alt="Михаил Волков">
+                            </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Михаил Волков</h4>
+                                <p class="reviewer-position">Основатель IT-стартапа</p>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <p class="review-text">"Быстро, качественно и по приятной цене. Сайт работает безупречно, все пожелания были учтены. Рекомендую!"</p>
+                        <div class="review-project">Корпоративный сайт</div>
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <img src="images/avatars/elena-sidorova.jpg" alt="Елена Сидорова">
+                            </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Елена Сидорова</h4>
+                                <p class="reviewer-position">Владелец интернет-магазина</p>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <p class="review-text">"Отличный интернет-магазин с удобной админкой. Продажи выросли, клиенты довольны. Сопровождение на высшем уровне!"</p>
+                        <div class="review-project">Интернет-магазин одежды</div>
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <img src="images/avatars/dmitriy-kozlov.jpg" alt="Дмитрий Козлов">
+                            </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Дмитрий Козлов</h4>
+                                <p class="reviewer-position">Руководитель отдела продаж</p>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <p class="review-text">"Современный дизайн и отличная производительность. Все сделано в срок и с учетом наших пожеланий. Спасибо за работу!"</p>
+                        <div class="review-project">Корпоративный портал</div>
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <img src="images/avatars/olga-morozova.jpg" alt="Ольга Морозова">
+                            </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Ольга Морозова</h4>
+                                <p class="reviewer-position">Фитнес-тренер</p>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <p class="review-text">"Красивый лендинг, который привлекает клиентов. Записей на тренировки стало в разы больше. Очень довольна результатом!"</p>
+                        <div class="review-project">Лендинг фитнес-услуг</div>
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <img src="images/avatars/aleksandr-belov.jpg" alt="Александр Белов">
+                            </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Александр Белов</h4>
+                                <p class="reviewer-position">Ресторатор</p>
+                            </div>
+                        </div>
+                        <div class="review-rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <p class="review-text">"Сайт с онлайн-бронированием столиков работает идеально. Клиенты легко находят нас и делают заказы. Отличная работа!"</p>
+                        <div class="review-project">Сайт ресторана</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section faq-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Часто задаваемые вопросы</h2>
+                <p class="section-subtitle">Ответы на популярные вопросы</p>
+            </div>
+            
+            <div class="faq-content" data-aos="fade-up">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Сколько времени займет создание сайта?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Сроки зависят от сложности проекта:</p>
+                        <ul>
+                            <li><strong>Лендинг</strong> — 3-5 рабочих дней</li>
+                            <li><strong>Многостраничный сайт</strong> — 7-14 дней</li>
+                            <li><strong>Интернет-магазин</strong> — 14-21 день</li>
+                            <li><strong>Кастомное решение</strong> — обсуждается индивидуально</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Какие гарантии вы предоставляете?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Я предоставляю полные гарантии качества:</p>
+                        <ul>
+                            <li>Бесплатные правки в течение 30 дней после сдачи</li>
+                            <li>Гарантия работоспособности — 6 месяцев</li>
+                            <li>Исходный код и все материалы передаются клиенту</li>
+                            <li>Поддержка и консультации в течение месяца</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Как происходит оплата?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Оплата разделена на этапы для удобства:</p>
+                        <ul>
+                            <li><strong>50%</strong> — предоплата после утверждения ТЗ</li>
+                            <li><strong>50%</strong> — после сдачи готового проекта</li>
+                            <li>Принимаю оплату картой, переводом, криптовалютой</li>
+                            <li>Выдаю чек или договор по запросу</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Включена ли поддержка после запуска?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Да, поддержка включена в стоимость:</p>
+                        <ul>
+                            <li>Месяц бесплатной технической поддержки</li>
+                            <li>Помощь с настройкой хостинга и домена</li>
+                            <li>Обучение работе с админ-панелью</li>
+                            <li>Дальнейшая поддержка — по отдельному тарифу</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Можно ли внести изменения в процессе работы?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Конечно, я готов к изменениям:</p>
+                        <ul>
+                            <li>Мелкие правки — бесплатно на любом этапе</li>
+                            <li>Серьезные изменения — обсуждаем доплату</li>
+                            <li>Показываю промежуточные результаты для согласования</li>
+                            <li>Всегда иду навстречу разумным пожеланиям</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Делаете ли адаптивную верстку?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Все сайты создаю адаптивными:</p>
+                        <ul>
+                            <li>Отлично работают на всех устройствах</li>
+                            <li>Тестирую на телефонах, планшетах, десктопах</li>
+                            <li>Быстрая загрузка и оптимизация</li>
+                            <li>SEO-оптимизация включена в стоимость</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Contact Section -->
         <section id="contact" class="section contact-section">
         <div class="container">
@@ -828,6 +1280,9 @@
                     <a href="#hero" class="footer-link">Главная</a>
                     <a href="#works" class="footer-link">Работы</a>
                     <a href="#services" class="footer-link">Услуги</a>
+                    <a href="#calculator" class="footer-link">Калькулятор</a>
+                    <a href="#reviews" class="footer-link">Отзывы</a>
+                    <a href="#faq" class="footer-link">FAQ</a>
                     <a href="#about" class="footer-link">О себе</a>
                     <a href="#contact" class="footer-link">Контакты</a>
     </div>
