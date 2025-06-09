@@ -2242,4 +2242,25 @@ button {
   margin-top: var(--spacing-md);
   max-width: 100%; /* Для кнопок в форме разрешаем полную ширину */
   white-space: nowrap;
+}
+
+/* Стили для кнопки TZ-generator на мобильных устройствах */
+@media (max-width: 480px) {
+  .btn-outline {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .btn-outline span {
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .btn-outline .btn-icon {
+    width: 16px;
+    height: 16px;
+  }
 } 
