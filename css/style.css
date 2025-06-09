@@ -1359,12 +1359,17 @@ button {
 .mobile-nav-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
   display: flex;
   flex-direction: column;
+  max-height: calc(100vh - 80px);
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
-/* Стили скроллбара для мобильного меню */
 .mobile-nav-content::-webkit-scrollbar {
   width: 4px;
 }
@@ -1431,11 +1436,11 @@ button {
 
 .mobile-nav-link {
   display: block;
-  padding: 12px 16px;
-  margin-bottom: 8px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
   color: var(--color-text-primary);
-  font-size: var(--font-size-base);
-  border-radius: 8px;
+  font-size: var(--font-size-sm);
+  border-radius: 6px;
   background: var(--color-bg-card);
   transition: all 0.3s ease;
 }
@@ -3290,6 +3295,51 @@ button {
     min-width: auto;
     width: 100%;
     max-width: 250px;
+  }
+}
+
+/* Стили для навигации в ТЗ генераторе */
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.navigation .btn {
+  flex: 0 1 auto;
+  min-width: 100px;
+  max-width: 150px;
+  width: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+  .navigation {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .navigation .btn {
+    width: 100%;
+    max-width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .navigation {
+    gap: var(--spacing-xs);
+  }
+  
+  .navigation .btn {
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-xs);
   }
 }
 
