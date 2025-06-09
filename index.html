@@ -197,14 +197,42 @@
 <body>
     <!-- Прелоадер -->
     <div class="preloader" id="preloader">
+        <div class="preloader-bg">
+            <div class="preloader-particles"></div>
+            <div class="preloader-grid"></div>
+        </div>
         <div class="preloader-content">
             <div class="preloader-logo">
-                <span class="gradient-text">TP</span>
+                <div class="logo-container">
+                    <span class="logo-text">TechPortal</span>
+                    <div class="logo-underline"></div>
+                </div>
             </div>
-            <div class="preloader-spinner">
-                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="45" />
-                </svg>
+            <div class="preloader-animation">
+                <div class="preloader-orbits">
+                    <div class="orbit orbit-1">
+                        <div class="orbit-dot"></div>
+                    </div>
+                    <div class="orbit orbit-2">
+                        <div class="orbit-dot"></div>
+                    </div>
+                    <div class="orbit orbit-3">
+                        <div class="orbit-dot"></div>
+                    </div>
+                </div>
+                <div class="preloader-center">
+                    <div class="center-core"></div>
+                    <div class="center-ring"></div>
+                </div>
+            </div>
+            <div class="preloader-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="progressText">Загрузка...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
             </div>
         </div>
     </div>
