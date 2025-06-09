@@ -2235,6 +2235,14 @@ button {
   margin-top: auto;
 }
 
+.contact-info-cta .btn-outline {
+  white-space: nowrap;
+  min-width: 250px;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  text-align: center;
+  width: 100%;
+}
+
 /* Footer */
 .footer {
   background-color: var(--color-bg-secondary);
@@ -3106,6 +3114,13 @@ button {
     flex-shrink: 0;
   }
   
+  .contact-info-cta .btn-outline {
+    font-size: 0.75rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    min-width: 200px;
+    width: 100%;
+  }
+  
   /* Адаптируем кнопку .btn-secondary для мобильных устройств */
   .btn-secondary {
     font-size: var(--font-size-xs);
@@ -3113,6 +3128,14 @@ button {
     min-width: auto;
     max-width: none;
     width: auto;
+    flex-shrink: 0;
+  }
+  
+  /* Исключение для кнопки в шапке сайта */
+  .site-header .btn-secondary {
+    width: auto !important;
+    min-width: auto;
+    max-width: none;
     flex-shrink: 0;
   }
   
@@ -3141,6 +3164,18 @@ button {
   .btn-secondary .btn-icon {
     width: 14px;
     height: 14px;
+  }
+  
+  .contact-info-cta .btn-outline {
+    font-size: 0.7rem;
+    padding: 8px 12px;
+    min-width: 180px;
+  }
+  
+  .site-header .btn-secondary {
+    width: auto !important;
+    min-width: auto;
+    padding: 8px 12px;
   }
   
   .mobile-nav {
@@ -3173,6 +3208,19 @@ button {
   .btn-secondary .btn-icon {
     width: 12px;
     height: 12px;
+  }
+  
+  .contact-info-cta .btn-outline {
+    font-size: 0.65rem;
+    padding: 6px 10px;
+    min-width: 160px;
+  }
+  
+  .site-header .btn-secondary {
+    width: auto !important;
+    min-width: auto;
+    padding: 6px 10px;
+    font-size: 0.65rem;
   }
   
   .mobile-nav-toggle {
