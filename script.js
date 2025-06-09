@@ -100,11 +100,8 @@ function showToast(type, message) {
 }
 
 // Инициализация при загрузке DOM
-document.addEventListener('DOMContentLoaded', async function() {
-    // Загружаем CSRF токен первым делом
-    await initCSRF();
-    
-    // Затем инициализируем остальные компоненты
+document.addEventListener('DOMContentLoaded', function() {
+    // Инициализируем все компоненты сразу
     initPreloader();
     initCustomCursor();
     initSideNav();
@@ -114,11 +111,21 @@ document.addEventListener('DOMContentLoaded', async function() {
     initPortfolioFilter();
     initLazyLoading();
     initScrollAnimations();
-    initContactForm();
     initModal();
     initCVDownload();
     registerServiceWorker();
+    
+    // Асинхронно инициализируем CSRF и форму
+    initCSRFAndForm();
 });
+
+// Отдельная функция для асинхронной инициализации формы
+async function initCSRFAndForm() {
+    // Загружаем CSRF токен
+    await initCSRF();
+    // Затем инициализируем форму
+    initContactForm();
+}
 
 // ===== Модули =====
 
