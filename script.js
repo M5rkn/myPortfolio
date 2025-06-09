@@ -56,47 +56,118 @@ function showToast(type, message) {
         border-radius: 8px;
         color: white;
         font-weight: 500;
-        z-index: 10000;
+        z-index: 999999;
         animation: slideInRight 0.3s ease forwards;
         background: ${type === 'success' ? '#10b981' : '#ef4444'};
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.1);
+        max-width: 350px;
+        width: calc(100vw - 40px);
+        box-sizing: border-box;
+        font-size: 14px;
+        line-height: 1.4;
+        pointer-events: auto;
+        transform: translateX(100%);
     `;
+    
+    // Добавляем мобильные стили
+    if (window.innerWidth <= 768) {
+        toast.style.cssText += `
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            width: auto;
+            max-width: none;
+            font-size: 13px;
+            padding: 12px 16px;
+        `;
+    }
     
     // Добавляем CSS анимации если их нет
     if (!document.getElementById('toast-styles')) {
     const style = document.createElement('style');
         style.id = 'toast-styles';
-    style.textContent = `
+            style.textContent = `
             @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
+                from { 
+                    transform: translateX(100%); 
+                    opacity: 0; 
+                }
+                to { 
+                    transform: translateX(0); 
+                    opacity: 1; 
+                }
+            }
             @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
+                from { 
+                    transform: translateX(0); 
+                    opacity: 1; 
+                }
+                to { 
+                    transform: translateX(100%); 
+                    opacity: 0; 
+                }
+            }
+            @keyframes slideInTop {
+                from { 
+                    transform: translateY(-100%); 
+                    opacity: 0; 
+                }
+                to { 
+                    transform: translateY(0); 
+                    opacity: 1; 
+                }
+            }
+            @keyframes slideOutTop {
+                from { 
+                    transform: translateY(0); 
+                    opacity: 1; 
+                }
+                to { 
+                    transform: translateY(-100%); 
+                    opacity: 0; 
+                }
+            }
             .toast-content {
-            display: flex;
-            align-items: center;
+                display: flex;
+                align-items: center;
                 gap: 8px;
-        }
-    `;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            @media (max-width: 768px) {
+                .toast {
+                    animation: slideInTop 0.3s ease forwards !important;
+                }
+                .toast.hiding {
+                    animation: slideOutTop 0.3s ease forwards !important;
+                }
+            }
+        `;
     document.head.appendChild(style);
     }
     
     document.body.appendChild(toast);
     
-    // Автоматическое скрытие через 4 секунды
+    // Принудительно запускаем анимацию появления
     setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease forwards';
+        toast.style.transform = 'translateX(0)';
+        toast.style.opacity = '1';
+    }, 50);
+    
+    // Автоматическое скрытие через 5 секунд (увеличили время)
+    setTimeout(() => {
+        toast.classList.add('hiding');
+        const isMobile = window.innerWidth <= 768;
+        toast.style.animation = isMobile ? 'slideOutTop 0.3s ease forwards' : 'slideOutRight 0.3s ease forwards';
+        
         setTimeout(() => {
             if (toast.parentNode) {
                 toast.remove();
             }
         }, 300);
-    }, 4000);
+    }, 5000);
 }
 
 // Инициализация при загрузке DOM
@@ -773,23 +844,7 @@ function initModal() {
                 // Установка изображения
                 document.getElementById('modalImage').style.backgroundImage = 'url(' + projectData.image + ')';
                 
-                // Установка ссылок
-                const liveLink = document.getElementById('modalLiveLink');
-                const githubLink = document.getElementById('modalGithubLink');
-                
-                if (projectData.liveLink) {
-                    liveLink.style.display = '';
-                    liveLink.href = projectData.liveLink;
-                } else {
-                    liveLink.style.display = 'none';
-                }
-                
-                if (projectData.githubLink) {
-                    githubLink.style.display = '';
-                    githubLink.href = projectData.githubLink;
-                } else {
-                    githubLink.style.display = 'none';
-                }
+
                 
                 // Открытие модального окна
                 modal.classList.add('active');
