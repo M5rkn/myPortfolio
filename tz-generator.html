@@ -489,7 +489,7 @@
             stroke-dashoffset: 75;
             transform-origin: 50% 50%;
         }
-
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -960,7 +960,7 @@
         </div>
     </div>
 
-    <script>        
+    <script>
         const PRICING_CONFIG = {
             projectTypes: {
                 'landing': { min: 50, max: 150, name: 'Лендинг' },
@@ -1050,7 +1050,7 @@
                 });
             });
         }
-
+        
         // Обновление состояния кнопки "Далее"
         function updateNextButtonState() {
             const nextBtn = document.getElementById('nextBtn');
@@ -1197,8 +1197,8 @@
             if (currentStepIndex === 1) {
                 if (!formData.projectType) {
                     showError('Пожалуйста, выберите тип проекта');
-                    return false;
-                }
+                        return false;
+                    }
                 return true;
             }
 
@@ -1207,8 +1207,8 @@
                 const checkedBoxes = currentStep.querySelectorAll('input[type="checkbox"]:checked');
                 if (checkedBoxes.length === 0) {
                     showError('Выберите хотя бы одну функцию для проекта');
-                    return false;
-                }
+                        return false;
+                    }
                 return true;
             }
 
@@ -1446,7 +1446,7 @@
                     <div class="tz-section">
                         <h2>5. Технические требования</h2>
                         ${generateTechnicalRequirements(formData.features)}
-                    </div>
+                </div>
 
                     <div class="tz-section">
                         <h2>6. Сроки и бюджет</h2>
@@ -1536,7 +1536,7 @@
                 location.reload();
             }
         }
-
+        
     </script>
 
     <script>

@@ -23,7 +23,7 @@ let csrfToken = '';
 async function initCSRF() {
     try {
         const response = await fetch('/api/csrf-token');
-        const data = await response.json();
+                const data = await response.json();
         if (data.csrfToken) {
             csrfToken = data.csrfToken;
         }
@@ -66,24 +66,24 @@ function showToast(type, message) {
     
     // Добавляем CSS анимации если их нет
     if (!document.getElementById('toast-styles')) {
-        const style = document.createElement('style');
+    const style = document.createElement('style');
         style.id = 'toast-styles';
-        style.textContent = `
+    style.textContent = `
             @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
             @keyframes slideOutRight {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
             .toast-content {
-                display: flex;
-                align-items: center;
+            display: flex;
+            align-items: center;
                 gap: 8px;
-            }
-        `;
-        document.head.appendChild(style);
+        }
+    `;
+    document.head.appendChild(style);
     }
     
     document.body.appendChild(toast);
@@ -388,7 +388,7 @@ function initCustomCursor() {
             }
             document.removeEventListener('mousemove', mouseMoveHandler);
         };
-            } else {
+        } else {
         cursor.style.display = 'none';
         follower.style.display = 'none';
     }
@@ -481,7 +481,7 @@ function initMobileNav() {
                 // Если открыто, закрываем
                 mobileNav.classList.remove('active');
                 document.body.style.overflow = '';
-            } else {
+        } else {
                 // Если закрыто, открываем
                 mobileNav.classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -625,7 +625,7 @@ function initPortfolioFilter() {
             workItems.forEach(item => {
                 if (filterValue === 'all') {
                     item.style.display = 'block';
-                    setTimeout(() => {
+        setTimeout(() => {
                         item.classList.remove('filtered-out');
                     }, 10);
         } else {
@@ -1131,9 +1131,9 @@ function initFAQ() {
             // Переключить текущий элемент
             if (!isActive) {
                 item.classList.add('active');
-            } else {
+                } else {
                 item.classList.remove('active');
-            }
+                }
+            });
         });
-    });
-}
+    }
