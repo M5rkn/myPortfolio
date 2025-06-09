@@ -16,9 +16,95 @@
     }
 })();
 
-// Ожидание загрузки DOM
-document.addEventListener('DOMContentLoaded', function() {
-    // Инициализация модулей
+let isSubmitting = false;
+let csrfToken = '';
+
+// Initialize CSRF token
+async function initCSRF() {
+    try {
+        const response = await fetch('/api/csrf-token');
+        const data = await response.json();
+        if (data.csrfToken) {
+            csrfToken = data.csrfToken;
+        }
+    } catch (error) {
+        console.warn('CSRF token fetch failed:', error);
+    }
+}
+
+// Функция для показа уведомлений
+function showToast(type, message) {
+    // Удаляем существующие тосты
+    const existingToasts = document.querySelectorAll('.toast');
+    existingToasts.forEach(toast => toast.remove());
+    
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <span class="toast-icon">${type === 'success' ? '✅' : '❌'}</span>
+            <span class="toast-message">${message}</span>
+        </div>
+    `;
+    
+    // Добавляем стили
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        z-index: 10000;
+        animation: slideInRight 0.3s ease forwards;
+        background: ${type === 'success' ? '#10b981' : '#ef4444'};
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    `;
+    
+    // Добавляем CSS анимации если их нет
+    if (!document.getElementById('toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            .toast-content {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(toast);
+    
+    // Автоматическое скрытие через 4 секунды
+    setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease forwards';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.remove();
+            }
+        }, 300);
+    }, 4000);
+}
+
+// Инициализация при загрузке DOM
+document.addEventListener('DOMContentLoaded', async function() {
+    // Загружаем CSRF токен первым делом
+    await initCSRF();
+    
+    // Затем инициализируем остальные компоненты
     initPreloader();
     initCustomCursor();
     initSideNav();
@@ -26,13 +112,11 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollProgress();
     initStatsCounter();
     initPortfolioFilter();
-    initModal();
-    initContactForm();
     initLazyLoading();
     initScrollAnimations();
+    initContactForm();
+    initModal();
     initCVDownload();
-    
-    // Регистрация Service Worker для PWA
     registerServiceWorker();
 });
 
@@ -542,42 +626,68 @@ function initContactForm() {
     const form = document.getElementById('contactForm');
     if (!form) return;
     
-    let isSubmitting = false;
-    
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         if (isSubmitting) return;
         isSubmitting = true;
         
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span>Отправляем...</span>';
+        submitBtn.disabled = true;
+        
         try {
             const formData = new FormData(form);
-            const response = await fetch('/api/contact', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
             
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            const headers = {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            };
+            
+            // Добавляем CSRF токен если есть
+            if (csrfToken) {
+                headers['X-CSRF-Token'] = csrfToken;
             }
             
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    message: formData.get('message')
+                })
+            });
+            
             const data = await response.json();
-            showToast('success', 'Сообщение отправлено!');
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Network response was not ok');
+            }
+            
+            showToast('success', data.message || 'Сообщение отправлено!');
             form.reset();
             
         } catch (error) {
             console.error('Error:', error);
-            showToast('error', 'Произошла ошибка при отправке');
+            
+            // Если ошибка связана с CSRF токеном, пробуем обновить его
+            if (error.message.includes('CSRF') || error.message.includes('csrf')) {
+                await initCSRF();
+                showToast('error', 'Попробуйте отправить сообщение еще раз');
+            } else {
+                showToast('error', error.message || 'Произошла ошибка при отправке');
+            }
             
         } finally {
             isSubmitting = false;
-                }
-            });
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
         }
-        
+    });
+}
+
 // Данные проектов
 function getProjectData(projectId) {
     const projects = {
