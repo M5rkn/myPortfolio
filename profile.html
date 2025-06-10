@@ -414,7 +414,8 @@
                     userId: payload.userId,
                     email: payload.email,
                     name: payload.name || payload.email.split('@')[0],
-                    isAdmin: payload.isAdmin || false
+                    isAdmin: payload.isAdmin === true || payload.admin === true,
+                    role: payload.role
                 };
             } catch (error) {
                 console.error('Error parsing token:', error);

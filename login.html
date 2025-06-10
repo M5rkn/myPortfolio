@@ -661,11 +661,15 @@
                     
                     // Проверяем роль пользователя и перенаправляем соответственно
                     const userInfo = getUserFromToken(data.token);
+                    console.log('User info from token:', userInfo); // Отладка
+                    
                     setTimeout(() => {
-                        if (userInfo && userInfo.isAdmin) {
-                            window.location.replace('/admin.html');
+                        if (userInfo && userInfo.isAdmin === true) {
+                            console.log('Redirecting to admin panel'); // Отладка
+                            window.location.replace('admin.html');
                         } else {
-                            window.location.replace('/index.html');
+                            console.log('Redirecting to main page'); // Отладка
+                            window.location.replace('index.html');
                         }
                     }, 1000);
                 } else {
@@ -843,11 +847,14 @@
         function getUserFromToken(token) {
             try {
                 const payload = JSON.parse(atob(token.split('.')[1]));
+                console.log('Token payload:', payload); // Отладка
+                
                 return {
                     userId: payload.userId,
                     email: payload.email,
                     name: payload.name || payload.email.split('@')[0],
-                    isAdmin: payload.isAdmin || false
+                    isAdmin: payload.isAdmin === true || payload.admin === true,
+                    role: payload.role
                 };
             } catch (error) {
                 console.error('Error parsing token:', error);

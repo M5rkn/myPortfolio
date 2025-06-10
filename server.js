@@ -672,7 +672,9 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
             const tokenPayload = {
                 admin: true,
                 email: email,
+                name: email.split('@')[0],
                 role: 'admin',
+                isAdmin: true,
                 timestamp: Date.now(),
                 ip: clientIP,
                 sessionId: crypto.randomBytes(16).toString('hex')
@@ -744,7 +746,9 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
             const tokenPayload = {
                 userId: user._id,
                 email: user.email,
+                name: user.name || user.email.split('@')[0],
                 role: user.role,
+                isAdmin: false,
                 timestamp: Date.now(),
                 ip: clientIP,
                 sessionId: crypto.randomBytes(16).toString('hex')
