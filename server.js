@@ -73,7 +73,7 @@ app.use(morgan('combined', {
 // Более разумные лимиты для нормальной работы
 const strictLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Увеличено до 100 запросов за 15 минут
+    max: 150, // Увеличено до 150 запросов за 15 минут
     message: {
         success: false,
         message: 'Слишком много запросов, попробуйте позже'
@@ -81,18 +81,28 @@ const strictLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     skip: (req) => {
-        // Skip rate limiting for static files
-        return req.url.match(/\.(css|js|png|jpg|jpeg|gif|ico|woff|woff2|svg|webp)$/);
+        // Skip rate limiting for static files and common requests
+        return req.url.match(/\.(css|js|png|jpg|jpeg|gif|ico|woff|woff2|svg|webp|html)$/) ||
+               req.url === '/' ||
+               req.url === '/index.html' ||
+               req.url === '/profile.html' ||
+               req.url === '/login.html' ||
+               req.path === '/api/user/logout' ||
+               req.path === '/api/csrf-token';
     }
 });
 
 // API specific rate limiting (более мягкий)
 const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 30, // Увеличено до 30 API вызовов за 15 минут
+    max: 50, // Увеличено до 50 API вызовов за 15 минут
     message: {
         success: false,
         message: 'API rate limit exceeded'
+    },
+    skip: (req) => {
+        // Пропускаем rate limiting для logout запросов
+        return req.path === '/api/user/logout';
     }
 });
 
@@ -2000,6 +2010,37 @@ app.delete('/api/user/calculations/:id', authenticateUser, asyncHandler(async (r
     } catch (error) {
         console.error('Error deleting calculation:', error);
         handleError(res, error, 'Ошибка удаления расчета');
+    }
+}));
+
+// Logout endpoint
+app.post('/api/user/logout', authenticateUser, asyncHandler(async (req, res) => {
+    try {
+        // Добавляем токен в черный список
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        if (token) {
+            tokenBlacklist.add(token);
+            
+            // Очищаем старые токены из черного списка (простая очистка по времени)
+            if (tokenBlacklist.size > 1000) {
+                const tokensArray = Array.from(tokenBlacklist);
+                tokenBlacklist.clear();
+                // Оставляем только последние 500 токенов
+                tokensArray.slice(-500).forEach(t => tokenBlacklist.add(t));
+            }
+        }
+        
+        res.json({
+            success: true,
+            message: 'Успешный выход'
+        });
+    } catch (error) {
+        console.error('Error during logout:', error);
+        // Всегда возвращаем успех для logout
+        res.json({
+            success: true,
+            message: 'Выход выполнен'
+        });
     }
 }));
 

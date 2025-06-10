@@ -1994,9 +1994,32 @@ function initAuthButton() {
         }
     }
 
-    function logout() {
+    async function logout() {
+        try {
+            const token = localStorage.getItem('authToken');
+            
+            // Если есть токен, уведомляем сервер о выходе
+            if (token) {
+                // Делаем запрос на сервер без ожидания ответа
+                fetch('/api/user/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }).catch(() => {
+                    // Игнорируем ошибки - выход все равно произойдет локально
+                });
+            }
+        } catch (error) {
+            // Игнорируем ошибки сети
+        }
+        
+        // Всегда очищаем локальные данные
         localStorage.removeItem('authToken');
         localStorage.removeItem('userInfo');
+        sessionStorage.clear();
+        
         updateAuthButton(false);
         showToast('success', 'Вы успешно вышли из аккаунта');
         
@@ -2006,6 +2029,19 @@ function initAuthButton() {
             if (typeof renderFunction === 'function') {
                 renderFunction();
             }
+        }
+        
+        // Очищаем кэши браузера
+        try {
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                    });
+                });
+            }
+        } catch (error) {
+            // Игнорируем ошибки кэша
         }
     }
 }

@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
@@ -29,6 +29,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            touch-action: manipulation;
         }
 
         .login-container {
@@ -40,6 +43,7 @@
             width: 100%;
             max-width: 400px;
             text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .login-title {
@@ -96,6 +100,9 @@
             font-size: 1rem;
             width: 100%;
             transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            min-height: 44px; /* iOS рекомендует минимум 44px для тач-элементов */
         }
 
         .btn:hover:not(:disabled) {
@@ -165,6 +172,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 500;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            min-height: 44px;
         }
 
         .tab-btn.active {
@@ -214,61 +224,165 @@
 
         /* Мобильная оптимизация */
         @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
             .login-container {
-                width: 90%;
-                max-width: none;
-                padding: var(--spacing-lg);
-                margin: var(--spacing-lg) auto;
+                width: 100%;
+                max-width: 350px;
+                padding: 1.5rem;
+                margin: 1rem auto;
+                min-height: auto;
             }
 
-            .login-form {
-                gap: var(--spacing-lg);
+            .login-title {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
             }
 
             .form-group {
-                margin-bottom: var(--spacing-lg);
+                margin-bottom: 1.5rem;
             }
 
-            .form-input {
-                font-size: 16px;
-                padding: var(--spacing-lg);
-                height: 50px;
+            .form-group input {
+                font-size: 16px; /* Предотвращает зум на iOS */
+                padding: 0.875rem;
+                height: auto;
             }
 
-            .btn-login {
-                height: 50px;
-                font-size: var(--font-size-lg);
+            .btn {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
             }
 
-            .form-footer {
-                flex-direction: column;
-                gap: var(--spacing-md);
-                text-align: center;
+            .auth-tabs {
+                margin-bottom: 1.5rem;
+            }
+
+            .tab-btn {
+                padding: 0.75rem;
+                font-size: 0.9rem;
             }
         }
 
         /* Планшеты */
         @media (min-width: 769px) and (max-width: 1024px) {
             .login-container {
-                width: 70%;
-                padding: var(--spacing-xl);
-            }
-
-            .form-input {
-                font-size: var(--font-size-base);
-                padding: var(--spacing-md);
+                width: 90%;
+                max-width: 450px;
+                padding: 2.5rem;
             }
         }
 
-        /* Small phones */
+        /* Маленькие телефоны */
         @media (max-width: 480px) {
+            body {
+                padding: 0.5rem;
+            }
+            
             .login-container {
-                padding: var(--spacing-lg);
-                margin: var(--spacing-md);
+                width: 100%;
+                max-width: 320px;
+                padding: 1.25rem;
+                margin: 0.5rem auto;
+                border-radius: 15px;
             }
 
-            h1 {
-                font-size: var(--font-size-xl);
+            .login-title {
+                font-size: 1.35rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .form-group input {
+                padding: 0.8rem;
+                font-size: 16px;
+            }
+
+            .btn {
+                padding: 0.8rem 1.25rem;
+                font-size: 0.95rem;
+            }
+
+            .tab-btn {
+                padding: 0.7rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Очень маленькие экраны */
+        @media (max-width: 375px) {
+            .login-container {
+                max-width: 290px;
+                padding: 1rem;
+            }
+
+            .login-title {
+                font-size: 1.2rem;
+            }
+
+            .form-group input {
+                padding: 0.75rem;
+            }
+
+            .btn {
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        /* Альбомная ориентация на мобильных */
+        @media (max-width: 768px) and (orientation: landscape) {
+            body {
+                padding: 0.5rem;
+            }
+            
+            .login-container {
+                max-width: 400px;
+                padding: 1rem;
+                margin: 0.5rem auto;
+            }
+
+            .login-title {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+
+            .form-group {
+                margin-bottom: 1rem;
+            }
+
+            .auth-tabs {
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* iPhone с вырезом (notch) */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            @media (max-width: 768px) {
+                body {
+                    padding-top: max(1rem, env(safe-area-inset-top));
+                    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+                    padding-left: max(1rem, env(safe-area-inset-left));
+                    padding-right: max(1rem, env(safe-area-inset-right));
+                }
+            }
+        }
+
+        /* Дополнительные стили для очень узких экранов */
+        @media (max-width: 320px) {
+            .login-container {
+                max-width: 280px;
+                padding: 0.875rem;
+                border-radius: 12px;
+            }
+
+            .auth-tabs {
+                padding: 3px;
+            }
+
+            .tab-btn {
+                padding: 0.6rem 0.5rem;
+                font-size: 0.8rem;
             }
         }
     </style>

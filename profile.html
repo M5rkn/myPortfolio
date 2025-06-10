@@ -778,18 +778,50 @@
             return 'дней';
         }
 
-        function logout() {
+        async function logout() {
             if (confirm('Вы уверены, что хотите выйти?')) {
-                // Очищаем все токены и состояния
+                try {
+                    const token = localStorage.getItem('authToken');
+                    
+                    // Если есть токен, уведомляем сервер о выходе
+                    if (token) {
+                        // Делаем запрос на сервер без ожидания ответа
+                        fetch('/api/user/logout', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        }).catch(() => {
+                            // Игнорируем ошибки - выход все равно произойдет локально
+                        });
+                    }
+                } catch (error) {
+                    // Игнорируем ошибки сети
+                }
+                
+                // Всегда очищаем локальные данные
                 localStorage.removeItem('authToken');
+                localStorage.removeItem('userInfo');
                 sessionStorage.removeItem('adminToken');
                 sessionStorage.removeItem('redirectCount');
                 sessionStorage.clear();
                 
-                // Добавляем небольшую задержку перед переходом
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 100);
+                // Очищаем кэши браузера
+                try {
+                    if ('caches' in window) {
+                        caches.keys().then(names => {
+                            names.forEach(name => {
+                                caches.delete(name);
+                            });
+                        });
+                    }
+                } catch (error) {
+                    // Игнорируем ошибки кэша
+                }
+                
+                // Мгновенный переход без задержки
+                window.location.replace('index.html');
             }
         }
     </script>
