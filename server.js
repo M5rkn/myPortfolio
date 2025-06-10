@@ -475,6 +475,89 @@ userSchema.index({ role: 1 });
 
 const User = mongoose.model('User', userSchema);
 
+// Calculation model for saved calculations
+const calculationSchema = new mongoose.Schema({
+    userId: {
+        type: String,
+        required: true,
+        index: true
+    },
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+        maxlength: 100
+    },
+    package: {
+        type: Object,
+        required: true
+    },
+    services: {
+        type: Array,
+        required: true
+    },
+    total: {
+        type: Number,
+        required: true
+    },
+    date: {
+        type: String,
+        required: true
+    }
+}, {
+    timestamps: true
+});
+
+const Calculation = mongoose.model('Calculation', calculationSchema);
+
+// Order model for user orders
+const orderSchema = new mongoose.Schema({
+    userId: {
+        type: String,
+        required: true,
+        index: true
+    },
+    orderNumber: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    name: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    email: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    phone: {
+        type: String,
+        trim: true
+    },
+    message: {
+        type: String,
+        trim: true
+    },
+    calculation: {
+        type: Object
+    },
+    status: {
+        type: String,
+        enum: ['new', 'in_progress', 'completed', 'cancelled'],
+        default: 'new'
+    },
+    total: {
+        type: Number,
+        required: true
+    }
+}, {
+    timestamps: true
+});
+
+const Order = mongoose.model('Order', orderSchema);
+
 // Enhanced auth middleware with blacklist check
 const authenticateAdmin = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -1504,7 +1587,7 @@ app.get('/api/health', (req, res) => {
 // User profile endpoints
 app.get('/api/user/calculations', authenticateUser, asyncHandler(async (req, res) => {
     try {
-        const calculations = await ContactMessage.find({ 
+        const calculations = await Calculation.find({ 
             userId: req.user.userId 
         }).sort({ createdAt: -1 }).limit(50);
         
@@ -1517,7 +1600,7 @@ app.get('/api/user/calculations', authenticateUser, asyncHandler(async (req, res
 
 app.get('/api/user/orders', authenticateUser, asyncHandler(async (req, res) => {
     try {
-        const orders = await ContactMessage.find({ 
+        const orders = await Order.find({ 
             userId: req.user.userId
         }).sort({ createdAt: -1 }).limit(20);
         
@@ -1539,7 +1622,11 @@ app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => 
         }
         
         // Считаем статистику
-        const calculationsCount = await ContactMessage.countDocuments({ 
+        const calculationsCount = await Calculation.countDocuments({ 
+            userId: req.user.userId
+        });
+        
+        const ordersCount = await Order.countDocuments({ 
             userId: req.user.userId
         });
         
@@ -1554,13 +1641,47 @@ app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => 
             },
             stats: {
                 calculationsCount,
-                ordersCount: calculationsCount, // Пока используем одинаковый счетчик
+                ordersCount,
                 joinDays
             }
         });
     } catch (error) {
         console.error('Error fetching user profile:', error);
         handleError(res, error, 'Ошибка загрузки профиля');
+    }
+}));
+
+// Save calculation endpoint
+app.post('/api/user/calculations', authenticateUser, asyncHandler(async (req, res) => {
+    try {
+        const { name, package: pkg, services, total, date } = req.body;
+        
+        if (!name || !pkg || !services || !total || !date) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Все поля обязательны' 
+            });
+        }
+        
+        const calculation = new Calculation({
+            userId: req.user.userId,
+            name: name.trim(),
+            package: pkg,
+            services,
+            total,
+            date
+        });
+        
+        await calculation.save();
+        
+        res.json({
+            success: true,
+            message: 'Расчет сохранен',
+            calculation
+        });
+    } catch (error) {
+        console.error('Error saving calculation:', error);
+        handleError(res, error, 'Ошибка сохранения расчета');
     }
 }));
 
