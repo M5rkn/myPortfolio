@@ -3950,6 +3950,27 @@ button {
     margin-top: var(--spacing-lg);
     overflow-x: auto;
     max-width: 100%;
+    -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) var(--color-bg-secondary);
+}
+
+.comparison-table::-webkit-scrollbar {
+    height: 8px;
+}
+
+.comparison-table::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+    border-radius: 4px;
+}
+
+.comparison-table::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 4px;
+}
+
+.comparison-table::-webkit-scrollbar-thumb:hover {
+    background: var(--color-secondary);
 }
 
 .comparison-header {
@@ -4415,8 +4436,28 @@ button {
     
     .comparison-header,
     .comparison-row {
-        grid-template-columns: 1fr repeat(2, 80px);
+        grid-template-columns: 1fr repeat(3, 80px);
         font-size: var(--font-size-xs);
+        min-width: 360px;
+    }
+    
+    .comparison-feature {
+        font-size: var(--font-size-xs);
+    }
+    
+    .comparison-value {
+        font-size: var(--font-size-xs);
+    }
+    
+    /* Индикатор прокрутки на мобильных */
+    .comparison-table::after {
+        content: '👆 Прокрутите горизонтально';
+        display: block;
+        text-align: center;
+        font-size: var(--font-size-xs);
+        color: var(--color-text-secondary);
+        margin-top: var(--spacing-sm);
+        opacity: 0.7;
     }
 }
 
@@ -4442,6 +4483,25 @@ button {
     
     .timeline-item {
         padding-left: var(--spacing-md);
+    }
+    
+    /* Еще более компактная таблица сравнения на малых экранах */
+    .comparison-header,
+    .comparison-row {
+        grid-template-columns: 1fr repeat(3, 60px);
+        min-width: 300px;
+        padding: var(--spacing-xs);
+        gap: var(--spacing-xs);
+    }
+    
+    .comparison-feature {
+        font-size: var(--font-size-xs);
+        line-height: 1.2;
+    }
+    
+    .comparison-value {
+        font-size: 10px;
+        text-align: center;
     }
 }
 
