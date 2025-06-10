@@ -877,7 +877,7 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
 
             // Generate admin token
             const tokenPayload = {
-                userId: 'admin',
+                userId: null, // Админ не имеет userId в базе пользователей
                 admin: true,
                 email: email,
                 name: email.split('@')[0],
@@ -958,6 +958,13 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
             user.loginAttempts = 0;
             user.lockUntil = null;
             user.lastLogin = new Date();
+            
+            // Исправляем отсутствующее имя у старых пользователей
+            if (!user.name) {
+                user.name = user.email.split('@')[0];
+                console.log(`Fixed missing name for user: ${user.email}`);
+            }
+            
             await user.save();
 
             // Generate user token
@@ -1714,6 +1721,14 @@ app.get('/api/health', (req, res) => {
 // User profile endpoints
 app.get('/api/user/calculations', authenticateUser, asyncHandler(async (req, res) => {
     try {
+        // Проверяем что это не админ
+        if (!req.user.userId || req.user.isAdmin) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Доступ только для обычных пользователей' 
+            });
+        }
+        
         const calculations = await Calculation.find({ 
             userId: req.user.userId 
         }).sort({ createdAt: -1 }).limit(50);
@@ -1727,6 +1742,14 @@ app.get('/api/user/calculations', authenticateUser, asyncHandler(async (req, res
 
 app.get('/api/user/orders', authenticateUser, asyncHandler(async (req, res) => {
     try {
+        // Проверяем что это не админ
+        if (!req.user.userId || req.user.isAdmin) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Доступ только для обычных пользователей' 
+            });
+        }
+        
         const orders = await Order.find({ 
             userId: req.user.userId
         }).sort({ createdAt: -1 }).limit(20);
@@ -1740,6 +1763,14 @@ app.get('/api/user/orders', authenticateUser, asyncHandler(async (req, res) => {
 
 app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => {
     try {
+        // Проверяем что это не админ
+        if (!req.user.userId || req.user.isAdmin) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Доступ только для обычных пользователей' 
+            });
+        }
+        
         const user = await User.findById(req.user.userId).select('-password');
         if (!user) {
             return res.status(404).json({ 
@@ -1781,6 +1812,14 @@ app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => 
 // Save calculation endpoint
 app.post('/api/user/calculations', authenticateUser, asyncHandler(async (req, res) => {
     try {
+        // Проверяем что это не админ
+        if (!req.user.userId || req.user.isAdmin) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Доступ только для обычных пользователей' 
+            });
+        }
+        
         const { name, package: pkg, services, total, date } = req.body;
         
         if (!name || !pkg || !services || !total || !date) {
