@@ -1,4 +1,4 @@
-const CACHE_NAME = 'techportal-v1.0.0';
+const CACHE_NAME = 'techportal-v1.1-fixed';
 const ALLOWED_ORIGINS = [
     self.location.origin,
     'https://fonts.googleapis.com',
@@ -49,77 +49,41 @@ function isValidCacheUrl(url) {
 
 // Secure request validation
 function isValidRequest(request) {
-    // Only cache GET requests
+    // Only cache GET requests to static resources
     if (request.method !== 'GET') {
         return false;
     }
 
-    // Validate URL
-    if (!isValidCacheUrl(request.url)) {
+    // Не кэшируем API запросы
+    if (request.url.includes('/api/')) {
         return false;
     }
 
-    // Block requests with dangerous headers
-    const dangerousHeaders = ['x-forwarded-for', 'x-real-ip', 'host'];
-    for (const header of dangerousHeaders) {
-        if (request.headers.has(header)) {
-            return false;
-        }
-    }
+    // Кэшируем только статические ресурсы
+    const staticExtensions = ['.css', '.js', '.html', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2'];
+    const hasStaticExtension = staticExtensions.some(ext => 
+        request.url.toLowerCase().includes(ext)
+    );
 
-    return true;
+    return hasStaticExtension || request.url.includes('.html') || request.url.endsWith('/');
 }
 
 // Enhanced fetch with security checks
 async function secureFetch(request) {
-    // Clone request for security
-    const clonedRequest = request.clone();
-
-    // Add security headers
-    const secureHeaders = new Headers(clonedRequest.headers);
-    secureHeaders.set('X-Requested-With', 'ServiceWorker');
-    secureHeaders.set('Cache-Control', 'max-age=3600');
-
-    const secureRequest = new Request(clonedRequest.url, {
-        method: clonedRequest.method,
-        headers: secureHeaders,
-        mode: 'cors',
-        credentials: 'omit', // Don't send credentials
-        cache: 'default'
-    });
-
     try {
-        const response = await fetch(secureRequest);
+        // Простой fetch без излишних ограничений
+        const response = await fetch(request);
 
-        // Validate response
-        if (!response.ok || response.status >= 400) {
-            throw new Error('Invalid response');
-        }
-
-        // Check content type
-        const contentType = response.headers.get('content-type') || '';
-        const allowedTypes = [
-            'text/html',
-            'text/css',
-            'application/javascript',
-            'text/javascript',
-            'application/json',
-            'image/',
-            'font/'
-        ];
-
-        const isAllowedType = allowedTypes.some(type =>
-            contentType.toLowerCase().includes(type.toLowerCase())
-        );
-
-        if (!isAllowedType) {
-            throw new Error('Invalid content type');
+        // Базовая валидация только для критических ошибок
+        if (response.status >= 500) {
+            throw new Error('Server error');
         }
 
         return response;
     } catch (error) {
-        console.error('Secure fetch failed:', error.message);
-        return new Response('Resource not available', { status: 503 });
+        console.warn('Fetch failed, fallback:', error.message);
+        // Возвращаем оригинальный запрос без кэширования
+        return fetch(request);
     }
 }
 
@@ -149,40 +113,46 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// Перехват fetch запросов с усиленной безопасностью
+// Перехват fetch запросов с упрощенной логикой
 self.addEventListener('fetch', (event) => {
-    // Only handle valid requests
+    // Только для кэшируемых статических ресурсов
     if (!isValidRequest(event.request)) {
-        return; // Let browser handle invalid requests
+        return; // Браузер обработает остальные запросы
     }
 
     event.respondWith(
         caches.match(event.request)
             .then(async (response) => {
-                // Return cached response if valid
+                // Возвращаем кэшированный ответ если есть
                 if (response) {
-                    // Validate cached response
-                    const cacheDate = response.headers.get('date');
-                    if (cacheDate) {
-                        const age = Date.now() - new Date(cacheDate).getTime();
-                        // Refresh cache if older than 24 hours
-                        if (age > 24 * 60 * 60 * 1000) {
-                            return secureFetch(event.request);
+                    // Обновляем кэш в фоне для следующего раза
+                    secureFetch(event.request).then(freshResponse => {
+                        if (freshResponse && freshResponse.ok) {
+                            caches.open(CACHE_NAME).then(cache => {
+                                cache.put(event.request, freshResponse.clone());
+                            });
                         }
-                    }
+                    }).catch(() => {
+                        // Игнорируем ошибки фонового обновления
+                    });
+                    
                     return response;
                 }
 
-                // Fetch and cache new response
-                return secureFetch(event.request);
+                // Загружаем и кэшируем новый ресурс
+                return secureFetch(event.request).then(freshResponse => {
+                    if (freshResponse && freshResponse.ok) {
+                        const responseToCache = freshResponse.clone();
+                        caches.open(CACHE_NAME).then(cache => {
+                            cache.put(event.request, responseToCache);
+                        });
+                    }
+                    return freshResponse;
+                });
             })
             .catch(() => {
-                // Return fallback for errors
-                return new Response('Service temporarily unavailable', {
-                    status: 503,
-                    statusText: 'Service Unavailable',
-                    headers: { 'Content-Type': 'text/plain' }
-                });
+                // Простой fallback без кэширования
+                return fetch(event.request);
             })
     );
 });
