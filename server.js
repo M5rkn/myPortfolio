@@ -419,6 +419,13 @@ const ProjectLike = mongoose.model('ProjectLike', projectLikeSchema);
 
 // User model for authentication
 const userSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+        minlength: 2,
+        maxlength: 50
+    },
     email: {
         type: String,
         required: true,
@@ -746,7 +753,7 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
             const tokenPayload = {
                 userId: user._id,
                 email: user.email,
-                name: user.name || user.email.split('@')[0],
+                name: user.name,
                 role: user.role,
                 isAdmin: false,
                 timestamp: Date.now(),
@@ -781,12 +788,20 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
 // User registration
 app.post('/api/admin/register', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { name, email, password } = req.body;
 
-        if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
+        if (!name || !email || !password || typeof name !== 'string' || typeof email !== 'string' || typeof password !== 'string') {
             return res.status(400).json({
                 success: false,
-                message: 'Email и пароль обязательны'
+                message: 'Имя, email и пароль обязательны'
+            });
+        }
+
+        // Validate name
+        if (name.length < 2 || name.length > 50) {
+            return res.status(400).json({
+                success: false,
+                message: 'Имя должно содержать от 2 до 50 символов'
             });
         }
 
@@ -824,6 +839,7 @@ app.post('/api/admin/register', loginLimiter, validateCSRFToken, asyncHandler(as
 
         // Create new user
         const newUser = new User({
+            name: name.trim(),
             email: email.toLowerCase(),
             password: hashedPassword,
             role: 'user'
@@ -831,7 +847,7 @@ app.post('/api/admin/register', loginLimiter, validateCSRFToken, asyncHandler(as
 
         await newUser.save();
 
-        console.log(`New user registered from IP: ${clientIP}, email: ${email}`);
+        console.log(`New user registered from IP: ${clientIP}, name: ${name}, email: ${email}`);
 
         res.json({
             success: true,

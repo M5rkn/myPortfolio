@@ -275,7 +275,7 @@
 </head>
 <body>
     <div class="login-container">
-        <h1 class="login-title">Админ-панель</h1>
+        <h1 class="login-title">Авторизация</h1>
         
         <div class="auth-tabs">
             <button class="tab-btn active" id="loginTab">Вход</button>
@@ -321,6 +321,21 @@
 
         <!-- Форма регистрации -->
         <form id="registerForm" class="auth-form" novalidate>
+            <div class="form-group">
+                <label for="registerName">Имя</label>
+                <input 
+                    type="text" 
+                    id="registerName" 
+                    name="name" 
+                    placeholder="Введите ваше имя" 
+                    required 
+                    minlength="2"
+                    maxlength="50"
+                    autocomplete="given-name"
+                    spellcheck="false"
+                >
+            </div>
+
             <div class="form-group">
                 <label for="registerEmail">Email</label>
                 <input 
@@ -401,6 +416,7 @@
         // Input elements
         const loginEmailInput = document.getElementById('loginEmail');
         const loginPasswordInput = document.getElementById('loginPassword');
+        const registerNameInput = document.getElementById('registerName');
         const registerEmailInput = document.getElementById('registerEmail');
         const registerPasswordInput = document.getElementById('registerPassword');
         const confirmPasswordInput = document.getElementById('confirmPassword');
@@ -596,9 +612,16 @@
             successMessage.style.display = 'none';
         }
 
-        // Login form submission handler
+                // Login form submission handler  
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Check if user is locked out
+            if (lockoutExpiry > Date.now()) {
+                const remainingTime = Math.ceil((lockoutExpiry - Date.now()) / 1000 / 60);
+                showError(`Слишком много неудачных попыток. Попробуйте через ${remainingTime} мин.`);
+                return;
+            }
             
             const email = loginEmailInput.value.trim();
             const password = loginPasswordInput.value.trim();
@@ -611,11 +634,6 @@
             
             if (!validatePassword(password)) {
                 showError('Пароль должен содержать от 8 до 128 символов');
-                return;
-            }
-
-            // Check rate limiting
-            if (!checkRateLimit()) {
                 return;
             }
 
@@ -662,9 +680,10 @@
                     // Проверяем роль пользователя и перенаправляем соответственно
                     const userInfo = getUserFromToken(data.token);
                     console.log('User info from token:', userInfo); // Отладка
+                    console.log('Token raw:', data.token); // Отладка
                     
                     setTimeout(() => {
-                        if (userInfo && userInfo.isAdmin === true) {
+                        if (userInfo && (userInfo.isAdmin === true || userInfo.role === 'admin')) {
                             console.log('Redirecting to admin panel'); // Отладка
                             window.location.replace('admin.html');
                         } else {
@@ -678,8 +697,15 @@
                     saveRateLimitData();
                     updateAttemptsWarning();
                     
-                    const message = data.message || 'Неверные данные для входа';
-                    showError(sanitizeText(message));
+                    // Check if user should be locked out
+                    if (loginAttempts >= SECURITY_CONFIG.maxAttempts) {
+                        lockoutExpiry = Date.now() + SECURITY_CONFIG.lockoutDuration;
+                        saveRateLimitData();
+                        showError('Превышено количество попыток входа. Попробуйте через 15 минут.');
+                    } else {
+                        const message = data.message || 'Неверные данные для входа';
+                        showError(sanitizeText(message));
+                    }
                     
                     // Clear password field on failure
                     loginPasswordInput.value = '';
@@ -702,11 +728,17 @@
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const name = registerNameInput.value.trim();
             const email = registerEmailInput.value.trim();
             const password = registerPasswordInput.value.trim();
             const confirmPassword = confirmPasswordInput.value.trim();
             
             // Validate input
+            if (!name || name.length < 2 || name.length > 50) {
+                showError('Имя должно содержать от 2 до 50 символов');
+                return;
+            }
+            
             if (!validateEmail(email)) {
                 showError('Введите корректный email адрес');
                 return;
@@ -731,7 +763,7 @@
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), SECURITY_CONFIG.requestTimeout);
 
-                const requestBody = { email, password };
+                const requestBody = { name, email, password };
                 const headers = {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
@@ -755,6 +787,7 @@
                     showSuccess('Регистрация успешна! Переключаемся на вход...');
                     
                     // Clear form
+                    registerNameInput.value = '';
                     registerEmailInput.value = '';
                     registerPasswordInput.value = '';
                     confirmPasswordInput.value = '';
@@ -830,6 +863,7 @@
         // Security: Clear form data on page unload
         window.addEventListener('beforeunload', () => {
             loginPasswordInput.value = '';
+            registerNameInput.value = '';
             registerPasswordInput.value = '';
             confirmPasswordInput.value = '';
         });
@@ -838,6 +872,7 @@
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 loginPasswordInput.blur();
+                registerNameInput.blur();
                 registerPasswordInput.blur();
                 confirmPasswordInput.blur();
             }
@@ -852,8 +887,8 @@
                 return {
                     userId: payload.userId,
                     email: payload.email,
-                    name: payload.name || payload.email.split('@')[0],
-                    isAdmin: payload.isAdmin === true || payload.admin === true,
+                    name: payload.name || payload.email?.split('@')[0],
+                    isAdmin: payload.isAdmin === true || payload.admin === true || payload.role === 'admin',
                     role: payload.role
                 };
             } catch (error) {

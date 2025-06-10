@@ -457,6 +457,11 @@ function initAdvancedCalculator() {
     // Получить токен авторизации
     function getAuthToken() {
         try {
+            // Проверяем localStorage для токена (где он сохраняется при входе)
+            let token = localStorage.getItem('authToken');
+            if (token) return token;
+            
+            // Для обратной совместимости проверяем sessionStorage
             const tokenData = sessionStorage.getItem('adminToken');
             if (!tokenData) return null;
             
@@ -475,10 +480,18 @@ function initAdvancedCalculator() {
     // Получить ID пользователя из токена
     function getUserIdFromToken(token) {
         try {
+            if (!token) return null;
             const payload = JSON.parse(atob(token.split('.')[1]));
-            return payload.userId || payload.email || 'anonymous';
+            
+            // Проверяем срок действия токена
+            if (payload.exp && payload.exp * 1000 < Date.now()) {
+                return null;
+            }
+            
+            return payload.userId || payload.email || payload.id || null;
         } catch (error) {
-            return 'anonymous';
+            console.log('Ошибка декодирования токена:', error);
+            return null;
         }
     }
 
@@ -1837,11 +1850,17 @@ function initAuthButton() {
     function getUserFromToken(token) {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
+            
+            // Проверяем срок действия токена
+            if (payload.exp && payload.exp * 1000 < Date.now()) {
+                return null;
+            }
+            
             return {
                 userId: payload.userId,
                 email: payload.email,
-                name: payload.name || payload.email.split('@')[0],
-                isAdmin: payload.isAdmin === true || payload.admin === true,
+                name: payload.name || payload.email?.split('@')[0],
+                isAdmin: payload.isAdmin === true || payload.admin === true || payload.role === 'admin',
                 role: payload.role
             };
         } catch (error) {
