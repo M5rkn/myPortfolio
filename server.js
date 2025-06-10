@@ -1989,16 +1989,11 @@ app.get('/api/health', (req, res) => {
 // User profile endpoints
 app.get('/api/user/calculations', authenticateUser, asyncHandler(async (req, res) => {
     try {
-        // Проверяем что это не админ
-        if (!req.user.userId || req.user.isAdmin) {
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Доступ только для обычных пользователей' 
-            });
-        }
+        // Определяем ID пользователя (для админа используем email как ID)
+        const userIdentifier = req.user.userId || req.user.email || 'admin';
         
         const calculations = await Calculation.find({ 
-            userId: req.user.userId 
+            userId: userIdentifier 
         }).sort({ createdAt: -1 }).limit(50);
         
         res.json(calculations);
@@ -2136,13 +2131,8 @@ app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => 
 // Save calculation endpoint
 app.post('/api/user/calculations', authenticateUser, asyncHandler(async (req, res) => {
     try {
-        // Проверяем что есть userId
-        if (!req.user.userId) {
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Требуется авторизация пользователя' 
-            });
-        }
+        // Определяем ID пользователя (для админа используем email как ID)
+        const userIdentifier = req.user.userId || req.user.email || 'admin';
         
         const { name, package: pkg, services, total, date } = req.body;
         
@@ -2154,7 +2144,7 @@ app.post('/api/user/calculations', authenticateUser, asyncHandler(async (req, re
         }
         
         const calculation = new Calculation({
-            userId: req.user.userId,
+            userId: userIdentifier,
             name: name.trim(),
             package: pkg,
             services,
@@ -2178,13 +2168,8 @@ app.post('/api/user/calculations', authenticateUser, asyncHandler(async (req, re
 // Delete calculation endpoint
 app.delete('/api/user/calculations/:id', authenticateUser, asyncHandler(async (req, res) => {
     try {
-        // Проверяем что есть userId
-        if (!req.user.userId) {
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Требуется авторизация пользователя' 
-            });
-        }
+        // Определяем ID пользователя (для админа используем email как ID)
+        const userIdentifier = req.user.userId || req.user.email || 'admin';
         
         const { id } = req.params;
         
@@ -2197,7 +2182,7 @@ app.delete('/api/user/calculations/:id', authenticateUser, asyncHandler(async (r
         
         const calculation = await Calculation.findOneAndDelete({
             _id: id,
-            userId: req.user.userId
+            userId: userIdentifier
         });
         
         if (!calculation) {
