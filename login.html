@@ -781,15 +781,28 @@
                     headers['X-CSRF-Token'] = csrfToken;
                 }
 
-                const response = await fetch('/api/user/login', {
+                // Сначала пробуем админский эндпоинт, затем пользовательский
+                let response = await fetch('/api/admin/login', {
                     method: 'POST',
                     headers: headers,
                     body: JSON.stringify(requestBody),
                     signal: controller.signal
                 });
 
+                let data = await response.json();
+
+                // Если админский не сработал, пробуем пользовательский
+                if (!data.success && response.status === 401) {
+                    response = await fetch('/api/user/login', {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(requestBody),
+                        signal: controller.signal
+                    });
+                    data = await response.json();
+                }
+
                 clearTimeout(timeoutId);
-                const data = await response.json();
 
                 if (data.success && data.token) {
                     // Reset rate limiting on success
@@ -896,6 +909,8 @@
                     headers['X-CSRF-Token'] = csrfToken;
                 }
 
+                // Примечание: Регистрация администраторов заблокирована на серверной стороне
+                
                 const response = await fetch('/api/user/register', {
                     method: 'POST',
                     headers: headers,
