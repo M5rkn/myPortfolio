@@ -479,6 +479,11 @@
         async function loadUserData(userId) {
             try {
                 const token = localStorage.getItem('authToken');
+                if (!token) {
+                    console.log('No auth token found, redirecting to login');
+                    window.location.href = 'login.html';
+                    return;
+                }
                 
                 // Загружаем сохраненные расчеты
                 const calculationsResponse = await fetch(`/api/user/calculations`, {
@@ -491,6 +496,11 @@
                     const calculations = await calculationsResponse.json();
                     updateCalculations(calculations);
                     document.getElementById('calculationsCount').textContent = calculations.length;
+                } else if (calculationsResponse.status === 401) {
+                    console.log('Token expired or invalid, redirecting to login');
+                    localStorage.removeItem('authToken');
+                    window.location.href = 'login.html';
+                    return;
                 }
 
                 // Загружаем заказы пользователя
@@ -504,6 +514,11 @@
                     const orders = await ordersResponse.json();
                     updateOrders(orders);
                     document.getElementById('ordersCount').textContent = orders.length;
+                } else if (ordersResponse.status === 401) {
+                    console.log('Token expired or invalid, redirecting to login');
+                    localStorage.removeItem('authToken');
+                    window.location.href = 'login.html';
+                    return;
                 }
 
                 // Загружаем профиль для получения даты регистрации
@@ -518,6 +533,11 @@
                     if (profileData.success) {
                         document.getElementById('joinDays').textContent = profileData.stats.joinDays;
                     }
+                } else if (profileResponse.status === 401) {
+                    console.log('Token expired or invalid, redirecting to login');
+                    localStorage.removeItem('authToken');
+                    window.location.href = 'login.html';
+                    return;
                 }
 
             } catch (error) {
@@ -601,8 +621,16 @@
 
         function logout() {
             if (confirm('Вы уверены, что хотите выйти?')) {
+                // Очищаем все токены и состояния
                 localStorage.removeItem('authToken');
-                window.location.href = 'index.html';
+                sessionStorage.removeItem('adminToken');
+                sessionStorage.removeItem('redirectCount');
+                sessionStorage.clear();
+                
+                // Добавляем небольшую задержку перед переходом
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 100);
             }
         }
     </script>

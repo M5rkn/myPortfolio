@@ -506,6 +506,11 @@
         // Exit admin panel function (только выход из админ панели)
         function exitAdminPanel() {
             if (confirm('Выйти из админ панели?')) {
+                // Очищаем только админские токены и состояние
+                sessionStorage.removeItem('adminToken');
+                sessionStorage.removeItem('redirectCount');
+                
+                // НЕ удаляем authToken - пользователь остается залогиненным
                 window.location.replace('/');
             }
         }
