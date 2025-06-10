@@ -472,12 +472,6 @@ function initAdvancedCalculator() {
                 const token = getAuthToken();
                 if (!token) {
                     showToast('error', 'Для сохранения расчетов необходимо войти в систему');
-                    // Показываем ссылку на авторизацию
-                    setTimeout(() => {
-                        if (confirm('Хотите перейти к форме входа?')) {
-                            window.open('/login.html', '_blank');
-                        }
-                    }, 1000);
                     return;
                 }
 
@@ -926,7 +920,13 @@ function initChatbot() {
                 messageElement.className = 'message message-bot';
                 messageElement.innerHTML = `
                  <div class="message-avatar">
-                     <img src="images/avatar.jpg" alt="Бот">
+                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                         <circle cx="12" cy="8" r="4" fill="#667eea"/>
+                         <path d="M12 14c-4 0-7 2.5-7 5.5V21h14v-1.5c0-3-5.5-7-5.5z" fill="#667eea"/>
+                         <circle cx="9" cy="7" r="1" fill="white"/>
+                         <circle cx="15" cy="7" r="1" fill="white"/>
+                         <path d="M9.5 9.5c.5.5 1.5.5 2 0s1.5 0 2 0" stroke="white" stroke-width="1" stroke-linecap="round"/>
+                     </svg>
                  </div>
                  <div class="message-content">
                      <p>${response}</p>
