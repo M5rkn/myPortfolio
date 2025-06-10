@@ -467,6 +467,11 @@ function initAdvancedCalculator() {
         saveCalculationBtn.addEventListener('click', async () => {
             const calculationData = getCurrentCalculation();
 
+            if (!calculationData) {
+                showToast('error', 'Выберите тип проекта для сохранения расчета');
+                return;
+            }
+
             if (calculationData) {
                 // Проверяем авторизацию пользователя
                 const token = getAuthToken();
