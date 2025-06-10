@@ -103,6 +103,61 @@
             gap: var(--spacing-xl);
         }
         
+        .bonus-section {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            color: white;
+            text-align: center;
+        }
+        
+        .bonus-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .streak-counter {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .bonus-progress {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius-lg);
+            height: 8px;
+            margin: var(--spacing-md) 0;
+            overflow: hidden;
+        }
+        
+        .bonus-progress-fill {
+            background: white;
+            height: 100%;
+            border-radius: var(--border-radius-lg);
+            transition: width 0.3s ease;
+        }
+        
+        .bonus-discount {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-md);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .discount-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FFE66D;
+        }
+        
         .profile-main {
             background: var(--color-bg-card);
             border-radius: var(--border-radius-lg);
@@ -399,6 +454,22 @@
                 </div>
             </div>
 
+            <!-- Бонусная система -->
+            <div class="bonus-section" id="bonusSection" style="display: none;">
+                <div class="bonus-title">
+                    🔥 Ежедневный стрик
+                </div>
+                <div class="streak-counter" id="streakCounter">0</div>
+                <div class="bonus-progress">
+                    <div class="bonus-progress-fill" id="bonusProgressFill" style="width: 0%;"></div>
+                </div>
+                <p id="bonusDescription">Заходите 7 дней подряд и получите скидку 15%!</p>
+                <div class="bonus-discount" id="bonusDiscount" style="display: none;">
+                    <div class="discount-value" id="discountValue">15%</div>
+                    <p>Скидка активна до <span id="discountExpiry"></span></p>
+                </div>
+            </div>
+
             <!-- Основной контент -->
             <div class="profile-content">
                 <div class="profile-main">
@@ -570,6 +641,11 @@
                     const profileData = await profileResponse.json();
                     if (profileData.success) {
                         document.getElementById('joinDays').textContent = profileData.stats.joinDays;
+                        
+                        // Обновляем бонусную информацию
+                        if (profileData.bonus) {
+                            updateBonusInfo(profileData.bonus);
+                        }
                     }
                 } else if (profileResponse.status === 401) {
                     console.log('Token expired or invalid, redirecting to login');
@@ -598,7 +674,7 @@
                     <div class="calculation-name">${calc.name || 'Расчет без названия'}</div>
                     <div class="calculation-details">
                         <span>${new Date(calc.createdAt).toLocaleDateString('ru-RU')}</span>
-                        <span>${calc.totalPrice || 0} €</span>
+                        <span>${calc.total || 0} €</span>
                     </div>
                 `;
                 
@@ -655,6 +731,51 @@
                 case 'completed': return 'Завершен';
                 default: return 'Новый';
             }
+        }
+
+        function updateBonusInfo(bonusData) {
+            const bonusSection = document.getElementById('bonusSection');
+            const streakCounter = document.getElementById('streakCounter');
+            const bonusProgressFill = document.getElementById('bonusProgressFill');
+            const bonusDescription = document.getElementById('bonusDescription');
+            const bonusDiscount = document.getElementById('bonusDiscount');
+            const discountValue = document.getElementById('discountValue');
+            const discountExpiry = document.getElementById('discountExpiry');
+            
+            // Показываем секцию бонусов
+            bonusSection.style.display = 'block';
+            
+            // Обновляем счетчик стрика
+            streakCounter.textContent = bonusData.dailyStreak;
+            
+            // Обновляем прогресс-бар (7 дней = 100%)
+            const progressPercent = Math.min((bonusData.dailyStreak / 7) * 100, 100);
+            bonusProgressFill.style.width = `${progressPercent}%`;
+            
+            // Обновляем описание
+            if (bonusData.hasActiveBonus) {
+                bonusDescription.textContent = `🎉 Поздравляем! У вас активна скидка ${bonusData.bonusDiscount}%`;
+                bonusDiscount.style.display = 'block';
+                discountValue.textContent = `${bonusData.bonusDiscount}%`;
+                
+                if (bonusData.streakExpiry) {
+                    const expiryDate = new Date(bonusData.streakExpiry).toLocaleDateString('ru-RU');
+                    discountExpiry.textContent = expiryDate;
+                }
+            } else if (bonusData.dailyStreak >= 7) {
+                bonusDescription.textContent = '🎯 Отлично! Продолжайте заходить каждый день!';
+                bonusDiscount.style.display = 'none';
+            } else {
+                const daysLeft = bonusData.daysUntilBonus;
+                bonusDescription.textContent = `Осталось ${daysLeft} ${getDaysWord(daysLeft)} до получения скидки 15%!`;
+                bonusDiscount.style.display = 'none';
+            }
+        }
+        
+        function getDaysWord(days) {
+            if (days === 1) return 'день';
+            if (days >= 2 && days <= 4) return 'дня';
+            return 'дней';
         }
 
         function logout() {

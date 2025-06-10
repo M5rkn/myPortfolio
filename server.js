@@ -260,6 +260,59 @@ const validateCSRFToken = (req, res, next) => {
 // JWT Token blacklist (use Redis in production)
 const tokenBlacklist = new Set();
 
+// Функция для обновления ежедневного стрика пользователя
+async function updateUserDailyStreak(userId) {
+    try {
+        const user = await User.findById(userId);
+        if (!user) return;
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const lastVisit = user.lastVisitDate ? new Date(user.lastVisitDate) : null;
+        if (lastVisit) {
+            lastVisit.setHours(0, 0, 0, 0);
+        }
+        
+        // Если пользователь уже заходил сегодня, ничего не делаем
+        if (lastVisit && lastVisit.getTime() === today.getTime()) {
+            return;
+        }
+        
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        if (lastVisit && lastVisit.getTime() === yesterday.getTime()) {
+            // Пользователь заходил вчера, увеличиваем стрик
+            user.dailyStreak += 1;
+        } else if (!lastVisit || lastVisit.getTime() < yesterday.getTime()) {
+            // Пользователь пропустил день(и), сбрасываем стрик
+            user.dailyStreak = 1;
+        }
+        
+        // Обновляем дату последнего визита
+        user.lastVisitDate = new Date();
+        
+        // Проверяем достижения и начисляем бонусы
+        if (user.dailyStreak >= 7) {
+            // 7 дней подряд = 15% скидка на 3 дня
+            user.bonusDiscount = 15;
+            user.streakExpiry = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 дня
+            console.log(`🎉 User ${user.email} получил 15% скидку за 7-дневный стрик!`);
+        }
+        
+        await user.save();
+        
+        return {
+            streak: user.dailyStreak,
+            discount: user.bonusDiscount,
+            hasBonus: user.bonusDiscount > 0 && user.streakExpiry > new Date()
+        };
+    } catch (error) {
+        console.error('Error updating daily streak:', error);
+    }
+}
+
 // Telegram webhook endpoint
 app.post('/telegram-webhook', express.json({ limit: '10mb' }), (req, res) => {
     try {
@@ -469,6 +522,24 @@ const userSchema = new mongoose.Schema({
         default: 0
     },
     lockUntil: {
+        type: Date,
+        default: null
+    },
+    // Бонусная система
+    dailyStreak: {
+        type: Number,
+        default: 0
+    },
+    lastVisitDate: {
+        type: Date,
+        default: null
+    },
+    bonusDiscount: {
+        type: Number,
+        default: 0,
+        max: 50 // Максимум 50% скидки
+    },
+    streakExpiry: {
         type: Date,
         default: null
     }
@@ -1791,12 +1862,24 @@ app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => 
             });
         }
         
+        // Обновляем ежедневный стрик пользователя
+        await updateUserDailyStreak(req.user.userId);
+        
         const user = await User.findById(req.user.userId).select('-password');
         if (!user) {
             return res.status(404).json({ 
                 success: false, 
                 message: 'Пользователь не найден' 
             });
+        }
+        
+        // Проверяем активность бонуса
+        const hasActiveBonus = user.bonusDiscount > 0 && user.streakExpiry && user.streakExpiry > new Date();
+        if (!hasActiveBonus && user.bonusDiscount > 0) {
+            // Бонус истек, сбрасываем
+            user.bonusDiscount = 0;
+            user.streakExpiry = null;
+            await user.save();
         }
         
         // Считаем статистику
@@ -1821,6 +1904,13 @@ app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => 
                 calculationsCount,
                 ordersCount,
                 joinDays
+            },
+            bonus: {
+                dailyStreak: user.dailyStreak,
+                bonusDiscount: hasActiveBonus ? user.bonusDiscount : 0,
+                hasActiveBonus,
+                streakExpiry: user.streakExpiry,
+                daysUntilBonus: Math.max(0, 7 - user.dailyStreak)
             }
         });
     } catch (error) {
@@ -1868,6 +1958,48 @@ app.post('/api/user/calculations', authenticateUser, asyncHandler(async (req, re
     } catch (error) {
         console.error('Error saving calculation:', error);
         handleError(res, error, 'Ошибка сохранения расчета');
+    }
+}));
+
+// Delete calculation endpoint
+app.delete('/api/user/calculations/:id', authenticateUser, asyncHandler(async (req, res) => {
+    try {
+        // Проверяем что это не админ
+        if (!req.user.userId || req.user.isAdmin) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Доступ только для обычных пользователей' 
+            });
+        }
+        
+        const { id } = req.params;
+        
+        if (!id) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'ID расчета обязателен' 
+            });
+        }
+        
+        const calculation = await Calculation.findOneAndDelete({
+            _id: id,
+            userId: req.user.userId
+        });
+        
+        if (!calculation) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Расчет не найден' 
+            });
+        }
+        
+        res.json({
+            success: true,
+            message: 'Расчет удален'
+        });
+    } catch (error) {
+        console.error('Error deleting calculation:', error);
+        handleError(res, error, 'Ошибка удаления расчета');
     }
 }));
 

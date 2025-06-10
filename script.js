@@ -259,7 +259,7 @@ function initCalculator() {
     });
 
     // Функция обновления расчета
-    function updateCalculation() {
+    async function updateCalculation() {
         let breakdown = '';
         let total = 0;
 
@@ -290,8 +290,24 @@ function initCalculator() {
             total += service.price;
         });
 
+        // Получаем бонусную скидку пользователя
+        const bonusDiscount = await getUserBonusDiscount();
+        let finalTotal = total;
+        
+        if (bonusDiscount > 0 && total > 0) {
+            const discountAmount = (total * bonusDiscount) / 100;
+            finalTotal = total - discountAmount;
+            
+            breakdown += `
+                <div class="breakdown-item bonus-discount">
+                    <span>🎉 Бонусная скидка ${bonusDiscount}%</span>
+                    <span>-${formatPrice(discountAmount)}</span>
+                </div>
+            `;
+        }
+
         costBreakdown.innerHTML = breakdown;
-        totalPrice.textContent = formatPrice(total);
+        totalPrice.textContent = formatPrice(finalTotal);
 
         // Активируем/деактивируем кнопку отправки
         if (sendToFormBtn) {
@@ -303,7 +319,9 @@ function initCalculator() {
             detail: {
                 selectedPackage,
                 selectedServices,
-                total
+                total: finalTotal,
+                originalTotal: total,
+                bonusDiscount
             }
         });
         document.dispatchEvent(event);
@@ -312,6 +330,38 @@ function initCalculator() {
     // Функция форматирования цены
     function formatPrice(price) {
         return new Intl.NumberFormat('en-DE').format(price) + ' €';
+    }
+
+    // Функция получения бонусной скидки пользователя
+    async function getUserBonusDiscount() {
+        try {
+            const token = localStorage.getItem('authToken');
+            if (!token) return 0;
+
+            // Проверяем, что токен не истек
+            if (isTokenExpired(token)) {
+                localStorage.removeItem('authToken');
+                return 0;
+            }
+
+            const response = await fetch('/api/user/profile', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.bonus && data.bonus.hasActiveBonus) {
+                    return data.bonus.bonusDiscount;
+                }
+            }
+            
+            return 0;
+        } catch (error) {
+            console.error('Error getting bonus discount:', error);
+            return 0;
+        }
     }
 
     // Функция генерации текста для формы
@@ -414,7 +464,7 @@ function initAdvancedCalculator() {
 
     // Сохранение расчета
     if (saveCalculationBtn) {
-        saveCalculationBtn.addEventListener('click', () => {
+        saveCalculationBtn.addEventListener('click', async () => {
             const calculationData = getCurrentCalculation();
 
             if (calculationData) {
@@ -434,22 +484,40 @@ function initAdvancedCalculator() {
                 const name = prompt('Введите название для расчета:', calculationData.package.name);
                 if (!name) return;
 
-                const savedCalc = {
-                    id: Date.now(),
-                    name: name.trim(),
-                    package: calculationData.package,
-                    services: calculationData.services,
-                    total: calculationData.total,
-                    date: new Date().toLocaleDateString('ru-RU'),
-                    userId: getUserIdFromToken(token)
-                };
+                try {
+                    // Сохраняем через API
+                    const response = await fetch('/api/user/calculations', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            name: name.trim(),
+                            package: calculationData.package,
+                            services: calculationData.services,
+                            total: calculationData.total,
+                            date: new Date().toLocaleDateString('ru-RU')
+                        })
+                    });
 
-                savedCalcs.unshift(savedCalc);
-                if (savedCalcs.length > 10) savedCalcs.pop(); // Лимит 10 расчетов
-
-                localStorage.setItem('savedCalculations', JSON.stringify(savedCalcs));
-                renderSavedCalculations();
-                showToast('success', 'Расчет сохранен');
+                    if (response.ok) {
+                        showToast('success', 'Расчет сохранен');
+                        // Обновляем локальный список для отображения
+                        renderSavedCalculations();
+                    } else if (response.status === 401) {
+                        localStorage.removeItem('authToken');
+                        showToast('error', 'Сессия истекла. Войдите в систему заново');
+                        setTimeout(() => {
+                            window.location.href = '/login.html';
+                        }, 2000);
+                    } else {
+                        showToast('error', 'Ошибка сохранения расчета');
+                    }
+                } catch (error) {
+                    console.error('Error saving calculation:', error);
+                    showToast('error', 'Ошибка сохранения расчета');
+                }
             }
         });
     }
@@ -512,68 +580,116 @@ function initAdvancedCalculator() {
     }
 
     // Функция отображения сохраненных расчетов
-    function renderSavedCalculations() {
+    async function renderSavedCalculations() {
         if (!savedCalculations) return;
 
-        // Фильтруем расчеты по текущему пользователю
         const token = getAuthToken();
-        const currentUserId = token ? getUserIdFromToken(token) : null;
         
-        const userCalcs = currentUserId 
-            ? savedCalcs.filter(calc => calc.userId === currentUserId || !calc.userId) // Показываем старые расчеты без userId
-            : [];
-
-        if (userCalcs.length === 0) {
+        if (!token) {
             savedCalculations.innerHTML = `
                 <div class="saved-item-placeholder">
-                    <p>${currentUserId ? 'Ваши сохраненные расчеты появятся здесь' : 'Войдите в систему для сохранения расчетов'}</p>
-                    ${!currentUserId ? '<a href="/login.html" target="_blank" style="color: #667eea; text-decoration: none;">Войти в систему</a>' : ''}
+                    <p>Войдите в систему для сохранения расчетов</p>
+                    <a href="/login.html" target="_blank" style="color: #667eea; text-decoration: none;">Войти в систему</a>
                 </div>
             `;
             return;
         }
 
-        savedCalculations.innerHTML = userCalcs.map(calc => `
-            <div class="saved-item" data-calc-id="${calc.id}">
-                <div class="saved-item-header">
-                    <span class="saved-item-name">${calc.name}</span>
-                    <span class="saved-item-price">${formatPrice(calc.total)}</span>
-                </div>
-                <div class="saved-item-date">${calc.date}</div>
-                <div class="saved-item-actions">
-                    <button class="delete-btn" data-delete-id="${calc.id}">Удалить</button>
-                </div>
-            </div>
-        `).join('');
-
-        // Добавляем обработчики для загрузки сохраненных расчетов
-        savedCalculations.querySelectorAll('.saved-item').forEach(item => {
-            // Обработчик клика по элементу (загрузка)
-            item.addEventListener('click', (e) => {
-                // Игнорируем клик если это кнопка удаления
-                if (e.target.classList.contains('delete-btn')) return;
-                
-                const calcId = parseInt(item.dataset.calcId);
-                const calc = userCalcs.find(c => c.id === calcId);
-                if (calc) {
-                    loadSavedCalculation(calc);
-                    showToast('success', 'Расчет загружен');
+        try {
+            // Загружаем расчеты через API
+            const response = await fetch('/api/user/calculations', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
                 }
             });
-        });
 
-        // Добавляем обработчики для удаления
-        savedCalculations.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Предотвращаем загрузку расчета
+            if (response.ok) {
+                const userCalcs = await response.json();
                 
-                const calcId = parseInt(btn.dataset.deleteId);
-                savedCalcs = savedCalcs.filter(c => c.id !== calcId);
-                localStorage.setItem('savedCalculations', JSON.stringify(savedCalcs));
-                renderSavedCalculations();
-                showToast('success', 'Расчет удален');
-            });
-        });
+                if (userCalcs.length === 0) {
+                    savedCalculations.innerHTML = `
+                        <div class="saved-item-placeholder">
+                            <p>Ваши сохраненные расчеты появятся здесь</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                savedCalculations.innerHTML = userCalcs.map(calc => `
+                    <div class="saved-item" data-calc-id="${calc._id}">
+                        <div class="saved-item-header">
+                            <span class="saved-item-name">${calc.name}</span>
+                            <span class="saved-item-price">${formatPrice(calc.total)}</span>
+                        </div>
+                        <div class="saved-item-date">${new Date(calc.createdAt).toLocaleDateString('ru-RU')}</div>
+                        <div class="saved-item-actions">
+                            <button class="delete-btn" data-delete-id="${calc._id}">Удалить</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Добавляем обработчики для загрузки сохраненных расчетов
+                savedCalculations.querySelectorAll('.saved-item').forEach(item => {
+                    // Обработчик клика по элементу (загрузка)
+                    item.addEventListener('click', (e) => {
+                        // Игнорируем клик если это кнопка удаления
+                        if (e.target.classList.contains('delete-btn')) return;
+                        
+                        const calcId = item.dataset.calcId;
+                        const calc = userCalcs.find(c => c._id === calcId);
+                        if (calc) {
+                            loadSavedCalculation(calc);
+                            showToast('success', 'Расчет загружен');
+                        }
+                    });
+                });
+
+                // Добавляем обработчики для удаления
+                savedCalculations.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation(); // Предотвращаем загрузку расчета
+                        
+                        if (!confirm('Удалить этот расчет?')) return;
+                        
+                        const calcId = btn.dataset.deleteId;
+                        
+                        try {
+                            const deleteResponse = await fetch(`/api/user/calculations/${calcId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`
+                                }
+                            });
+
+                            if (deleteResponse.ok) {
+                                renderSavedCalculations();
+                                showToast('success', 'Расчет удален');
+                            } else {
+                                showToast('error', 'Ошибка удаления расчета');
+                            }
+                        } catch (error) {
+                            console.error('Error deleting calculation:', error);
+                            showToast('error', 'Ошибка удаления расчета');
+                        }
+                    });
+                });
+            } else if (response.status === 401) {
+                localStorage.removeItem('authToken');
+                savedCalculations.innerHTML = `
+                    <div class="saved-item-placeholder">
+                        <p>Сессия истекла. Войдите в систему заново</p>
+                        <a href="/login.html" target="_blank" style="color: #667eea; text-decoration: none;">Войти в систему</a>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error loading calculations:', error);
+            savedCalculations.innerHTML = `
+                <div class="saved-item-placeholder">
+                    <p>Ошибка загрузки расчетов</p>
+                </div>
+            `;
+        }
     }
 
     // Функция загрузки сохраненного расчета
