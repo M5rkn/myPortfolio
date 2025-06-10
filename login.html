@@ -549,6 +549,20 @@
         // Check if already logged in
         function checkExistingAuth() {
             try {
+                // Проверяем новый формат токена в localStorage
+                const token = localStorage.getItem('authToken');
+                if (token) {
+                    const userInfo = getUserFromToken(token);
+                    if (userInfo) {
+                        console.log('Found existing token, user info:', userInfo);
+                        return token;
+                    } else {
+                        localStorage.removeItem('authToken');
+                        return false;
+                    }
+                }
+                
+                // Для обратной совместимости проверяем старый формат
                 const tokenStr = sessionStorage.getItem('adminToken');
                 if (!tokenStr) return false;
                 
@@ -560,6 +574,7 @@
                 
                 return tokenData.token;
             } catch (error) {
+                localStorage.removeItem('authToken');
                 sessionStorage.removeItem('adminToken');
                 return false;
             }
@@ -568,27 +583,28 @@
             // Verify token and redirect if valid
         async function verifyTokenAndRedirect(token) {
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), SECURITY_CONFIG.requestTimeout);
+                const userInfo = getUserFromToken(token);
+                console.log('Verifying token, user info:', userInfo);
                 
-                const response = await fetch('/api/admin/contacts', {
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    signal: controller.signal
-                });
-
-                clearTimeout(timeoutId);
-
-                if (response.ok) {
-                    window.location.replace('/admin');
-                    return true;
-                } else {
+                if (!userInfo) {
+                    localStorage.removeItem('authToken');
                     sessionStorage.removeItem('adminToken');
                     return false;
                 }
+                
+                // Перенаправляем в зависимости от роли
+                if (userInfo.isAdmin === true || userInfo.role === 'admin') {
+                    console.log('Redirecting admin to admin panel');
+                    window.location.replace('admin.html');
+                } else {
+                    console.log('Redirecting user to main page');
+                    window.location.replace('index.html');
+                }
+                
+                return true;
             } catch (error) {
+                console.error('Token verification error:', error);
+                localStorage.removeItem('authToken');
                 sessionStorage.removeItem('adminToken');
                 return false;
             }

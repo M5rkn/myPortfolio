@@ -677,6 +677,7 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
 
             // Generate admin token
             const tokenPayload = {
+                userId: 'admin',
                 admin: true,
                 email: email,
                 name: email.split('@')[0],
@@ -823,6 +824,14 @@ app.post('/api/admin/register', loginLimiter, validateCSRFToken, asyncHandler(as
 
         const clientIP = getClientIP(req);
         console.log(`Registration attempt from IP: ${clientIP}, email: ${email}`);
+
+        // Запрещаем регистрацию на админский email
+        if (ADMIN_EMAIL && email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Регистрация на этот email запрещена'
+            });
+        }
 
         // Check if user already exists
         const existingUser = await User.findOne({ email: email.toLowerCase() });
