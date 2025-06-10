@@ -188,6 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initModal();
     initFAQ();
     initCVDownload();
+    initAuthButton();
     registerServiceWorker();
 
     // Асинхронно инициализируем CSRF и форму
@@ -1778,4 +1779,75 @@ function initFAQ() {
             }
         });
     });
+}
+
+// Инициализация кнопки авторизации
+function initAuthButton() {
+    const authLink = document.getElementById('authLink');
+    const authText = document.getElementById('authText');
+    const authLinkMobile = document.getElementById('authLinkMobile');
+    const authTextMobile = document.getElementById('authTextMobile');
+
+    if (!authLink || !authText || !authLinkMobile || !authTextMobile) return;
+
+    // Проверяем авторизацию при загрузке страницы
+    checkAuthStatus();
+
+    function checkAuthStatus() {
+        const token = localStorage.getItem('authToken');
+        const isLoggedIn = token && !isTokenExpired(token);
+
+        if (isLoggedIn) {
+            // Пользователь авторизован - показываем "Выйти"
+            updateAuthButton(true);
+        } else {
+            // Пользователь не авторизован - показываем "Войти"
+            updateAuthButton(false);
+        }
+    }
+
+    function updateAuthButton(isLoggedIn) {
+        if (isLoggedIn) {
+            authText.textContent = 'Выйти';
+            authTextMobile.textContent = 'Выйти';
+            authLink.href = '#';
+            authLinkMobile.href = '#';
+            
+            // Добавляем обработчик выхода
+            authLink.onclick = authLinkMobile.onclick = (e) => {
+                e.preventDefault();
+                logout();
+            };
+        } else {
+            authText.textContent = 'Войти';
+            authTextMobile.textContent = 'Войти';
+            authLink.href = 'login.html';
+            authLinkMobile.href = 'login.html';
+            authLink.onclick = authLinkMobile.onclick = null;
+        }
+    }
+
+    function isTokenExpired(token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return Date.now() >= payload.exp * 1000;
+        } catch (error) {
+            return true;
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userInfo');
+        updateAuthButton(false);
+        showToast('success', 'Вы успешно вышли из аккаунта');
+        
+        // Обновляем сохраненные расчеты если мы на странице калькулятора
+        if (document.querySelector('.calculator-section')) {
+            const renderFunction = window.renderSavedCalculations;
+            if (typeof renderFunction === 'function') {
+                renderFunction();
+            }
+        }
+    }
 }

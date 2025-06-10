@@ -1246,6 +1246,34 @@ button {
   color: var(--color-text-primary);
 }
 
+/* Стили для кнопки авторизации */
+.auth-link {
+  margin-top: var(--spacing-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: var(--spacing-md) !important;
+}
+
+.auth-link .nav-dot {
+  background: var(--color-secondary) !important;
+}
+
+.auth-link:hover .nav-dot {
+  background: var(--color-primary) !important;
+}
+
+.auth-link-mobile {
+  margin-top: var(--spacing-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: var(--spacing-md);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: white !important;
+}
+
+.auth-link-mobile:hover {
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  transform: translateX(10px);
+}
+
 /* Мобильная навигация */
 .mobile-nav-toggle {
   position: fixed;
@@ -3740,9 +3768,12 @@ button {
 
 .advanced-features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: var(--spacing-xl);
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
     margin-top: var(--spacing-lg);
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .feature-card {
@@ -3761,7 +3792,7 @@ button {
 }
 
 .feature-card-wide {
-    grid-column: 1 / -1;
+    /* Убираем, так как теперь все карточки занимают полную ширину */
 }
 
 .feature-icon {
