@@ -408,9 +408,48 @@
             return true;
         }
 
+        // Helper function to get user info from token
+        function getUserFromToken(token) {
+            try {
+                if (!token) return null;
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                
+                // Проверяем срок действия токена
+                if (payload.exp && payload.exp * 1000 < Date.now()) {
+                    return null;
+                }
+                
+                return {
+                    userId: payload.userId,
+                    email: payload.email,
+                    name: payload.name || payload.email?.split('@')[0],
+                    isAdmin: payload.isAdmin === true || payload.admin === true || payload.role === 'admin',
+                    role: payload.role
+                };
+            } catch (error) {
+                console.error('Error parsing token:', error);
+                return null;
+            }
+        }
+
         // Check authorization on page load
         function checkAuth() {
             try {
+                // Сначала проверяем новый формат токена в localStorage
+                const token = localStorage.getItem('authToken');
+                if (token) {
+                    // Проверяем валидность токена
+                    const userInfo = getUserFromToken(token);
+                    if (userInfo && (userInfo.isAdmin === true || userInfo.role === 'admin')) {
+                        return token;
+                    } else {
+                        localStorage.removeItem('authToken');
+                        redirectToLogin();
+                        return false;
+                    }
+                }
+                
+                // Для обратной совместимости проверяем старый формат
                 const tokenStr = sessionStorage.getItem('adminToken');
                 if (!tokenStr) {
                     redirectToLogin();
@@ -426,6 +465,7 @@
                 
                 return tokenData.token;
             } catch (error) {
+                localStorage.removeItem('authToken');
                 sessionStorage.removeItem('adminToken');
                 redirectToLogin();
                 return false;
@@ -452,14 +492,15 @@
         
         // Secure redirect to login
         function redirectToLogin() {
-            window.location.replace('/login');
+            window.location.replace('/login.html');
         }
 
         // Logout function
         function logout() {
+            localStorage.removeItem('authToken');
             sessionStorage.removeItem('adminToken');
             sessionStorage.clear();
-            window.location.replace('/login');
+            window.location.replace('/login.html');
         }
 
         // Telegram functions

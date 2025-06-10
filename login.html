@@ -688,6 +688,9 @@
                     lockoutExpiry = 0;
                     saveRateLimitData();
                     
+                    // Reset redirect counter
+                    sessionStorage.removeItem('redirectCount');
+                    
                     // Save token securely
                     localStorage.setItem('authToken', data.token);
                     
@@ -852,21 +855,36 @@
             loadRateLimitData();
             await initCSRF();
             
+            // Защита от бесконечных редиректов
+            const redirectCount = sessionStorage.getItem('redirectCount') || '0';
+            if (parseInt(redirectCount) > 3) {
+                console.warn('Обнаружено слишком много перенаправлений, очищаем токены');
+                localStorage.removeItem('authToken');
+                sessionStorage.removeItem('adminToken');
+                sessionStorage.removeItem('redirectCount');
+                loginBtn.textContent = 'Войти';
+                loginBtn.disabled = false;
+                loginEmailInput.focus();
+                return;
+            }
+            
             // Check if already authenticated
             const existingToken = checkExistingAuth();
             if (existingToken) {
+                sessionStorage.setItem('redirectCount', (parseInt(redirectCount) + 1).toString());
+                
                 loginBtn.textContent = 'Проверяем токен...';
                 loginBtn.disabled = true;
                 
                 const verified = await verifyTokenAndRedirect(existingToken);
                 if (!verified) {
+                    sessionStorage.removeItem('redirectCount');
                     loginBtn.textContent = 'Войти';
                     loginBtn.disabled = false;
-        }
-            }
-            
-            // Auto-focus email field if not checking token
-            if (!existingToken) {
+                }
+            } else {
+                sessionStorage.removeItem('redirectCount');
+                // Auto-focus email field if not checking token
                 loginEmailInput.focus();
             }
         });
