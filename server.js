@@ -96,13 +96,19 @@ const apiLimiter = rateLimit({
     }
 });
 
-// Login specific rate limiting (very strict)
+// Login specific rate limiting (менее агрессивный)
 const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 3, // Only 3 login attempts per 15 minutes
+    windowMs: 15 * 60 * 1000, // 15 минут
+    max: 10, // 10 попыток входа за 15 минут (увеличено с 3)
     message: {
         success: false,
         message: 'Слишком много попыток входа, попробуйте позже'
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => {
+        // Пропускаем rate limiting для GET запросов CSRF токенов
+        return req.method === 'GET' && req.path === '/api/csrf-token';
     }
 });
 
@@ -835,6 +841,18 @@ app.post('/api/debug/fix-admin-conflict', asyncHandler(async (req, res) => {
     }
 }));
 
+// Проверка статуса аутентификации и rate limiting
+app.get('/api/debug/auth-status', (req, res) => {
+    const clientIP = getClientIP(req);
+    
+    res.json({
+        success: true,
+        ip: clientIP,
+        timestamp: new Date().toISOString(),
+        message: 'Эндпоинт для проверки доступности сервера'
+    });
+});
+
 // Admin login with enhanced security
 app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
     try {
@@ -869,6 +887,8 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
 
             if (!isValidPassword) {
                 console.warn(`Failed admin login attempt from IP: ${clientIP}`);
+                // Добавляем небольшую задержку для предотвращения brute force
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 return res.status(401).json({
                     success: false,
                     message: 'Неверные данные для входа'
