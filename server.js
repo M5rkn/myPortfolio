@@ -1472,11 +1472,17 @@ process.on('uncaughtException', (error) => {
     if (server && server.listening) {
         server.close(() => {
             console.log('🔴 HTTP server closed');
-            mongoose.connection.close(() => {
-                console.log('🔴 MongoDB connection closed');
-                clearTimeout(shutdownTimeout);
-                process.exit(1);
-            });
+            mongoose.connection.close()
+                .then(() => {
+                    console.log('🔴 MongoDB connection closed');
+                    clearTimeout(shutdownTimeout);
+                    process.exit(1);
+                })
+                .catch((err) => {
+                    console.error('Error closing MongoDB:', err);
+                    clearTimeout(shutdownTimeout);
+                    process.exit(1);
+                });
         });
     } else {
         clearTimeout(shutdownTimeout);
@@ -1577,15 +1583,20 @@ const gracefulShutdown = (signal) => {
         }
 
         // Закрываем MongoDB соединение
-        mongoose.connection.close(() => {
-            console.log('MongoDB connection closed');
+        mongoose.connection.close()
+            .then(() => {
+                console.log('MongoDB connection closed');
 
-            // Финальная очистка
-            csrfTokens.clear();
-            tokenBlacklist.clear();
+                // Финальная очистка
+                csrfTokens.clear();
+                tokenBlacklist.clear();
 
-            process.exit(0);
-        });
+                process.exit(0);
+            })
+            .catch((err) => {
+                console.error('Error closing MongoDB:', err);
+                process.exit(1);
+            });
     });
 
     // Принудительное завершение через 15 секунд (увеличено)
@@ -1599,62 +1610,68 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // Для nodemon
 
+// Глобальная переменная для сервера
+let server;
+
 // Экспорт для тестов
 module.exports = app;
 
-// Start server with security logging
-const server = app.listen(PORT, () => {
-    const isRailway = process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID;
-    const railwayUrl = process.env.RAILWAY_STATIC_URL || process.env.FRONTEND_URL;
+// Запуск сервера только если файл запущен напрямую (не через require)
+if (require.main === module) {
+    // Start server with security logging
+    server = app.listen(PORT, () => {
+        const isRailway = process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID;
+        const railwayUrl = process.env.RAILWAY_STATIC_URL || process.env.FRONTEND_URL;
 
-    console.log(`🚀 Сервер запущен на порту ${PORT}`);
+        console.log(`🚀 Сервер запущен на порту ${PORT}`);
 
-    if (isRailway) {
-        console.log(`🚄 Railway Environment: ${process.env.RAILWAY_ENVIRONMENT || 'production'}`);
-        console.log(`🌐 Railway URL: ${railwayUrl || 'https://techportal.up.railway.app'}`);
-        console.log(`🔧 Railway Project: ${process.env.RAILWAY_PROJECT_ID ? 'Connected' : 'Not detected'}`);
-    } else {
-        console.log(`📱 Локальный URL: http://localhost:${PORT}`);
-    }
+        if (isRailway) {
+            console.log(`🚄 Railway Environment: ${process.env.RAILWAY_ENVIRONMENT || 'production'}`);
+            console.log(`🌐 Railway URL: ${railwayUrl || 'https://techportal.up.railway.app'}`);
+            console.log(`🔧 Railway Project: ${process.env.RAILWAY_PROJECT_ID ? 'Connected' : 'Not detected'}`);
+        } else {
+            console.log(`📱 Локальный URL: http://localhost:${PORT}`);
+        }
 
-    console.log(`🔒 Режим безопасности: ${process.env.NODE_ENV || 'development'}`);
-    console.log('🛡️  Все меры безопасности активированы');
-    console.log(`⚡ CSRF защита: ✅ ${isRailway ? '(Railway Mode)' : '(Dev Mode)'}`);
-    console.log(`⚡ CORS Policy: ${isRailway ? 'Railway Flexible' : 'Strict Whitelist'}`);
-    console.log('⚡ Rate Limiting: ✅');
-    console.log('⚡ Input Validation: ✅');
-    console.log('⚡ MongoDB Sanitization: ✅');
-    console.log('⚡ JWT Security: ✅');
-    console.log('⚡ Helmet Protection: ✅');
+        console.log(`🔒 Режим безопасности: ${process.env.NODE_ENV || 'development'}`);
+        console.log('🛡️  Все меры безопасности активированы');
+        console.log(`⚡ CSRF защита: ✅ ${isRailway ? '(Railway Mode)' : '(Dev Mode)'}`);
+        console.log(`⚡ CORS Policy: ${isRailway ? 'Railway Flexible' : 'Strict Whitelist'}`);
+        console.log('⚡ Rate Limiting: ✅');
+        console.log('⚡ Input Validation: ✅');
+        console.log('⚡ MongoDB Sanitization: ✅');
+        console.log('⚡ JWT Security: ✅');
+        console.log('⚡ Helmet Protection: ✅');
 
-    if (isRailway) {
-        console.log('🔧 Railway CSRF Tokens: Persistent mode enabled');
-        console.log('🔧 Cache Duration: 10 minutes');
-        console.log('🔧 CSRF Fallback: Enabled for Railway');
-    }
+        if (isRailway) {
+            console.log('🔧 Railway CSRF Tokens: Persistent mode enabled');
+            console.log('🔧 Cache Duration: 10 minutes');
+            console.log('🔧 CSRF Fallback: Enabled for Railway');
+        }
 
-    // Setup Telegram webhook in production
-    if (process.env.NODE_ENV === 'production' && railwayUrl) {
+        // Setup Telegram webhook in production
+        if (process.env.NODE_ENV === 'production' && railwayUrl) {
+            setTimeout(() => {
+                telegramService.setupWebhook(railwayUrl);
+            }, 5000); // Wait 5 seconds after server start
+        }
+
+        // Log integration status
         setTimeout(() => {
-            telegramService.setupWebhook(railwayUrl);
-        }, 5000); // Wait 5 seconds after server start
-    }
+            if (telegramService.isAvailable()) {
+                console.log('✅ Telegram Bot интеграция активна');
+            } else {
+                console.log('ℹ️  Telegram интеграция отключена (настройте TELEGRAM_BOT_TOKEN и TELEGRAM_ADMIN_CHAT_ID)');
+            }
 
-    // Log integration status
-    setTimeout(() => {
-        if (telegramService.isAvailable()) {
-            console.log('✅ Telegram Bot интеграция активна');
-        } else {
-            console.log('ℹ️  Telegram интеграция отключена (настройте TELEGRAM_BOT_TOKEN и TELEGRAM_ADMIN_CHAT_ID)');
-        }
+            if (emailService.isAvailable()) {
+                console.log('✅ Email сервис активен');
+            } else {
+                console.log('ℹ️  Email сервис отключен (настройте SMTP параметры)');
+            }
+        }, 2000);
+    });
 
-        if (emailService.isAvailable()) {
-            console.log('✅ Email сервис активен');
-        } else {
-            console.log('ℹ️  Email сервис отключен (настройте SMTP параметры)');
-        }
-    }, 2000);
-});
-
-// Security timeout for server
-server.timeout = 30000; // 30 seconds timeout
+    // Security timeout for server
+    server.timeout = 30000; // 30 seconds timeout
+}

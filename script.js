@@ -474,7 +474,7 @@ function initCustomCursor() {
 
         document.addEventListener('mousemove', mouseMoveHandler);
 
-        function updateCursor() {
+        const updateCursor = () => {
             cursorX += (mouseX - cursorX) * 0.2;
             cursorY += (mouseY - cursorY) * 0.2;
             followerX += (mouseX - followerX) * 0.1;
@@ -484,7 +484,7 @@ function initCustomCursor() {
             follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0)`;
 
             animationFrameId = requestAnimationFrame(updateCursor);
-        }
+        };
 
         animationFrameId = requestAnimationFrame(updateCursor);
 
@@ -712,7 +712,7 @@ function initStatsCounter() {
                 let frame = 0;
                 let currentValue = 0;
 
-                function animate() {
+                const animate = () => {
                     frame++;
                     const progress = frame / totalFrames;
                     const easedProgress = progress < 0.5
@@ -727,7 +727,7 @@ function initStatsCounter() {
                     } else {
                         el.textContent = targetValue;
                     }
-                }
+                };
 
                 requestAnimationFrame(animate);
                 observer.unobserve(el);
