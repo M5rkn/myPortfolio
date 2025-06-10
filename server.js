@@ -718,6 +718,79 @@ app.get('/api/csrf-token', (req, res) => {
     });
 });
 
+// Debug endpoint для проверки пользователей
+app.get('/api/debug/users', asyncHandler(async (req, res) => {
+    try {
+        const userCount = await User.countDocuments();
+        const users = await User.find().select('email name role isActive createdAt').limit(5);
+        
+        res.json({
+            success: true,
+            userCount,
+            sampleUsers: users
+        });
+    } catch (error) {
+        console.error('Debug users error:', error);
+        res.json({
+            success: false,
+            error: error.message
+        });
+    }
+}));
+
+// Создание тестового пользователя
+app.post('/api/debug/create-test-user', asyncHandler(async (req, res) => {
+    try {
+        const testEmail = 'test@example.com';
+        const testPassword = 'password123';
+        
+        // Проверяем не существует ли уже
+        const existingUser = await User.findOne({ email: testEmail });
+        if (existingUser) {
+            return res.json({
+                success: true,
+                message: 'Тестовый пользователь уже существует',
+                user: {
+                    email: existingUser.email,
+                    name: existingUser.name
+                }
+            });
+        }
+        
+        // Создаем тестового пользователя
+        const hashedPassword = await bcrypt.hash(testPassword, 12);
+        const testUser = new User({
+            name: 'Тестовый Пользователь',
+            email: testEmail,
+            password: hashedPassword,
+            role: 'user',
+            isActive: true
+        });
+        
+        await testUser.save();
+        
+        res.json({
+            success: true,
+            message: 'Тестовый пользователь создан',
+            user: {
+                email: testUser.email,
+                name: testUser.name,
+                role: testUser.role
+            },
+            credentials: {
+                email: testEmail,
+                password: testPassword
+            }
+        });
+    } catch (error) {
+        console.error('Create test user error:', error);
+        res.json({
+            success: false,
+            error: error.message
+        });
+    }
+}));
+
 // Admin login with enhanced security
 app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
     try {
@@ -786,12 +859,20 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
             });
         } else {
             // Regular user login - check database
+            console.log(`Checking database for user: ${email.toLowerCase()}`);
+            
             const user = await User.findOne({ 
                 email: email.toLowerCase(),
                 isActive: true 
             });
 
+            console.log(`User found: ${user ? 'Yes' : 'No'}`);
+            if (user) {
+                console.log(`User details: email=${user.email}, name=${user.name}, role=${user.role}, isActive=${user.isActive}`);
+            }
+
             if (!user) {
+                console.log(`No user found for email: ${email.toLowerCase()}`);
                 return res.status(401).json({
                     success: false,
                     message: 'Неверные данные для входа'
@@ -807,7 +888,9 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
             }
 
             // Verify password
+            console.log('Verifying password...');
             const isValidPassword = await bcrypt.compare(password, user.password);
+            console.log(`Password valid: ${isValidPassword}`);
 
             if (!isValidPassword) {
                 // Increment failed attempts
