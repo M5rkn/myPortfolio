@@ -890,6 +890,136 @@
         </div>
     </section>
 
+    <!-- Advanced Calculator Features -->
+    <section class="calculator-advanced-features">
+        <div class="container">
+            <div class="advanced-features-grid">
+                <!-- Сохранение расчетов -->
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="17,21 17,13 7,13 7,21" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="7,3 7,8 15,8" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Сохранение расчетов</h3>
+                    <div class="saved-calculations" id="savedCalculations">
+                        <div class="saved-item-placeholder">
+                            <p>Ваши сохраненные расчеты появятся здесь</p>
+                        </div>
+                    </div>
+                    <button id="saveCalculationBtn" class="btn btn-outline btn-small" disabled>
+                        <span>Сохранить расчет</span>
+                    </button>
+                </div>
+
+                <!-- Сравнение пакетов -->
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M19 7h-4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Сравнение пакетов</h3>
+                    <div class="package-comparison" id="packageComparison">
+                        <div class="comparison-toggle">
+                            <button id="toggleComparisonBtn" class="btn btn-outline btn-small">
+                                <span>Включить сравнение</span>
+                            </button>
+                        </div>
+                        <div class="comparison-table" id="comparisonTable" style="display: none;">
+                            <!-- Таблица сравнения будет генерироваться динамически -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Временная шкала проекта -->
+                <div class="feature-card feature-card-wide" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="12,6 12,12 16,14" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Временная шкала проекта</h3>
+                    <div class="project-timeline" id="projectTimeline">
+                        <div class="timeline-placeholder">
+                            <p>Выберите тип проекта для отображения временной шкалы</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chat Bot -->
+    <div class="chatbot-container" id="chatbotContainer">
+        <div class="chatbot-toggle" id="chatbotToggle">
+            <div class="chatbot-icon">
+                <svg class="icon-chat" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <svg class="icon-close" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/>
+                    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="chatbot-notification" id="chatbotNotification">
+                <span class="notification-text">Есть вопросы?</span>
+            </div>
+        </div>
+
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <div class="chatbot-avatar">
+                    <img src="images/avatar.jpg" alt="Консультант">
+                </div>
+                <div class="chatbot-info">
+                    <h4 class="chatbot-name">Виртуальный консультант</h4>
+                    <span class="chatbot-status">Онлайн</span>
+                </div>
+            </div>
+
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message message-bot">
+                    <div class="message-avatar">
+                        <img src="images/avatar.jpg" alt="Бот">
+                    </div>
+                    <div class="message-content">
+                        <p>Привет! 👋 Я помогу вам с вопросами о создании сайтов.</p>
+                        <p>Вы можете спросить о:</p>
+                        <div class="quick-buttons">
+                            <button class="quick-btn" data-question="цена">💰 Ценах</button>
+                            <button class="quick-btn" data-question="сроки">⏰ Сроках</button>
+                            <button class="quick-btn" data-question="технологии">⚙️ Технологиях</button>
+                            <button class="quick-btn" data-question="процесс">📋 Процессе работы</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chatbot-input">
+                <div class="input-group">
+                    <input type="text" id="chatbotInput" placeholder="Напишите ваш вопрос..." maxlength="200">
+                    <button id="chatbotSendBtn" class="send-btn">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2"/>
+                            <polygon points="22,2 15,22 11,13 2,9 22,2" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="chatbot-typing" id="chatbotTyping" style="display: none;">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-text">Печатает...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Reviews Section -->
     <section id="reviews" class="section reviews-section">
         <div class="container">

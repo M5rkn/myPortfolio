@@ -183,6 +183,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initLazyLoading();
     initScrollAnimations();
     initCalculator();
+    initAdvancedCalculator();
+    initChatbot();
     initModal();
     initFAQ();
     initCVDownload();
@@ -294,6 +296,16 @@ function initCalculator() {
         if (sendToFormBtn) {
             sendToFormBtn.disabled = !selectedPackage;
         }
+
+        // Отправляем событие для интеграции с расширенным калькулятором
+        const event = new CustomEvent('calculatorUpdated', {
+            detail: {
+                selectedPackage,
+                selectedServices,
+                total
+            }
+        });
+        document.dispatchEvent(event);
     }
 
     // Функция форматирования цены
@@ -367,6 +379,443 @@ function initCalculator() {
 
     // Инициальный расчет
     updateCalculation();
+}
+
+// ===== УЛУЧШЕННЫЕ ФУНКЦИИ КАЛЬКУЛЯТОРА =====
+
+// Улучшенный калькулятор с дополнительными фишками
+function initAdvancedCalculator() {
+    const saveCalculationBtn = document.getElementById('saveCalculationBtn');
+    const savedCalculations = document.getElementById('savedCalculations');
+    const toggleComparisonBtn = document.getElementById('toggleComparisonBtn');
+    const comparisonTable = document.getElementById('comparisonTable');
+    const projectTimeline = document.getElementById('projectTimeline');
+
+    let isComparisonMode = false;
+    let savedCalcs = JSON.parse(localStorage.getItem('savedCalculations') || '[]');
+
+    // Инициализация сохраненных расчетов
+    renderSavedCalculations();
+
+    // Обновляем кнопку сохранения при изменении калькулятора
+    document.addEventListener('calculatorUpdated', (event) => {
+        const { selectedPackage } = event.detail;
+
+        if (saveCalculationBtn) {
+            saveCalculationBtn.disabled = !selectedPackage;
+        }
+
+        // Обновляем временную шкалу
+        if (selectedPackage) {
+            updateProjectTimeline(selectedPackage.type);
+        }
+    });
+
+    // Сохранение расчета
+    if (saveCalculationBtn) {
+        saveCalculationBtn.addEventListener('click', () => {
+            const calculationData = getCurrentCalculation();
+
+            if (calculationData) {
+                const savedCalc = {
+                    id: Date.now(),
+                    name: calculationData.package.name,
+                    package: calculationData.package,
+                    services: calculationData.services,
+                    total: calculationData.total,
+                    date: new Date().toLocaleDateString('ru-RU')
+                };
+
+                savedCalcs.unshift(savedCalc);
+                if (savedCalcs.length > 10) savedCalcs.pop(); // Лимит 10 расчетов
+
+                localStorage.setItem('savedCalculations', JSON.stringify(savedCalcs));
+                renderSavedCalculations();
+                showToast('success', 'Расчет сохранен');
+            }
+        });
+    }
+
+    // Сравнение пакетов
+    if (toggleComparisonBtn) {
+        toggleComparisonBtn.addEventListener('click', () => {
+            isComparisonMode = !isComparisonMode;
+
+            if (isComparisonMode) {
+                toggleComparisonBtn.innerHTML = '<span>Скрыть сравнение</span>';
+                comparisonTable.style.display = 'block';
+                renderComparisonTable();
+            } else {
+                toggleComparisonBtn.innerHTML = '<span>Включить сравнение</span>';
+                comparisonTable.style.display = 'none';
+            }
+        });
+    }
+
+    // Функция отображения сохраненных расчетов
+    function renderSavedCalculations() {
+        if (!savedCalculations) return;
+
+        if (savedCalcs.length === 0) {
+            savedCalculations.innerHTML = `
+                <div class="saved-item-placeholder">
+                    <p>Ваши сохраненные расчеты появятся здесь</p>
+                </div>
+            `;
+            return;
+        }
+
+        savedCalculations.innerHTML = savedCalcs.map(calc => `
+            <div class="saved-item" data-calc-id="${calc.id}">
+                <div class="saved-item-header">
+                    <span class="saved-item-name">${calc.name}</span>
+                    <span class="saved-item-price">${formatPrice(calc.total)}</span>
+                </div>
+                <div class="saved-item-date">${calc.date}</div>
+            </div>
+        `).join('');
+
+        // Добавляем обработчики для загрузки сохраненных расчетов
+        savedCalculations.querySelectorAll('.saved-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const calcId = parseInt(item.dataset.calcId);
+                const calc = savedCalcs.find(c => c.id === calcId);
+                if (calc) {
+                    loadSavedCalculation(calc);
+                    showToast('success', 'Расчет загружен');
+                }
+            });
+        });
+    }
+
+    // Функция загрузки сохраненного расчета
+    function loadSavedCalculation(calc) {
+        // Сброс текущего состояния
+        document.querySelectorAll('.package-card').forEach(card => {
+            card.classList.remove('selected');
+            if (card.dataset.package === calc.package.type) {
+                card.classList.add('selected');
+            }
+        });
+
+        // Установка чекбоксов услуг
+        document.querySelectorAll('.service-option input[type="checkbox"]').forEach(checkbox => {
+            const serviceType = checkbox.dataset.service;
+            checkbox.checked = calc.services.some(service => service.type === serviceType);
+        });
+
+        // Отправляем событие обновления
+        const event = new CustomEvent('calculatorUpdated', {
+            detail: {
+                selectedPackage: calc.package,
+                selectedServices: calc.services,
+                total: calc.total
+            }
+        });
+        document.dispatchEvent(event);
+    }
+
+    // Функция отображения таблицы сравнения
+    function renderComparisonTable() {
+        if (!comparisonTable) return;
+
+        const packages = [
+            { name: 'Лендинг', price: 50, features: ['Адаптивная верстка', 'SEO базовое', 'Контактная форма', 'Оптимизация скорости'] },
+            { name: 'Многостраничный', price: 90, features: ['До 10 страниц', 'Адаптивная верстка', 'CMS', 'SEO оптимизация'] },
+            { name: 'Интернет-магазин', price: 140, features: ['Каталог товаров', 'Корзина и оплата', 'Админ панель', 'Интеграции'] }
+        ];
+
+        const allFeatures = [...new Set(packages.flatMap(p => p.features))];
+
+        comparisonTable.innerHTML = `
+            <div class="comparison-header">
+                <div>Функции</div>
+                <div>Лендинг</div>
+                <div>Многостр.</div>
+                <div>Магазин</div>
+            </div>
+            ${allFeatures.map(feature => `
+                <div class="comparison-row">
+                    <div class="comparison-feature">${feature}</div>
+                    ${packages.map(pkg => `
+                        <div class="comparison-value ${pkg.features.includes(feature) ? 'comparison-check' : 'comparison-cross'}">
+                            ${pkg.features.includes(feature) ? '✓' : '✗'}
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('')}
+            <div class="comparison-row" style="font-weight: 600; background: var(--color-bg-secondary);">
+                <div class="comparison-feature">Цена</div>
+                ${packages.map(pkg => `
+                    <div class="comparison-value">${pkg.price} €</div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    // Функция обновления временной шкалы
+    function updateProjectTimeline(projectType) {
+        if (!projectTimeline) return;
+
+        const timelines = {
+            landing: [
+                { phase: 'Планирование', duration: '1-2 дня', description: 'Анализ требований, создание ТЗ' },
+                { phase: 'Дизайн', duration: '2-3 дня', description: 'Создание макетов, согласование стиля' },
+                { phase: 'Верстка', duration: '3-4 дня', description: 'HTML/CSS код, адаптивность' },
+                { phase: 'Функционал', duration: '1-2 дня', description: 'JavaScript, формы, анимации' },
+                { phase: 'Тестирование', duration: '1 день', description: 'Проверка во всех браузерах' }
+            ],
+            multipage: [
+                { phase: 'Планирование', duration: '2-3 дня', description: 'Структура сайта, ТЗ' },
+                { phase: 'Дизайн', duration: '4-5 дней', description: 'Дизайн всех страниц' },
+                { phase: 'Верстка', duration: '5-7 дней', description: 'Верстка всех страниц' },
+                { phase: 'CMS', duration: '2-3 дня', description: 'Настройка системы управления' },
+                { phase: 'Наполнение', duration: '1-2 дня', description: 'Добавление контента' },
+                { phase: 'Тестирование', duration: '1-2 дня', description: 'Полное тестирование' }
+            ],
+            ecommerce: [
+                { phase: 'Планирование', duration: '3-4 дня', description: 'Архитектура, ТЗ, интеграции' },
+                { phase: 'Дизайн', duration: '5-7 дней', description: 'Дизайн всех страниц и процессов' },
+                { phase: 'Backend', duration: '7-10 дней', description: 'Система каталога, корзины, заказов' },
+                { phase: 'Frontend', duration: '5-7 дней', description: 'Интерфейс магазина' },
+                { phase: 'Платежи', duration: '2-3 дня', description: 'Настройка платежных систем' },
+                { phase: 'Тестирование', duration: '2-3 дня', description: 'Тестирование всех процессов' }
+            ],
+            custom: [
+                { phase: 'Анализ', duration: '3-5 дней', description: 'Глубокий анализ требований' },
+                { phase: 'Прототип', duration: '5-7 дней', description: 'Создание рабочего прототипа' },
+                { phase: 'Разработка', duration: '10-15 дней', description: 'Основная разработка' },
+                { phase: 'Интеграции', duration: '3-5 дней', description: 'Подключение внешних сервисов' },
+                { phase: 'Тестирование', duration: '3-4 дня', description: 'Комплексное тестирование' },
+                { phase: 'Оптимизация', duration: '2-3 дня', description: 'Финальная оптимизация' }
+            ]
+        };
+
+        const timeline = timelines[projectType];
+        if (!timeline) return;
+
+        projectTimeline.innerHTML = `
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                ${timeline.map(item => `
+                    <div class="timeline-item">
+                        <div class="timeline-phase">${item.phase}</div>
+                        <div class="timeline-duration">${item.duration}</div>
+                        <div class="timeline-description">${item.description}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    // Функция получения текущего расчета
+    function getCurrentCalculation() {
+        const selectedPackageCard = document.querySelector('.package-card.selected');
+        if (!selectedPackageCard) return null;
+
+        const selectedPackage = {
+            name: selectedPackageCard.querySelector('.package-title').textContent,
+            price: parseInt(selectedPackageCard.dataset.price),
+            type: selectedPackageCard.dataset.package
+        };
+
+        const selectedServices = [];
+        document.querySelectorAll('.service-option input[type="checkbox"]:checked').forEach(checkbox => {
+            selectedServices.push({
+                name: checkbox.parentNode.querySelector('.service-name').textContent,
+                price: parseInt(checkbox.dataset.price),
+                type: checkbox.dataset.service
+            });
+        });
+
+        const total = selectedPackage.price + selectedServices.reduce((sum, service) => sum + service.price, 0);
+
+        return { package: selectedPackage, services: selectedServices, total };
+    }
+
+    // Функция форматирования цены (используем существующую)
+    function formatPrice(price) {
+        return new Intl.NumberFormat('en-DE').format(price) + ' €';
+    }
+}
+
+// ===== ЧАТБОТ =====
+
+// Инициализация чатбота
+function initChatbot() {
+    const chatbotContainer = document.getElementById('chatbotContainer');
+    const chatbotToggle = document.getElementById('chatbotToggle');
+    const chatbotMessages = document.getElementById('chatbotMessages');
+    const chatbotInput = document.getElementById('chatbotInput');
+    const chatbotSendBtn = document.getElementById('chatbotSendBtn');
+    const chatbotTyping = document.getElementById('chatbotTyping');
+
+    if (!chatbotContainer || !chatbotToggle) return;
+
+    let isOpen = false;
+
+    // База знаний для чатбота
+    const chatbotKnowledge = {
+        'цена': 'Стоимость проектов:\n• Лендинг: от 50€\n• Многостраничный сайт: от 90€\n• Интернет-магазин: от 140€\n• Кастомное решение: от 110€\n\nИспользуйте калькулятор выше для точного расчета! 💰',
+        'сроки': 'Сроки разработки:\n• Лендинг: 7-12 дней\n• Многостраничный: 15-20 дней\n• Интернет-магазин: 25-35 дней\n• Кастомное решение: 28-40 дней\n\nТочные сроки зависят от сложности проекта. ⏱️',
+        'технологии': 'Используемые технологии:\n• Frontend: HTML5, CSS3, JavaScript, React\n• Backend: Node.js, Express.js, MongoDB\n• Инструменты: Git, Webpack, ESLint\n• Хостинг: Railway, Vercel, AWS\n\nВсегда использую современные и надежные решения! ⚙️',
+        'процесс': 'Процесс работы:\n1. Обсуждение требований\n2. Создание технического задания\n3. Дизайн и согласование\n4. Разработка\n5. Тестирование\n6. Запуск и передача\n\nВы участвуете на каждом этапе! 📋',
+        'портфолио': 'В моем портфолио есть:\n• Лендинги для бизнеса\n• Корпоративные сайты\n• Интернет-магазины\n• Веб-приложения\n\nПосмотрите секцию "Мои работы" выше! 💼',
+        'поддержка': 'Предоставляю:\n• Техническую поддержку 6 месяцев\n• Обучение работе с сайтом\n• Исправление багов\n• Консультации по развитию\n\nВаш сайт всегда будет работать стабильно! 🛠️',
+        'контакты': 'Связаться со мной:\n• Email: info@techportal.dev\n• Telegram: @techportal_dev\n• Телефон: +7 (999) 123-45-67\n\nОтвечу в течение 2-4 часов! 📞'
+    };
+
+    // Открытие/закрытие чатбота
+    chatbotToggle.addEventListener('click', () => {
+        isOpen = !isOpen;
+        chatbotContainer.classList.toggle('active', isOpen);
+
+        if (isOpen && chatbotInput) {
+            setTimeout(() => chatbotInput.focus(), 300);
+        }
+    });
+
+    // Обработка быстрых кнопок
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('quick-btn')) {
+            const question = e.target.dataset.question;
+            if (question) {
+                sendUserMessage(question);
+                setTimeout(() => sendBotResponse(question), 800);
+            }
+        }
+    });
+
+    // Отправка сообщения пользователя
+    function sendUserMessage(message) {
+        if (!chatbotMessages) return;
+
+        const messageElement = document.createElement('div');
+        messageElement.className = 'message message-user';
+        messageElement.innerHTML = `
+            <div class="message-avatar">
+                <img src="images/user-avatar.jpg" alt="Вы" onerror="this.style.display='none'">
+            </div>
+            <div class="message-content">
+                <p>${message}</p>
+            </div>
+        `;
+
+        chatbotMessages.appendChild(messageElement);
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    }
+
+    // Отправка ответа бота
+    function sendBotResponse(query) {
+        if (!chatbotMessages) return;
+
+        // Показываем индикатор печатания
+        showTypingIndicator();
+
+        setTimeout(() => {
+            hideTypingIndicator();
+
+            const response = getBotResponse(query);
+
+            function createBotMessage() {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message message-bot';
+                messageElement.innerHTML = `
+                 <div class="message-avatar">
+                     <img src="images/avatar.jpg" alt="Бот">
+                 </div>
+                 <div class="message-content">
+                     <p>${response}</p>
+                 </div>
+             `;
+                return messageElement;
+            }
+
+            chatbotMessages.appendChild(createBotMessage());
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }, 1500);
+    }
+
+    // Получение ответа бота
+    function getBotResponse(query) {
+        const lowerQuery = query.toLowerCase();
+
+        // Поиск по ключевым словам
+        for (const [key, response] of Object.entries(chatbotKnowledge)) {
+            if (lowerQuery.includes(key)) {
+                return response;
+            }
+        }
+
+        // Дополнительные ключевые слова
+        if (lowerQuery.includes('привет') || lowerQuery.includes('здравствуй')) {
+            return 'Привет! 👋 Рад вас видеть! Чем могу помочь? Спросите о ценах, сроках или технологиях.';
+        }
+
+        if (lowerQuery.includes('спасибо') || lowerQuery.includes('благодар')) {
+            return 'Пожалуйста! 😊 Если есть еще вопросы - обращайтесь!';
+        }
+
+        if (lowerQuery.includes('заказ') || lowerQuery.includes('хочу')) {
+            return 'Отлично! 🎉 Заполните форму обратной связи ниже или напишите мне напрямую. Обсудим ваш проект детально!';
+        }
+
+        // Ответ по умолчанию
+        return 'Интересный вопрос! 🤔 Я могу рассказать о:\n• Ценах и сроках\n• Технологиях разработки\n• Процессе работы\n• Поддержке проектов\n\nИли напишите мне напрямую для детального обсуждения!';
+    }
+
+    // Индикатор печатания
+    function showTypingIndicator() {
+        if (chatbotTyping) {
+            chatbotTyping.style.display = 'flex';
+        }
+    }
+
+    function hideTypingIndicator() {
+        if (chatbotTyping) {
+            chatbotTyping.style.display = 'none';
+        }
+    }
+
+    // Функция обработки отправки сообщения
+    function handleSendMessage() {
+        if (!chatbotInput) return;
+
+        const message = chatbotInput.value.trim();
+        if (message) {
+            sendUserMessage(message);
+            chatbotInput.value = '';
+            setTimeout(() => sendBotResponse(message), 800);
+        }
+    }
+
+    // Обработка ввода текста
+    if (chatbotInput && chatbotSendBtn) {
+        chatbotSendBtn.addEventListener('click', handleSendMessage);
+
+        chatbotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSendMessage();
+            }
+        });
+    }
+
+    // Автоматическое появление уведомления через 10 секунд
+    setTimeout(() => {
+        if (!isOpen) {
+            const notification = document.getElementById('chatbotNotification');
+            if (notification) {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0) scale(1)';
+
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(10px) scale(0.8)';
+                }, 5000);
+            }
+        }
+    }, 10000);
 }
 
 // ===== Модули =====
