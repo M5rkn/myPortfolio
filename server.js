@@ -276,6 +276,12 @@ async function updateUserDailyStreak(userId) {
         const user = await User.findById(userId);
         if (!user) return;
         
+        // Исправляем отсутствующее имя у старых пользователей
+        if (!user.name) {
+            user.name = user.email ? user.email.split('@')[0] : 'User';
+            console.log(`Fixed missing name for user: ${user.email}`);
+        }
+        
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
@@ -1245,6 +1251,13 @@ app.post('/api/user/login', loginLimiter, validateCSRFToken, asyncHandler(async 
                 success: false,
                 message: 'Неверный email или пароль'
             });
+        }
+
+        // Исправляем отсутствующее имя у старых пользователей
+        if (!user.name) {
+            user.name = user.email ? user.email.split('@')[0] : 'User';
+            await user.save();
+            console.log(`Fixed missing name for user: ${user.email}`);
         }
 
         // Update daily streak
