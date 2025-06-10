@@ -791,6 +791,50 @@ app.post('/api/debug/create-test-user', asyncHandler(async (req, res) => {
     }
 }));
 
+// Удаление конфликтующего админского email из базы пользователей
+app.post('/api/debug/fix-admin-conflict', asyncHandler(async (req, res) => {
+    try {
+        if (!ADMIN_EMAIL) {
+            return res.json({
+                success: false,
+                message: 'ADMIN_EMAIL не настроен'
+            });
+        }
+        
+        const adminEmail = ADMIN_EMAIL.toLowerCase();
+        console.log(`Fixing admin conflict for email: ${adminEmail}`);
+        
+        // Находим и удаляем админский email из таблицы пользователей
+        const conflictingUser = await User.findOne({ email: adminEmail });
+        
+        if (conflictingUser) {
+            await User.deleteOne({ email: adminEmail });
+            console.log(`Removed conflicting user: ${adminEmail}`);
+            
+            res.json({
+                success: true,
+                message: 'Конфликтующий админский аккаунт удален из базы пользователей',
+                removedUser: {
+                    email: conflictingUser.email,
+                    name: conflictingUser.name,
+                    role: conflictingUser.role
+                }
+            });
+        } else {
+            res.json({
+                success: true,
+                message: 'Конфликтующих записей не найдено'
+            });
+        }
+    } catch (error) {
+        console.error('Fix admin conflict error:', error);
+        res.json({
+            success: false,
+            error: error.message
+        });
+    }
+}));
+
 // Admin login with enhanced security
 app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
     try {
