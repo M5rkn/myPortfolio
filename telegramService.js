@@ -5,14 +5,14 @@ class TelegramService {
         this.bot = null;
         this.adminChatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
         this.isEnabled = false;
-        
+
         this.init();
     }
 
     init() {
         try {
             const token = process.env.TELEGRAM_BOT_TOKEN;
-            
+
             if (!token || !this.adminChatId) {
                 console.log('Telegram: токен или admin chat ID не настроены, Telegram интеграция отключена');
                 return;
@@ -20,7 +20,7 @@ class TelegramService {
 
             // Создаем бота с polling только в development
             const isDev = process.env.NODE_ENV !== 'production';
-            this.bot = new TelegramBot(token, { 
+            this.bot = new TelegramBot(token, {
                 polling: isDev,
                 webHook: !isDev
             });
@@ -30,7 +30,7 @@ class TelegramService {
 
             // Настройка команд
             this.setupCommands();
-            
+
         } catch (error) {
             console.error('❌ Ошибка инициализации Telegram бота:', error.message);
             this.isEnabled = false;
@@ -55,7 +55,7 @@ class TelegramService {
 
 _Этот бот используется для уведомлений и управления._
             `;
-            
+
             this.bot.sendMessage(chatId, welcomeMessage, { parse_mode: 'Markdown' });
         });
 
@@ -78,7 +78,7 @@ _Этот бот используется для уведомлений и уп�
 
 _Для дополнительной помощи обратитесь к администратору._
             `;
-            
+
             this.bot.sendMessage(chatId, helpMessage, { parse_mode: 'Markdown' });
         });
 
@@ -94,7 +94,7 @@ _Для дополнительной помощи обратитесь к адм
 
 _Последняя проверка: ${new Date().toLocaleString('ru-RU')}_
             `;
-            
+
             this.bot.sendMessage(chatId, statusMessage, { parse_mode: 'Markdown' });
         });
 
@@ -120,9 +120,9 @@ ${this.escapeMarkdown(contact.message)}
 _Ответьте клиенту через панель администратора или напрямую по email._
             `;
 
-            await this.bot.sendMessage(this.adminChatId, message, { 
+            await this.bot.sendMessage(this.adminChatId, message, {
                 parse_mode: 'Markdown',
-                disable_web_page_preview: true 
+                disable_web_page_preview: true
             });
 
             console.log('📬 Telegram уведомление о новом контакте отправлено');
@@ -153,8 +153,8 @@ ${stats.projectViews.map(p => `• ${p.name}: ${p.views}`).join('\n')}
 🕐 *Обновлено:* ${new Date().toLocaleString('ru-RU')}
             `;
 
-            await this.bot.sendMessage(this.adminChatId, message, { 
-                parse_mode: 'Markdown' 
+            await this.bot.sendMessage(this.adminChatId, message, {
+                parse_mode: 'Markdown'
             });
 
             return true;
@@ -180,8 +180,8 @@ ${stats.projectViews.map(p => `• ${p.name}: ${p.views}`).join('\n')}
 _Требуется внимание администратора._
             `;
 
-            await this.bot.sendMessage(this.adminChatId, message, { 
-                parse_mode: 'Markdown' 
+            await this.bot.sendMessage(this.adminChatId, message, {
+                parse_mode: 'Markdown'
             });
 
             return true;
@@ -243,4 +243,4 @@ _Требуется внимание администратора._
     }
 }
 
-module.exports = new TelegramService(); 
+module.exports = new TelegramService();

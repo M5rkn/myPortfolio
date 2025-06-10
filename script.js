@@ -7,7 +7,7 @@
 // Защитные функции
 (function() {
     'use strict';
-    
+
     // Защита от prototype pollution
     if (typeof Object.freeze === 'function') {
         Object.freeze(Object.prototype);
@@ -23,7 +23,7 @@ let csrfToken = '';
 async function initCSRF() {
     try {
         const response = await fetch('/api/csrf-token');
-                const data = await response.json();
+        const data = await response.json();
         if (data.csrfToken) {
             csrfToken = data.csrfToken;
         }
@@ -37,7 +37,7 @@ function showToast(type, message) {
     // Удаляем существующие тосты
     const existingToasts = document.querySelectorAll('.toast');
     existingToasts.forEach(toast => toast.remove());
-    
+
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.innerHTML = `
@@ -46,7 +46,7 @@ function showToast(type, message) {
             <span class="toast-message">${message.replace(/\n/g, '<br>')}</span>
         </div>
     `;
-    
+
     // Добавляем стили
     toast.style.cssText = `
         position: fixed;
@@ -70,7 +70,7 @@ function showToast(type, message) {
         pointer-events: auto;
         transform: translateX(100%);
     `;
-    
+
     // Добавляем мобильные стили
     if (window.innerWidth <= 768) {
         toast.style.cssText += `
@@ -83,12 +83,12 @@ function showToast(type, message) {
             padding: 12px 16px;
         `;
     }
-    
+
     // Добавляем CSS анимации если их нет
     if (!document.getElementById('toast-styles')) {
-    const style = document.createElement('style');
+        const style = document.createElement('style');
         style.id = 'toast-styles';
-            style.textContent = `
+        style.textContent = `
             @keyframes slideInRight {
                 from { 
                     transform: translateX(100%); 
@@ -145,23 +145,23 @@ function showToast(type, message) {
                 }
             }
         `;
-    document.head.appendChild(style);
+        document.head.appendChild(style);
     }
-    
+
     document.body.appendChild(toast);
-    
+
     // Принудительно запускаем анимацию появления
     setTimeout(() => {
         toast.style.transform = 'translateX(0)';
         toast.style.opacity = '1';
     }, 50);
-    
+
     // Автоматическое скрытие через 5 секунд (увеличили время)
     setTimeout(() => {
         toast.classList.add('hiding');
         const isMobile = window.innerWidth <= 768;
         toast.style.animation = isMobile ? 'slideOutTop 0.3s ease forwards' : 'slideOutRight 0.3s ease forwards';
-        
+
         setTimeout(() => {
             if (toast.parentNode) {
                 toast.remove();
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initFAQ();
     initCVDownload();
     registerServiceWorker();
-    
+
     // Асинхронно инициализируем CSRF и форму
     initCSRFAndForm();
 });
@@ -208,39 +208,39 @@ function initCalculator() {
     const totalPrice = document.getElementById('totalPrice');
     const sendToFormBtn = document.getElementById('sendToFormBtn');
     const resetCalculatorBtn = document.getElementById('resetCalculatorBtn');
-    
+
     if (!packageCards.length || !costBreakdown || !totalPrice) return;
-    
+
     let selectedPackage = null;
     let selectedServices = [];
-    
+
     // Обработчики для пакетов услуг
     packageCards.forEach(card => {
         card.addEventListener('click', () => {
             // Убираем выделение с других карточек
             packageCards.forEach(c => c.classList.remove('selected'));
-            
+
             // Выделяем текущую карточку
             card.classList.add('selected');
-            
+
             // Сохраняем выбранный пакет
             selectedPackage = {
                 name: card.querySelector('.package-title').textContent,
                 price: parseInt(card.dataset.price),
                 type: card.dataset.package
             };
-            
+
             updateCalculation();
         });
     });
-    
+
     // Обработчики для дополнительных услуг
     serviceCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
             const serviceName = checkbox.parentNode.querySelector('.service-name').textContent;
             const servicePrice = parseInt(checkbox.dataset.price);
             const serviceType = checkbox.dataset.service;
-            
+
             if (checkbox.checked) {
                 selectedServices.push({
                     name: serviceName,
@@ -250,16 +250,16 @@ function initCalculator() {
             } else {
                 selectedServices = selectedServices.filter(service => service.type !== serviceType);
             }
-            
+
             updateCalculation();
         });
     });
-    
+
     // Функция обновления расчета
     function updateCalculation() {
         let breakdown = '';
         let total = 0;
-        
+
         if (selectedPackage) {
             breakdown += `
                 <div class="breakdown-item">
@@ -276,7 +276,7 @@ function initCalculator() {
                 </div>
             `;
         }
-        
+
         selectedServices.forEach(service => {
             breakdown += `
                 <div class="breakdown-item">
@@ -286,85 +286,85 @@ function initCalculator() {
             `;
             total += service.price;
         });
-        
+
         costBreakdown.innerHTML = breakdown;
         totalPrice.textContent = formatPrice(total);
-        
+
         // Активируем/деактивируем кнопку отправки
         if (sendToFormBtn) {
             sendToFormBtn.disabled = !selectedPackage;
         }
     }
-    
+
     // Функция форматирования цены
     function formatPrice(price) {
         return new Intl.NumberFormat('en-DE').format(price) + ' €';
     }
-    
+
     // Функция генерации текста для формы
     function generateCalculationText() {
         if (!selectedPackage) return '';
-        
-        let text = `🧮 РАСЧЕТ СТОИМОСТИ ПРОЕКТА\n\n`;
+
+        let text = '🧮 РАСЧЕТ СТОИМОСТИ ПРОЕКТА\n\n';
         text += `📋 Основной пакет:\n${selectedPackage.name} — ${formatPrice(selectedPackage.price)}\n\n`;
-        
+
         if (selectedServices.length > 0) {
-            text += `🔧 Дополнительные услуги:\n`;
+            text += '🔧 Дополнительные услуги:\n';
             selectedServices.forEach(service => {
                 text += `• ${service.name} — ${formatPrice(service.price)}\n`;
             });
-            text += `\n`;
+            text += '\n';
         }
-        
+
         const total = selectedPackage.price + selectedServices.reduce((sum, service) => sum + service.price, 0);
         text += `💰 ИТОГО: ${formatPrice(total)}\n\n`;
-        text += `* Окончательная стоимость может отличаться в зависимости от сложности проекта\n\n`;
-        text += `—————————————————————————\nСообщение от клиента:\n\n`;
-        
+        text += '* Окончательная стоимость может отличаться в зависимости от сложности проекта\n\n';
+        text += '—————————————————————————\nСообщение от клиента:\n\n';
+
         return text;
     }
-    
+
     // Отправка расчета в форму
     if (sendToFormBtn) {
         sendToFormBtn.addEventListener('click', () => {
             const calculationText = generateCalculationText();
             const messageTextarea = document.getElementById('message');
-            
+
             if (messageTextarea) {
                 messageTextarea.value = calculationText;
                 messageTextarea.focus();
-                
+
                 // Плавная прокрутка к форме
                 const contactSection = document.getElementById('contact');
                 if (contactSection) {
                     contactSection.scrollIntoView({ behavior: 'smooth' });
                 }
-                
+
                 showToast('success', 'Расчет добавлен в форму обратной связи');
             }
         });
     }
-    
+
     // Сброс калькулятора
     if (resetCalculatorBtn) {
         resetCalculatorBtn.addEventListener('click', () => {
             // Сбрасываем выбранный пакет
             packageCards.forEach(card => card.classList.remove('selected'));
             selectedPackage = null;
-            
+
             // Сбрасываем дополнительные услуги
             serviceCheckboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
             selectedServices = [];
-            
+
             // Обновляем расчет
             updateCalculation();
-            
+
             showToast('success', 'Калькулятор сброшен');
         });
     }
-    
+
     // Инициальный расчет
     updateCalculation();
 }
@@ -377,9 +377,9 @@ function initPreloader() {
     const progressFill = document.getElementById('progressFill');
     const progressText = document.getElementById('progressText');
     const progressPercent = document.getElementById('progressPercent');
-    
+
     if (!preloader || !progressFill) return;
-    
+
     let progress = 0;
     const loadingSteps = [
         { text: 'Загрузка ресурсов...', duration: 300 },
@@ -388,22 +388,22 @@ function initPreloader() {
         { text: 'Финальная настройка...', duration: 200 },
         { text: 'Готово!', duration: 200 }
     ];
-    
+
     let currentStep = 0;
-    
+
     function updateProgress() {
         const targetProgress = Math.min(100, (currentStep + 1) * 20);
         const step = (targetProgress - progress) / 20;
-        
+
         const interval = setInterval(() => {
             progress += step;
             progressFill.style.width = progress + '%';
             progressPercent.textContent = Math.round(progress) + '%';
-            
+
             if (progress >= targetProgress) {
                 clearInterval(interval);
                 currentStep++;
-                
+
                 if (currentStep < loadingSteps.length) {
                     progressText.textContent = loadingSteps[currentStep].text;
                     setTimeout(() => {
@@ -413,7 +413,7 @@ function initPreloader() {
                     // Завершение загрузки
                     setTimeout(() => {
                         preloader.classList.add('hidden');
-                        
+
                         // Запуск анимаций после загрузки страницы
                         document.querySelectorAll('.animate-on-load').forEach(el => {
                             el.classList.add('animate');
@@ -423,15 +423,15 @@ function initPreloader() {
             }
         }, 20);
     }
-    
+
     // Запуск первого шага
     progressText.textContent = loadingSteps[0].text;
-    
+
     // Начинаем прогресс после небольшой задержки
     setTimeout(() => {
         updateProgress();
     }, 200);
-    
+
     // Fallback для быстрой загрузки
     window.addEventListener('load', function() {
         setTimeout(() => {
@@ -440,10 +440,10 @@ function initPreloader() {
                 progressFill.style.width = '100%';
                 progressPercent.textContent = '100%';
                 progressText.textContent = 'Готово!';
-                
+
                 setTimeout(() => {
                     preloader.classList.add('hidden');
-                    
+
                     document.querySelectorAll('.animate-on-load').forEach(el => {
                         el.classList.add('animate');
                     });
@@ -457,65 +457,65 @@ function initPreloader() {
 function initCustomCursor() {
     const cursor = document.getElementById('customCursor');
     const follower = document.getElementById('customCursorFollower');
-    
+
     if (!cursor || !follower) return;
-    
+
     // Только для устройств с мышью
     if (window.matchMedia('(pointer: fine)').matches) {
         let mouseX = 0, mouseY = 0;
         let cursorX = 0, cursorY = 0;
         let followerX = 0, followerY = 0;
         let animationFrameId = null;
-        
+
         const mouseMoveHandler = function(e) {
             mouseX = e.clientX;
             mouseY = e.clientY;
         };
-        
+
         document.addEventListener('mousemove', mouseMoveHandler);
-        
+
         function updateCursor() {
             cursorX += (mouseX - cursorX) * 0.2;
             cursorY += (mouseY - cursorY) * 0.2;
             followerX += (mouseX - followerX) * 0.1;
             followerY += (mouseY - followerY) * 0.1;
-            
+
             cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
             follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0)`;
-            
+
             animationFrameId = requestAnimationFrame(updateCursor);
         }
-        
+
         animationFrameId = requestAnimationFrame(updateCursor);
-        
+
         // Эффекты при наведении на интерактивные элементы
         const interactiveElements = document.querySelectorAll('a, button, .work-card, .service-card, input, textarea, [data-cursor="pointer"]');
-        
+
         interactiveElements.forEach(function(el) {
             el.addEventListener('mouseenter', function() {
                 cursor.classList.add('cursor-hover');
                 follower.classList.add('follower-hover');
             });
-            
+
             el.addEventListener('mouseleave', function() {
                 cursor.classList.remove('cursor-hover');
                 follower.classList.remove('follower-hover');
             });
         });
-        
+
         // Специальные эффекты для разных типов элементов
         document.querySelectorAll('[data-cursor="view"]').forEach(el => {
             el.addEventListener('mouseenter', function() {
                 cursor.classList.add('cursor-view');
                 follower.classList.add('follower-view');
             });
-            
+
             el.addEventListener('mouseleave', function() {
                 cursor.classList.remove('cursor-view');
                 follower.classList.remove('follower-view');
             });
         });
-        
+
         // Очистка при уничтожении
         return function cleanup() {
             if (animationFrameId) {
@@ -523,7 +523,7 @@ function initCustomCursor() {
             }
             document.removeEventListener('mousemove', mouseMoveHandler);
         };
-        } else {
+    } else {
         cursor.style.display = 'none';
         follower.style.display = 'none';
     }
@@ -533,47 +533,47 @@ function initCustomCursor() {
 function initSideNav() {
     const sideNav = document.getElementById('sideNav');
     const sideNavLinks = document.querySelectorAll('.side-nav-link');
-    
+
     if (!sideNav || !sideNavLinks.length) return;
-    
+
     // Использование Intersection Observer для определения активного раздела
     const sections = document.querySelectorAll('section[id]');
-const observerOptions = {
+    const observerOptions = {
         root: null,
         rootMargin: '0px',
         threshold: 0.3
-};
+    };
 
     const sectionObserver = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
                 const id = entry.target.getAttribute('id');
-                
+
                 sideNavLinks.forEach(link => {
                     link.classList.remove('active');
-                    
+
                     if (link.getAttribute('href') === '#' + id) {
                         link.classList.add('active');
-        }
-    });
-}
+                    }
+                });
+            }
         });
     }, observerOptions);
-    
+
     sections.forEach(section => {
         sectionObserver.observe(section);
     });
-    
+
     // Плавный скролл при клике
     sideNavLinks.forEach(function(link) {
         link.addEventListener('click', function(e) {
             if (link.classList.contains('external')) return;
-            
+
             e.preventDefault();
-            
+
             const targetId = this.getAttribute('href').substring(1);
             const targetSection = document.getElementById(targetId);
-            
+
             if (targetSection) {
                 window.scrollTo({
                     top: targetSection.offsetTop,
@@ -591,9 +591,9 @@ function initMobileNav() {
     const mobileNavClose = document.getElementById('mobileNavClose');
     const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
     const menuIcon = document.querySelector('.menu-icon');
-    
+
     if (!mobileNavToggle || !mobileNav || !mobileNavClose) return;
-    
+
     // Открытие/закрытие меню при клике на кнопку меню
     mobileNavToggle.addEventListener('click', function() {
         // Проверяем, открыто ли меню
@@ -607,7 +607,7 @@ function initMobileNav() {
             document.body.style.overflow = 'hidden';
         }
     });
-    
+
     // Добавляем обработчик на иконку меню отдельно (на всякий случай)
     if (menuIcon) {
         menuIcon.addEventListener('click', function(e) {
@@ -616,7 +616,7 @@ function initMobileNav() {
                 // Если открыто, закрываем
                 mobileNav.classList.remove('active');
                 document.body.style.overflow = '';
-        } else {
+            } else {
                 // Если закрыто, открываем
                 mobileNav.classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -624,13 +624,13 @@ function initMobileNav() {
             e.stopPropagation(); // Предотвращаем всплытие события
         });
     }
-    
+
     // Закрытие меню
     mobileNavClose.addEventListener('click', function() {
         mobileNav.classList.remove('active');
         document.body.style.overflow = '';
     });
-    
+
     // Закрытие при клике на само меню (фон)
     mobileNav.addEventListener('click', function(e) {
         // Если клик был на само меню, а не на его содержимое
@@ -639,31 +639,31 @@ function initMobileNav() {
             document.body.style.overflow = '';
         }
     });
-    
+
     // Закрытие по клику вне меню
     document.addEventListener('click', function(e) {
-        if (mobileNav.classList.contains('active') && 
-            !mobileNav.contains(e.target) && 
+        if (mobileNav.classList.contains('active') &&
+            !mobileNav.contains(e.target) &&
             e.target !== mobileNavToggle) {
             mobileNav.classList.remove('active');
             document.body.style.overflow = '';
         }
     });
-    
+
     // Плавный скролл при клике
     mobileNavLinks.forEach(function(link) {
         link.addEventListener('click', function(e) {
             // Всегда закрываем меню при клике на любой пункт
             mobileNav.classList.remove('active');
             document.body.style.overflow = '';
-            
+
             // Если это якорная ссылка, делаем плавный скролл
             if (this.getAttribute('href').startsWith('#')) {
                 e.preventDefault();
-                
+
                 const targetId = this.getAttribute('href').substring(1);
                 const targetSection = document.getElementById(targetId);
-                
+
                 if (targetSection) {
                     setTimeout(function() {
                         window.scrollTo({
@@ -681,16 +681,16 @@ function initMobileNav() {
 // Индикатор прогресса скролла
 function initScrollProgress() {
     const scrollProgress = document.getElementById('scrollProgress');
-    
+
     if (!scrollProgress) return;
-    
+
     function updateScrollProgress() {
         const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const scrolled = (window.scrollY / windowHeight) * 100;
-        
+
         scrollProgress.style.width = scrolled + '%';
     }
-    
+
     window.addEventListener('scroll', updateScrollProgress);
     updateScrollProgress(); // Инициализация
 }
@@ -698,9 +698,9 @@ function initScrollProgress() {
 // Счетчик статистики
 function initStatsCounter() {
     const stats = document.querySelectorAll('.stat-number');
-    
+
     if (!stats.length) return;
-    
+
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -711,30 +711,30 @@ function initStatsCounter() {
                 const totalFrames = Math.round(duration / frameDuration);
                 let frame = 0;
                 let currentValue = 0;
-                
+
                 function animate() {
                     frame++;
                     const progress = frame / totalFrames;
                     const easedProgress = progress < 0.5
                         ? 4 * progress * progress * progress
                         : 1 - Math.pow(-2 * progress + 2, 3) / 2; // Кубическая функция сглаживания
-                    
+
                     currentValue = Math.round(easedProgress * targetValue);
                     el.textContent = currentValue;
-                    
+
                     if (frame < totalFrames) {
                         requestAnimationFrame(animate);
-        } else {
+                    } else {
                         el.textContent = targetValue;
                     }
                 }
-                
+
                 requestAnimationFrame(animate);
                 observer.unobserve(el);
             }
         });
     }, { threshold: 0.5 });
-    
+
     stats.forEach(stat => {
         observer.observe(stat);
     });
@@ -744,26 +744,26 @@ function initStatsCounter() {
 function initPortfolioFilter() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     const workItems = document.querySelectorAll('.work-item');
-    
+
     if (!filterButtons.length || !workItems.length) return;
-    
+
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
             // Убираем активный класс со всех кнопок
             filterButtons.forEach(btn => btn.classList.remove('active'));
-            
+
             // Добавляем активный класс на текущую кнопку
             this.classList.add('active');
-            
+
             const filterValue = this.getAttribute('data-filter');
-            
+
             workItems.forEach(item => {
                 if (filterValue === 'all') {
                     item.style.display = 'block';
-        setTimeout(() => {
+                    setTimeout(() => {
                         item.classList.remove('filtered-out');
                     }, 10);
-        } else {
+                } else {
                     if (item.classList.contains(filterValue)) {
                         item.style.display = 'block';
                         setTimeout(() => {
@@ -790,7 +790,7 @@ function initLazyLoading() {
                 img.src = img.dataset.src;
             }
         });
-            } else {
+    } else {
         // Fallback для старых браузеров
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
@@ -801,9 +801,9 @@ function initLazyLoading() {
 // Анимации при скролле
 function initScrollAnimations() {
     const animatedElements = document.querySelectorAll('.animate-on-scroll');
-    
+
     if (!animatedElements.length) return;
-    
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -815,9 +815,9 @@ function initScrollAnimations() {
         threshold: 0.1,
         rootMargin: '50px'
     });
-    
+
     animatedElements.forEach(el => observer.observe(el));
-    
+
     // Очистка при уничтожении
     return function cleanup() {
         animatedElements.forEach(el => observer.unobserve(el));
@@ -842,15 +842,15 @@ function initModal() {
     const modal = document.getElementById('projectModal');
     const modalClose = document.getElementById('modalClose');
     const workLinks = document.querySelectorAll('.work-link');
-    
+
     if (!modal || !modalClose) return;
-    
+
     // Закрытие модального окна
     modalClose.addEventListener('click', function() {
         modal.classList.remove('active');
         document.body.style.overflow = '';
     });
-    
+
     // Клик вне модального окна
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
@@ -858,24 +858,24 @@ function initModal() {
             document.body.style.overflow = '';
         }
     });
-    
+
     // Открытие модального окна
     workLinks.forEach(function(link) {
         link.addEventListener('click', function() {
             const projectId = this.getAttribute('data-project');
-            
+
             // Получение данных проекта
             const projectData = getProjectData(projectId);
-            
+
             if (projectData) {
                 // Заполнение модального окна
                 document.getElementById('modalTitle').textContent = projectData.title;
                 document.getElementById('modalDescription').textContent = projectData.description;
                 document.getElementById('modalAbout').textContent = projectData.about;
-                
+
                 // Очистка тегов
                 document.getElementById('modalTags').innerHTML = '';
-                
+
                 // Добавление тегов
                 projectData.tags.forEach(function(tag) {
                     const tagElement = document.createElement('span');
@@ -883,10 +883,10 @@ function initModal() {
                     tagElement.textContent = tag;
                     document.getElementById('modalTags').appendChild(tagElement);
                 });
-                
+
                 // Очистка стека технологий
                 document.getElementById('modalTechStack').innerHTML = '';
-                
+
                 // Добавление стека технологий
                 projectData.techStack.forEach(function(tech) {
                     const techElement = document.createElement('span');
@@ -894,22 +894,22 @@ function initModal() {
                     techElement.textContent = tech;
                     document.getElementById('modalTechStack').appendChild(techElement);
                 });
-                
+
                 // Очистка особенностей
                 document.getElementById('modalFeatures').innerHTML = '';
-                
+
                 // Добавление особенностей
                 projectData.features.forEach(function(feature) {
                     const featureElement = document.createElement('li');
                     featureElement.textContent = feature;
                     document.getElementById('modalFeatures').appendChild(featureElement);
                 });
-                
+
                 // Установка изображения
                 document.getElementById('modalImage').style.backgroundImage = 'url(' + projectData.image + ')';
-                
 
-                
+
+
                 // Открытие модального окна
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -922,53 +922,53 @@ function initModal() {
 function initContactForm() {
     const form = document.getElementById('contactForm');
     if (!form) return;
-    
+
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+
         if (isSubmitting) return;
         isSubmitting = true;
-        
+
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<span>Отправляем...</span>';
         submitBtn.disabled = true;
-        
+
         try {
             const formData = new FormData(form);
             const name = formData.get('name');
-            const email = formData.get('email'); 
+            const email = formData.get('email');
             const message = formData.get('message');
-            
+
             // Клиентская валидация для лучшего UX
             const clientErrors = [];
-            
+
             if (!name || name.trim().length < 2 || name.trim().length > 50) {
                 clientErrors.push('Имя должно содержать от 2 до 50 символов');
             }
-            
+
             if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
                 clientErrors.push('Введите корректный email адрес');
             }
-            
+
             if (!message || message.trim().length < 10 || message.trim().length > 1000) {
                 clientErrors.push('Сообщение должно содержать от 10 до 1000 символов');
             }
-            
+
             if (clientErrors.length > 0) {
                 throw new Error(clientErrors.join('\n'));
             }
-            
+
             const headers = {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             };
-            
+
             // Добавляем CSRF токен если есть
             if (csrfToken) {
                 headers['X-CSRF-Token'] = csrfToken;
             }
-            
+
             const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: headers,
@@ -978,9 +978,9 @@ function initContactForm() {
                     message: message.trim()
                 })
             });
-            
+
             const data = await response.json();
-            
+
             if (!response.ok) {
                 // Если есть ошибки валидации, показываем их подробно
                 if (data.errors && Array.isArray(data.errors)) {
@@ -989,13 +989,13 @@ function initContactForm() {
                 }
                 throw new Error(data.message || 'Ошибка отправки');
             }
-            
+
             showToast('success', data.message || 'Сообщение отправлено!');
             form.reset();
-            
+
         } catch (error) {
             console.error('Error:', error);
-            
+
             // Если ошибка связана с CSRF токеном, пробуем обновить его
             if (error.message.includes('CSRF') || error.message.includes('csrf')) {
                 await initCSRF();
@@ -1003,7 +1003,7 @@ function initContactForm() {
             } else {
                 showToast('error', error.message || 'Произошла ошибка при отправке');
             }
-            
+
         } finally {
             isSubmitting = false;
             submitBtn.innerHTML = originalText;
@@ -1118,7 +1118,7 @@ function getProjectData(projectId) {
             githubLink: '#'
         }
     };
-    
+
     return projects[projectId] || null;
 }
 
@@ -1154,7 +1154,7 @@ function throttle(func, limit = 300) {
 // Утилиты для создания HTML элементов
 function createElement(tag, attributes = {}, children = []) {
     const element = document.createElement(tag);
-    
+
     Object.entries(attributes).forEach(([key, value]) => {
         if (key === 'classList' && Array.isArray(value)) {
             value.forEach(cls => element.classList.add(cls));
@@ -1169,7 +1169,7 @@ function createElement(tag, attributes = {}, children = []) {
             element.setAttribute(key, value);
         }
     });
-    
+
     if (typeof children === 'string') {
         element.textContent = children;
     } else if (Array.isArray(children)) {
@@ -1181,7 +1181,7 @@ function createElement(tag, attributes = {}, children = []) {
             }
         });
     }
-    
+
     return element;
 }
 
@@ -1203,25 +1203,25 @@ function generateId(prefix = '') {
 // Функция для скачивания CV
 function initCVDownload() {
     const downloadCVBtn = document.getElementById('downloadCVBtn');
-    
+
     if (!downloadCVBtn) return;
-    
+
     downloadCVBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-        
+        e.preventDefault();
+
         // Создаем ссылку на CV и запускаем скачивание
         const link = document.createElement('a');
         link.href = 'cv.pdf';
         link.download = 'TechPortal_CV.pdf';
         link.target = '_blank';
-        
+
         // Скрываем ссылку, добавляем в DOM, кликаем и удаляем
         link.style.display = 'none';
         document.body.appendChild(link);
         link.click();
-            setTimeout(() => {
+        setTimeout(() => {
             document.body.removeChild(link);
-            
+
             // Показываем уведомление об успешном скачивании
             showToast('Скачивание началось', 'Ваш файл скачивается', 'success');
         }, 100);
@@ -1231,28 +1231,28 @@ function initCVDownload() {
 // FAQ аккордеон
 function initFAQ() {
     const faqItems = document.querySelectorAll('.faq-item');
-    
+
     if (!faqItems.length) return;
-    
+
     faqItems.forEach(item => {
         const question = item.querySelector('.faq-question');
-        
+
         question.addEventListener('click', () => {
             const isActive = item.classList.contains('active');
-            
+
             // Закрыть все открытые элементы
             faqItems.forEach(otherItem => {
                 if (otherItem !== item) {
                     otherItem.classList.remove('active');
                 }
             });
-            
+
             // Переключить текущий элемент
             if (!isActive) {
                 item.classList.add('active');
-                } else {
+            } else {
                 item.classList.remove('active');
-                }
-            });
+            }
         });
-    }
+    });
+}

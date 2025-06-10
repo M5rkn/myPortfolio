@@ -27,5 +27,12 @@ Thumbs.db
 Desktop.ini
 
 # Logs
-logs/
+logs/*.log
+!logs/.gitkeep
 *.log
+
+# Test coverage
+coverage/
+
+# Jest cache
+.jest-cache/

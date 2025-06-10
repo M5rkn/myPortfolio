@@ -16,31 +16,31 @@ const urlsToCache = [
 function isValidCacheUrl(url) {
     try {
         const parsedUrl = new URL(url);
-        
+
         // Only allow HTTPS (except localhost)
-        if (parsedUrl.protocol !== 'https:' && 
-            !parsedUrl.hostname.includes('localhost') && 
+        if (parsedUrl.protocol !== 'https:' &&
+            !parsedUrl.hostname.includes('localhost') &&
             parsedUrl.hostname !== '127.0.0.1') {
             return false;
         }
-        
+
         // Check allowed origins
-        const isAllowedOrigin = ALLOWED_ORIGINS.some(origin => 
+        const isAllowedOrigin = ALLOWED_ORIGINS.some(origin =>
             parsedUrl.href.startsWith(origin)
         );
-        
+
         if (!isAllowedOrigin) {
             return false;
         }
-        
+
         // Block dangerous file types
         const dangerousExtensions = ['.php', '.asp', '.jsp', '.py', '.exe', '.bat'];
         const pathname = parsedUrl.pathname.toLowerCase();
-        
+
         if (dangerousExtensions.some(ext => pathname.includes(ext))) {
             return false;
         }
-        
+
         return true;
     } catch {
         return false;
@@ -53,12 +53,12 @@ function isValidRequest(request) {
     if (request.method !== 'GET') {
         return false;
     }
-    
+
     // Validate URL
     if (!isValidCacheUrl(request.url)) {
         return false;
     }
-    
+
     // Block requests with dangerous headers
     const dangerousHeaders = ['x-forwarded-for', 'x-real-ip', 'host'];
     for (const header of dangerousHeaders) {
@@ -66,7 +66,7 @@ function isValidRequest(request) {
             return false;
         }
     }
-    
+
     return true;
 }
 
@@ -74,12 +74,12 @@ function isValidRequest(request) {
 async function secureFetch(request) {
     // Clone request for security
     const clonedRequest = request.clone();
-    
+
     // Add security headers
     const secureHeaders = new Headers(clonedRequest.headers);
     secureHeaders.set('X-Requested-With', 'ServiceWorker');
     secureHeaders.set('Cache-Control', 'max-age=3600');
-    
+
     const secureRequest = new Request(clonedRequest.url, {
         method: clonedRequest.method,
         headers: secureHeaders,
@@ -87,35 +87,35 @@ async function secureFetch(request) {
         credentials: 'omit', // Don't send credentials
         cache: 'default'
     });
-    
+
     try {
         const response = await fetch(secureRequest);
-        
+
         // Validate response
         if (!response.ok || response.status >= 400) {
             throw new Error('Invalid response');
         }
-        
+
         // Check content type
         const contentType = response.headers.get('content-type') || '';
         const allowedTypes = [
             'text/html',
-            'text/css', 
+            'text/css',
             'application/javascript',
             'text/javascript',
             'application/json',
             'image/',
             'font/'
         ];
-        
-        const isAllowedType = allowedTypes.some(type => 
+
+        const isAllowedType = allowedTypes.some(type =>
             contentType.toLowerCase().includes(type.toLowerCase())
         );
-        
+
         if (!isAllowedType) {
             throw new Error('Invalid content type');
         }
-        
+
         return response;
     } catch (error) {
         console.error('Secure fetch failed:', error.message);
@@ -129,7 +129,7 @@ self.addEventListener('install', (event) => {
         caches.open(CACHE_NAME)
             .then(async (cache) => {
                 const validUrls = urlsToCache.filter(url => isValidCacheUrl(url));
-                
+
                 // Cache URLs securely one by one
                 for (const url of validUrls) {
                     try {
@@ -142,7 +142,7 @@ self.addEventListener('install', (event) => {
                         console.error(`Failed to cache ${url}:`, error.message);
                     }
                 }
-                
+
                 // Skip waiting for immediate activation
                 self.skipWaiting();
             })
@@ -155,7 +155,7 @@ self.addEventListener('fetch', (event) => {
     if (!isValidRequest(event.request)) {
         return; // Let browser handle invalid requests
     }
-    
+
     event.respondWith(
         caches.match(event.request)
             .then(async (response) => {
@@ -172,7 +172,7 @@ self.addEventListener('fetch', (event) => {
                     }
                     return response;
                 }
-                
+
                 // Fetch and cache new response
                 return secureFetch(event.request);
             })
@@ -192,16 +192,16 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(
         Promise.all([
             // Clean old caches
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
+            caches.keys().then((cacheNames) => {
+                return Promise.all(
+                    cacheNames.map((cacheName) => {
+                        if (cacheName !== CACHE_NAME) {
+                            return caches.delete(cacheName);
+                        }
+                    })
+                );
             }),
-            
+
             // Claim all clients immediately
             self.clients.claim()
         ])
@@ -218,4 +218,4 @@ self.addEventListener('error', (event) => {
 self.addEventListener('unhandledrejection', (event) => {
     console.error('Service Worker promise rejection:', event.reason?.message || 'Unknown rejection');
     event.preventDefault();
-}); 
+});

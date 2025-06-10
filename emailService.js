@@ -6,7 +6,7 @@ class EmailService {
         this.isEnabled = false;
         this.fromEmail = process.env.EMAIL_FROM;
         this.fromName = process.env.EMAIL_FROM_NAME || 'TechPortal';
-        
+
         this.init();
     }
 
@@ -87,7 +87,7 @@ class EmailService {
             };
 
             const info = await this.transporter.sendMail(mailOptions);
-            
+
             console.log('📧 Email отправлен:', {
                 to: to,
                 subject: subject,
@@ -109,7 +109,7 @@ class EmailService {
     // Форматирование HTML письма
     formatReplyHTML(message, originalContact) {
         const formattedMessage = message.replace(/\n/g, '<br>');
-        
+
         return `
 <!DOCTYPE html>
 <html lang="ru">
@@ -264,4 +264,4 @@ class EmailService {
     }
 }
 
-module.exports = new EmailService(); 
+module.exports = new EmailService();
