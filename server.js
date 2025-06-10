@@ -1213,6 +1213,160 @@ app.post('/api/admin/logout', authenticateAdmin, (req, res) => {
     }
 });
 
+// ===== USER ENDPOINTS =====
+
+// User login
+app.post('/api/user/login', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
+            return res.status(400).json({
+                success: false,
+                message: 'Email и пароль обязательны'
+            });
+        }
+
+        const clientIP = getClientIP(req);
+
+        // Find user
+        const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'Неверный email или пароль'
+            });
+        }
+
+        // Verify password
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        if (!isValidPassword) {
+            return res.status(401).json({
+                success: false,
+                message: 'Неверный email или пароль'
+            });
+        }
+
+        // Update daily streak
+        await updateUserDailyStreak(user._id.toString());
+
+        // Create token
+        const token = jwt.sign({
+            userId: user._id.toString(),
+            email: user.email,
+            name: user.name,
+            role: user.role || 'user',
+            timestamp: Date.now()
+        }, JWT_SECRET, { expiresIn: '24h' });
+
+        console.log(`User login successful from IP: ${clientIP}, email: ${email}`);
+
+        res.json({
+            success: true,
+            message: 'Вход выполнен успешно',
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role || 'user'
+            }
+        });
+
+    } catch (error) {
+        handleError(res, error);
+    }
+}));
+
+// User registration
+app.post('/api/user/register', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+
+        if (!name || !email || !password || typeof name !== 'string' || typeof email !== 'string' || typeof password !== 'string') {
+            return res.status(400).json({
+                success: false,
+                message: 'Имя, email и пароль обязательны'
+            });
+        }
+
+        // Validate name
+        if (name.length < 2 || name.length > 50) {
+            return res.status(400).json({
+                success: false,
+                message: 'Имя должно содержать от 2 до 50 символов'
+            });
+        }
+
+        // Validate email format
+        if (!validator.isEmail(email)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Некорректный email адрес'
+            });
+        }
+
+        // Validate password strength
+        if (password.length < 8 || password.length > 128) {
+            return res.status(400).json({
+                success: false,
+                message: 'Пароль должен содержать от 8 до 128 символов'
+            });
+        }
+
+        const clientIP = getClientIP(req);
+        console.log(`User registration attempt from IP: ${clientIP}, email: ${email}`);
+
+        // Запрещаем регистрацию на админский email
+        if (ADMIN_EMAIL && email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Регистрация на этот email запрещена'
+            });
+        }
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ email: email.toLowerCase() });
+        if (existingUser) {
+            return res.status(409).json({
+                success: false,
+                message: 'Пользователь с таким email уже существует'
+            });
+        }
+
+        // Hash password
+        const saltRounds = 12;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // Create new user
+        const newUser = new User({
+            name: name.trim(),
+            email: email.toLowerCase(),
+            password: hashedPassword,
+            role: 'user'
+        });
+
+        await newUser.save();
+
+        console.log(`New user registered from IP: ${clientIP}, name: ${name}, email: ${email}`);
+
+        res.json({
+            success: true,
+            message: 'Регистрация успешна! Теперь вы можете войти в систему.'
+        });
+
+    } catch (error) {
+        if (error.code === 11000) {
+            // Duplicate key error
+            return res.status(409).json({
+                success: false,
+                message: 'Пользователь с таким email уже существует'
+            });
+        }
+        handleError(res, error);
+    }
+}));
+
 // Submit contact form with enhanced security
 app.post('/api/contact', apiLimiter, validateCSRFToken, async (req, res) => {
     try {
@@ -1932,11 +2086,11 @@ app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => 
 // Save calculation endpoint
 app.post('/api/user/calculations', authenticateUser, asyncHandler(async (req, res) => {
     try {
-        // Проверяем что это не админ
-        if (!req.user.userId || req.user.isAdmin) {
+        // Проверяем что есть userId
+        if (!req.user.userId) {
             return res.status(403).json({ 
                 success: false, 
-                message: 'Доступ только для обычных пользователей' 
+                message: 'Требуется авторизация пользователя' 
             });
         }
         
@@ -1974,11 +2128,11 @@ app.post('/api/user/calculations', authenticateUser, asyncHandler(async (req, re
 // Delete calculation endpoint
 app.delete('/api/user/calculations/:id', authenticateUser, asyncHandler(async (req, res) => {
     try {
-        // Проверяем что это не админ
-        if (!req.user.userId || req.user.isAdmin) {
+        // Проверяем что есть userId
+        if (!req.user.userId) {
             return res.status(403).json({ 
                 success: false, 
-                message: 'Доступ только для обычных пользователей' 
+                message: 'Требуется авторизация пользователя' 
             });
         }
         
