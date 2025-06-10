@@ -356,7 +356,6 @@
             padding: var(--spacing-sm) var(--spacing-lg);
             cursor: pointer;
             font-weight: 600;
-            margin-top: var(--spacing-md);
             transition: all 0.3s ease;
         }
         
@@ -373,7 +372,6 @@
             padding: var(--spacing-sm) var(--spacing-lg);
             cursor: pointer;
             font-weight: 600;
-            margin-top: var(--spacing-sm);
             transition: all 0.3s ease;
             font-size: var(--font-size-base);
         }
@@ -381,6 +379,14 @@
         .admin-panel-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(103, 58, 183, 0.3);
+        }
+        
+        .profile-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
         }
         
         @media (max-width: 768px) {
@@ -412,14 +418,6 @@
             
             .profile-wrapper {
                 padding: 0 var(--spacing-md);
-            }
-            
-            .logout-btn,
-            .admin-panel-btn {
-                display: inline-block;
-                width: auto;
-                margin-left: auto;
-                margin-right: auto;
             }
         }
     </style>
@@ -455,10 +453,12 @@
                             <span class="stat-label">Дней с нами</span>
                         </div>
                     </div>
-                    <button class="logout-btn" onclick="logout()">Выйти из аккаунта</button>
-                    <button class="admin-panel-btn" id="adminPanelBtn" style="display: none;" onclick="window.location.href='admin.html'">
-                        🛠️ Админ панель
-                    </button>
+                    <div class="profile-buttons">
+                        <button class="logout-btn" onclick="logout()">Выйти из аккаунта</button>
+                        <button class="admin-panel-btn" id="adminPanelBtn" style="display: none;" onclick="window.location.href='admin.html'">
+                            🛠️ Админ панель
+                        </button>
+                    </div>
                 </div>
             </div>
 
