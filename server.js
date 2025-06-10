@@ -271,9 +271,29 @@ const validateCSRFToken = (req, res, next) => {
 const tokenBlacklist = new Set();
 
 // Функция для обновления ежедневного стрика пользователя
-async function updateUserDailyStreak(userId) {
+async function updateUserDailyStreak(userId, isAdmin = false, adminEmail = null) {
     try {
-        const user = await User.findById(userId);
+        let user;
+        
+        if (isAdmin && adminEmail) {
+            // Для админа ищем по email или создаем виртуального пользователя
+            user = await User.findOne({ email: adminEmail.toLowerCase() });
+            if (!user) {
+                // Создаем виртуального админа для отслеживания стрика
+                user = new User({
+                    name: adminEmail.split('@')[0],
+                    email: adminEmail.toLowerCase(),
+                    password: 'admin_placeholder', // Не используется
+                    role: 'admin',
+                    dailyStreak: 0,
+                    isActive: true
+                });
+                console.log(`Created virtual admin user for streak tracking: ${adminEmail}`);
+            }
+        } else {
+            user = await User.findById(userId);
+        }
+        
         if (!user) return;
         
         // Исправляем отсутствующее имя у старых пользователей
@@ -292,7 +312,11 @@ async function updateUserDailyStreak(userId) {
         
         // Если пользователь уже заходил сегодня, ничего не делаем
         if (lastVisit && lastVisit.getTime() === today.getTime()) {
-            return;
+            return {
+                streak: user.dailyStreak,
+                discount: user.bonusDiscount,
+                hasBonus: user.bonusDiscount > 0 && user.streakExpiry > new Date()
+            };
         }
         
         const yesterday = new Date(today);
@@ -309,8 +333,8 @@ async function updateUserDailyStreak(userId) {
         // Обновляем дату последнего визита
         user.lastVisitDate = new Date();
         
-        // Проверяем достижения и начисляем бонусы
-        if (user.dailyStreak >= 7) {
+        // Проверяем достижения и начисляем бонусы (только для обычных пользователей)
+        if (!isAdmin && user.dailyStreak >= 7) {
             // 7 дней подряд = 15% скидка на 3 дня
             user.bonusDiscount = 15;
             user.streakExpiry = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 дня
@@ -1000,6 +1024,9 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
                 issuer: 'TechPortal',
                 audience: 'admin'
             });
+
+            // Обновляем ежедневный стрик админа
+            await updateUserDailyStreak(null, true, email);
 
             console.log(`Successful admin login from IP: ${clientIP}`);
 
@@ -2035,6 +2062,22 @@ app.get('/api/admin/profile', authenticateUser, asyncHandler(async (req, res) =>
             });
         }
         
+        // Обновляем ежедневный стрик админа
+        const streakInfo = await updateUserDailyStreak(null, true, req.user.email);
+        
+        // Получаем информацию об админе для расчета дней с нами
+        const adminUser = await User.findOne({ email: req.user.email });
+        let joinDays = 1; // По умолчанию
+        
+        if (adminUser && adminUser.createdAt) {
+            joinDays = Math.ceil((new Date() - adminUser.createdAt) / (1000 * 60 * 60 * 24));
+        }
+        
+        // Считаем статистику админа
+        const totalUsers = await User.countDocuments({ role: { $ne: 'admin' } });
+        const totalCalculations = await Calculation.countDocuments();
+        const totalContacts = await Contact.countDocuments();
+        
         res.json({
             success: true,
             user: {
@@ -2043,13 +2086,14 @@ app.get('/api/admin/profile', authenticateUser, asyncHandler(async (req, res) =>
                 role: 'admin'
             },
             stats: {
-                calculationsCount: 0,
+                calculationsCount: totalCalculations,
                 ordersCount: 0,
-                joinDays: 0
+                joinDays,
+                totalUsers
             },
             bonus: {
-                dailyStreak: 0,
-                bonusDiscount: 0,
+                dailyStreak: streakInfo?.streak || 0,
+                bonusDiscount: 0, // Админы не получают скидки
                 hasActiveBonus: false,
                 streakExpiry: null,
                 daysUntilBonus: 0
@@ -2230,6 +2274,38 @@ app.post('/api/user/logout', authenticateUser, asyncHandler(async (req, res) => 
             success: true,
             message: 'Выход выполнен'
         });
+    }
+}));
+
+// Test streak endpoint - для тестирования стрика
+app.get('/api/test-streak', authenticateUser, asyncHandler(async (req, res) => {
+    try {
+        let streakInfo;
+        
+        if (req.user.isAdmin || req.user.role === 'admin') {
+            // Тест стрика для админа
+            streakInfo = await updateUserDailyStreak(null, true, req.user.email);
+            res.json({
+                success: true,
+                message: 'Стрик админа обновлен',
+                userType: 'admin',
+                email: req.user.email,
+                streak: streakInfo
+            });
+        } else {
+            // Тест стрика для обычного пользователя
+            streakInfo = await updateUserDailyStreak(req.user.userId);
+            res.json({
+                success: true,
+                message: 'Стрик пользователя обновлен',
+                userType: 'user',
+                userId: req.user.userId,
+                streak: streakInfo
+            });
+        }
+    } catch (error) {
+        console.error('Error testing streak:', error);
+        handleError(res, error, 'Ошибка тестирования стрика');
     }
 }));
 
