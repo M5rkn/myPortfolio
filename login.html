@@ -655,17 +655,18 @@
                     saveRateLimitData();
                     
                     // Save token securely
-                    const tokenData = {
-                        token: data.token,
-                        expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-                    };
-                    sessionStorage.setItem('adminToken', JSON.stringify(tokenData));
+                    localStorage.setItem('authToken', data.token);
                     
                     showSuccess('Вход выполнен успешно');
                     
-                    // Secure redirect after short delay
+                    // Проверяем роль пользователя и перенаправляем соответственно
+                    const userInfo = getUserFromToken(data.token);
                     setTimeout(() => {
-                        window.location.replace('/admin');
+                        if (userInfo && userInfo.isAdmin) {
+                            window.location.replace('/admin.html');
+                        } else {
+                            window.location.replace('/index.html');
+                        }
                     }, 1000);
                 } else {
                     // Increment failed attempts
@@ -837,6 +838,22 @@
                 confirmPasswordInput.blur();
             }
         });
+
+        // Helper function to get user info from token
+        function getUserFromToken(token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                return {
+                    userId: payload.userId,
+                    email: payload.email,
+                    name: payload.name || payload.email.split('@')[0],
+                    isAdmin: payload.isAdmin || false
+                };
+            } catch (error) {
+                console.error('Error parsing token:', error);
+                return null;
+            }
+        }
     </script>
 </body>
 </html> 

@@ -1274,6 +1274,46 @@ button {
   transform: translateX(10px);
 }
 
+/* Стили для аватарки пользователя */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--border-radius-full);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: white;
+  margin: 0 auto;
+}
+
+.user-avatar-mobile {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--border-radius-full);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: white;
+  margin-right: var(--spacing-sm);
+  vertical-align: middle;
+}
+
+.auth-link:hover .user-avatar {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.auth-link-mobile:hover .user-avatar-mobile {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
 /* Мобильная навигация */
 .mobile-nav-toggle {
   position: fixed;

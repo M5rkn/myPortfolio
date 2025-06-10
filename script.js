@@ -1808,22 +1808,44 @@ function initAuthButton() {
 
     function updateAuthButton(isLoggedIn) {
         if (isLoggedIn) {
-            authText.textContent = 'Выйти';
-            authTextMobile.textContent = 'Выйти';
-            authLink.href = '#';
-            authLinkMobile.href = '#';
+            const token = localStorage.getItem('authToken');
+            const userInfo = getUserFromToken(token);
             
-            // Добавляем обработчик выхода
-            authLink.onclick = authLinkMobile.onclick = (e) => {
-                e.preventDefault();
-                logout();
-            };
+            if (userInfo) {
+                // Показываем аватарку пользователя
+                const firstLetter = userInfo.name.charAt(0).toUpperCase();
+                
+                // Обновляем боковую навигацию
+                authText.innerHTML = `<div class="user-avatar">${firstLetter}</div>`;
+                authLink.href = 'profile.html';
+                authLink.onclick = null;
+                
+                // Обновляем мобильную навигацию
+                authTextMobile.innerHTML = `<div class="user-avatar-mobile">${firstLetter}</div> ${userInfo.name}`;
+                authLinkMobile.href = 'profile.html';
+                authLinkMobile.onclick = null;
+            }
         } else {
             authText.textContent = 'Войти';
             authTextMobile.textContent = 'Войти';
             authLink.href = 'login.html';
             authLinkMobile.href = 'login.html';
             authLink.onclick = authLinkMobile.onclick = null;
+        }
+    }
+    
+    function getUserFromToken(token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return {
+                userId: payload.userId,
+                email: payload.email,
+                name: payload.name || payload.email.split('@')[0],
+                isAdmin: payload.isAdmin || false
+            };
+        } catch (error) {
+            console.error('Error parsing token:', error);
+            return null;
         }
     }
 

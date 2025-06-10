@@ -1472,6 +1472,69 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// User profile endpoints
+app.get('/api/user/calculations', authenticateUser, asyncHandler(async (req, res) => {
+    try {
+        const calculations = await ContactMessage.find({ 
+            userId: req.user.userId 
+        }).sort({ createdAt: -1 }).limit(50);
+        
+        res.json(calculations);
+    } catch (error) {
+        console.error('Error fetching user calculations:', error);
+        handleError(res, error, 'Ошибка загрузки расчетов');
+    }
+}));
+
+app.get('/api/user/orders', authenticateUser, asyncHandler(async (req, res) => {
+    try {
+        const orders = await ContactMessage.find({ 
+            userId: req.user.userId
+        }).sort({ createdAt: -1 }).limit(20);
+        
+        res.json(orders);
+    } catch (error) {
+        console.error('Error fetching user orders:', error);
+        handleError(res, error, 'Ошибка загрузки заказов');
+    }
+}));
+
+app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId).select('-password');
+        if (!user) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Пользователь не найден' 
+            });
+        }
+        
+        // Считаем статистику
+        const calculationsCount = await ContactMessage.countDocuments({ 
+            userId: req.user.userId
+        });
+        
+        const joinDays = Math.ceil((new Date() - user.createdAt) / (1000 * 60 * 60 * 24));
+        
+        res.json({
+            success: true,
+            user: {
+                name: user.name,
+                email: user.email,
+                createdAt: user.createdAt
+            },
+            stats: {
+                calculationsCount,
+                ordersCount: calculationsCount, // Пока используем одинаковый счетчик
+                joinDays
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        handleError(res, error, 'Ошибка загрузки профиля');
+    }
+}));
+
 // Secure sitemap.xml with validation
 app.get('/sitemap.xml', (req, res) => {
     try {
