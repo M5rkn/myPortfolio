@@ -417,13 +417,30 @@ function initAdvancedCalculator() {
             const calculationData = getCurrentCalculation();
 
             if (calculationData) {
+                // Проверяем авторизацию пользователя
+                const token = getAuthToken();
+                if (!token) {
+                    showToast('error', 'Для сохранения расчетов необходимо войти в систему');
+                    // Показываем ссылку на авторизацию
+                    setTimeout(() => {
+                        if (confirm('Хотите перейти к форме входа?')) {
+                            window.open('/login.html', '_blank');
+                        }
+                    }, 1000);
+                    return;
+                }
+
+                const name = prompt('Введите название для расчета:', calculationData.package.name);
+                if (!name) return;
+
                 const savedCalc = {
                     id: Date.now(),
-                    name: calculationData.package.name,
+                    name: name.trim(),
                     package: calculationData.package,
                     services: calculationData.services,
                     total: calculationData.total,
-                    date: new Date().toLocaleDateString('ru-RU')
+                    date: new Date().toLocaleDateString('ru-RU'),
+                    userId: getUserIdFromToken(token)
                 };
 
                 savedCalcs.unshift(savedCalc);
@@ -434,6 +451,34 @@ function initAdvancedCalculator() {
                 showToast('success', 'Расчет сохранен');
             }
         });
+    }
+
+    // Получить токен авторизации
+    function getAuthToken() {
+        try {
+            const tokenData = sessionStorage.getItem('adminToken');
+            if (!tokenData) return null;
+            
+            const parsed = JSON.parse(tokenData);
+            if (parsed.expires && parsed.expires < Date.now()) {
+                sessionStorage.removeItem('adminToken');
+                return null;
+            }
+            
+            return parsed.token;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    // Получить ID пользователя из токена
+    function getUserIdFromToken(token) {
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return payload.userId || payload.email || 'anonymous';
+        } catch (error) {
+            return 'anonymous';
+        }
     }
 
     // Сравнение пакетов
@@ -456,34 +501,63 @@ function initAdvancedCalculator() {
     function renderSavedCalculations() {
         if (!savedCalculations) return;
 
-        if (savedCalcs.length === 0) {
+        // Фильтруем расчеты по текущему пользователю
+        const token = getAuthToken();
+        const currentUserId = token ? getUserIdFromToken(token) : null;
+        
+        const userCalcs = currentUserId 
+            ? savedCalcs.filter(calc => calc.userId === currentUserId || !calc.userId) // Показываем старые расчеты без userId
+            : [];
+
+        if (userCalcs.length === 0) {
             savedCalculations.innerHTML = `
                 <div class="saved-item-placeholder">
-                    <p>Ваши сохраненные расчеты появятся здесь</p>
+                    <p>${currentUserId ? 'Ваши сохраненные расчеты появятся здесь' : 'Войдите в систему для сохранения расчетов'}</p>
+                    ${!currentUserId ? '<a href="/login.html" target="_blank" style="color: #667eea; text-decoration: none;">Войти в систему</a>' : ''}
                 </div>
             `;
             return;
         }
 
-        savedCalculations.innerHTML = savedCalcs.map(calc => `
+        savedCalculations.innerHTML = userCalcs.map(calc => `
             <div class="saved-item" data-calc-id="${calc.id}">
                 <div class="saved-item-header">
                     <span class="saved-item-name">${calc.name}</span>
                     <span class="saved-item-price">${formatPrice(calc.total)}</span>
                 </div>
                 <div class="saved-item-date">${calc.date}</div>
+                <div class="saved-item-actions">
+                    <button class="delete-btn" data-delete-id="${calc.id}">Удалить</button>
+                </div>
             </div>
         `).join('');
 
         // Добавляем обработчики для загрузки сохраненных расчетов
         savedCalculations.querySelectorAll('.saved-item').forEach(item => {
-            item.addEventListener('click', () => {
+            // Обработчик клика по элементу (загрузка)
+            item.addEventListener('click', (e) => {
+                // Игнорируем клик если это кнопка удаления
+                if (e.target.classList.contains('delete-btn')) return;
+                
                 const calcId = parseInt(item.dataset.calcId);
-                const calc = savedCalcs.find(c => c.id === calcId);
+                const calc = userCalcs.find(c => c.id === calcId);
                 if (calc) {
                     loadSavedCalculation(calc);
                     showToast('success', 'Расчет загружен');
                 }
+            });
+        });
+
+        // Добавляем обработчики для удаления
+        savedCalculations.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Предотвращаем загрузку расчета
+                
+                const calcId = parseInt(btn.dataset.deleteId);
+                savedCalcs = savedCalcs.filter(c => c.id !== calcId);
+                localStorage.setItem('savedCalculations', JSON.stringify(savedCalcs));
+                renderSavedCalculations();
+                showToast('success', 'Расчет удален');
             });
         });
     }

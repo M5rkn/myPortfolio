@@ -23,6 +23,10 @@ const emailService = require('./emailService');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Админские данные из переменных окружения
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+const ADMIN_PASSWORD_NEW = process.env.ADMIN_PASSWORD_NEW;
+
 // Trust proxy for correct IP detection
 app.set('trust proxy', 1);
 
@@ -304,7 +308,17 @@ mongoose.connect(MONGODB_URI, {
     retryWrites: true,
     retryReads: true
 })
-    .then(() => console.log('✅ MongoDB подключен'))
+    .then(() => {
+        console.log('✅ MongoDB подключен');
+        
+        // Проверяем конфигурацию админа
+        if (!ADMIN_EMAIL || !ADMIN_PASSWORD_NEW) {
+            console.warn('⚠️ Админские данные не настроены в переменных окружения');
+            console.warn('⚠️ Установите ADMIN_EMAIL и ADMIN_PASSWORD_NEW в .env файле');
+        } else {
+            console.log('✅ Админская конфигурация загружена из переменных окружения');
+        }
+    })
     .catch(err => {
         console.error('❌ Ошибка подключения MongoDB:', err.message);
         // Не завершаем процесс, попробуем переподключиться
@@ -403,6 +417,57 @@ const projectLikeSchema = new mongoose.Schema({
 
 const ProjectLike = mongoose.model('ProjectLike', projectLikeSchema);
 
+// User model for authentication
+const userSchema = new mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
+        maxlength: 254,
+        index: true, // Убираем дублирование с schema.index()
+        validate: {
+            validator: validator.isEmail,
+            message: 'Invalid email format'
+        }
+    },
+    password: {
+        type: String,
+        required: true,
+        minlength: 8,
+        maxlength: 128
+    },
+    role: {
+        type: String,
+        enum: ['admin', 'user'],
+        default: 'user'
+    },
+    isActive: {
+        type: Boolean,
+        default: true
+    },
+    lastLogin: {
+        type: Date,
+        default: null
+    },
+    loginAttempts: {
+        type: Number,
+        default: 0
+    },
+    lockUntil: {
+        type: Date,
+        default: null
+    }
+}, {
+    timestamps: true
+});
+
+// Index только для role (email уже есть в схеме)
+userSchema.index({ role: 1 });
+
+const User = mongoose.model('User', userSchema);
+
 // Enhanced auth middleware with blacklist check
 const authenticateAdmin = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -426,19 +491,59 @@ const authenticateAdmin = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
 
-        // Additional security checks
-        if (!decoded.admin || !decoded.timestamp) {
-            throw new Error('Invalid token structure');
-        }
-
         // Check if token is too old (additional security)
         const tokenAge = Date.now() - decoded.timestamp;
         if (tokenAge > 24 * 60 * 60 * 1000) { // 24 hours
             throw new Error('Token expired');
         }
 
-        req.admin = decoded;
-        req.adminToken = token; // Store for potential blacklisting
+        // Check if this is admin token (old format or new format)
+        if (decoded.admin || (decoded.role === 'admin')) {
+            req.admin = decoded;
+            req.adminToken = token;
+            next();
+        } else {
+            throw new Error('Admin access required');
+        }
+    } catch (error) {
+        return res.status(401).json({
+            success: false,
+            message: 'Недействительный токен'
+        });
+    }
+};
+
+// General auth middleware for any authenticated user
+const authenticateUser = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+    if (!token) {
+        return res.status(401).json({
+            success: false,
+            message: 'Требуется авторизация'
+        });
+    }
+
+    // Check if token is blacklisted
+    if (tokenBlacklist.has(token)) {
+        return res.status(401).json({
+            success: false,
+            message: 'Токен недействителен'
+        });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+
+        // Check if token is too old
+        const tokenAge = Date.now() - decoded.timestamp;
+        if (tokenAge > 24 * 60 * 60 * 1000) { // 24 hours
+            throw new Error('Token expired');
+        }
+
+        req.user = decoded;
+        req.userToken = token;
         next();
     } catch (error) {
         return res.status(401).json({
@@ -526,69 +631,217 @@ app.get('/api/csrf-token', (req, res) => {
 // Admin login with enhanced security
 app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
     try {
-        const { password } = req.body;
+        const { email, password } = req.body;
 
-        if (!password || typeof password !== 'string') {
+        if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
             return res.status(400).json({
                 success: false,
-                message: 'Пароль обязателен'
+                message: 'Email и пароль обязательны'
             });
         }
 
-        // Rate limiting additional check per IP
-        const clientIP = getClientIP(req);
-        console.log(`Login attempt from IP: ${clientIP}`);
-
-        // Secure password comparison with timing attack protection
-        const isValidPassword = await new Promise((resolve) => {
-            // Add random delay to prevent timing attacks
-            setTimeout(() => {
-                // Если нет хэша в env, проверяем против простого пароля
-                if (!process.env.ADMIN_PASSWORD_HASH && process.env.ADMIN_PASSWORD) {
-                    resolve(password === process.env.ADMIN_PASSWORD);
-                } else {
-                    resolve(bcrypt.compareSync(password, ADMIN_PASSWORD_HASH));
-                }
-            }, Math.random() * 100 + 50);
-        });
-
-        if (!isValidPassword) {
-            // Enhanced debug logging
-            console.warn(`Failed login attempt from IP: ${clientIP}`);
-            console.warn(`Password length: ${password.length}`);
-            console.warn(`Has ADMIN_PASSWORD_HASH: ${!!process.env.ADMIN_PASSWORD_HASH}`);
-            console.warn(`Has ADMIN_PASSWORD: ${!!process.env.ADMIN_PASSWORD}`);
-            console.warn(`Using fallback: ${!process.env.ADMIN_PASSWORD_HASH && !process.env.ADMIN_PASSWORD}`);
-
-            return res.status(401).json({
+        // Validate email format
+        if (!validator.isEmail(email)) {
+            return res.status(400).json({
                 success: false,
-                message: 'Неверный пароль'
+                message: 'Некорректный email адрес'
             });
         }
 
-        // Generate secure JWT token
-        const tokenPayload = {
-            admin: true,
-            timestamp: Date.now(),
-            ip: clientIP,
-            sessionId: crypto.randomBytes(16).toString('hex')
-        };
+        const clientIP = getClientIP(req);
+        console.log(`Login attempt from IP: ${clientIP}, email: ${email}`);
 
-        const token = jwt.sign(tokenPayload, JWT_SECRET, {
-            expiresIn: '24h',
-            issuer: 'TechPortal',
-            audience: 'admin'
+        // Check if this is admin email
+        if (ADMIN_EMAIL && email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+            // Admin login - check against hardcoded password
+            const isValidPassword = await new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(ADMIN_PASSWORD_NEW && password === ADMIN_PASSWORD_NEW);
+                }, Math.random() * 100 + 50);
+            });
+
+            if (!isValidPassword) {
+                console.warn(`Failed admin login attempt from IP: ${clientIP}`);
+                return res.status(401).json({
+                    success: false,
+                    message: 'Неверные данные для входа'
+                });
+            }
+
+            // Generate admin token
+            const tokenPayload = {
+                admin: true,
+                email: email,
+                role: 'admin',
+                timestamp: Date.now(),
+                ip: clientIP,
+                sessionId: crypto.randomBytes(16).toString('hex')
+            };
+
+            const token = jwt.sign(tokenPayload, JWT_SECRET, {
+                expiresIn: '24h',
+                issuer: 'TechPortal',
+                audience: 'admin'
+            });
+
+            console.log(`Successful admin login from IP: ${clientIP}`);
+
+            res.json({
+                success: true,
+                message: 'Успешная авторизация',
+                token: token
+            });
+        } else {
+            // Regular user login - check database
+            const user = await User.findOne({ 
+                email: email.toLowerCase(),
+                isActive: true 
+            });
+
+            if (!user) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Неверные данные для входа'
+                });
+            }
+
+            // Check if account is locked
+            if (user.lockUntil && user.lockUntil > Date.now()) {
+                return res.status(423).json({
+                    success: false,
+                    message: 'Аккаунт временно заблокирован'
+                });
+            }
+
+            // Verify password
+            const isValidPassword = await bcrypt.compare(password, user.password);
+
+            if (!isValidPassword) {
+                // Increment failed attempts
+                user.loginAttempts += 1;
+                
+                // Lock account after 5 failed attempts
+                if (user.loginAttempts >= 5) {
+                    user.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+                }
+                
+                await user.save();
+
+                console.warn(`Failed login attempt from IP: ${clientIP}, email: ${email}`);
+                return res.status(401).json({
+                    success: false,
+                    message: 'Неверные данные для входа'
+                });
+            }
+
+            // Reset failed attempts on successful login
+            user.loginAttempts = 0;
+            user.lockUntil = null;
+            user.lastLogin = new Date();
+            await user.save();
+
+            // Generate user token
+            const tokenPayload = {
+                userId: user._id,
+                email: user.email,
+                role: user.role,
+                timestamp: Date.now(),
+                ip: clientIP,
+                sessionId: crypto.randomBytes(16).toString('hex')
+            };
+
+            const token = jwt.sign(tokenPayload, JWT_SECRET, {
+                expiresIn: '24h',
+                issuer: 'TechPortal',
+                audience: 'user'
+            });
+
+            console.log(`Successful user login from IP: ${clientIP}, email: ${email}`);
+
+            res.json({
+                success: true,
+                message: 'Успешная авторизация',
+                token: token,
+                user: {
+                    email: user.email,
+                    role: user.role
+                }
+            });
+        }
+
+    } catch (error) {
+        handleError(res, error);
+    }
+}));
+
+// User registration
+app.post('/api/admin/register', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
+            return res.status(400).json({
+                success: false,
+                message: 'Email и пароль обязательны'
+            });
+        }
+
+        // Validate email format
+        if (!validator.isEmail(email)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Некорректный email адрес'
+            });
+        }
+
+        // Validate password strength
+        if (password.length < 8 || password.length > 128) {
+            return res.status(400).json({
+                success: false,
+                message: 'Пароль должен содержать от 8 до 128 символов'
+            });
+        }
+
+        const clientIP = getClientIP(req);
+        console.log(`Registration attempt from IP: ${clientIP}, email: ${email}`);
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ email: email.toLowerCase() });
+        if (existingUser) {
+            return res.status(409).json({
+                success: false,
+                message: 'Пользователь с таким email уже существует'
+            });
+        }
+
+        // Hash password
+        const saltRounds = 12;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // Create new user
+        const newUser = new User({
+            email: email.toLowerCase(),
+            password: hashedPassword,
+            role: 'user'
         });
 
-        console.log(`Successful admin login from IP: ${clientIP}`);
+        await newUser.save();
+
+        console.log(`New user registered from IP: ${clientIP}, email: ${email}`);
 
         res.json({
             success: true,
-            message: 'Успешная авторизация',
-            token: token
+            message: 'Регистрация успешна! Теперь вы можете войти в систему.'
         });
 
     } catch (error) {
+        if (error.code === 11000) {
+            // Duplicate key error
+            return res.status(409).json({
+                success: false,
+                message: 'Пользователь с таким email уже существует'
+            });
+        }
         handleError(res, error);
     }
 }));
