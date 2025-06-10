@@ -990,16 +990,10 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
         // Check if this is admin email
         if (ADMIN_EMAIL && email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
             // Admin login - check against hardcoded password
-            const isValidPassword = await new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve(ADMIN_PASSWORD_NEW && password === ADMIN_PASSWORD_NEW);
-                }, Math.random() * 100 + 50);
-            });
+            const isValidPassword = ADMIN_PASSWORD_NEW && password === ADMIN_PASSWORD_NEW;
 
             if (!isValidPassword) {
                 console.warn(`Failed admin login attempt from IP: ${clientIP}`);
-                // Добавляем небольшую задержку для предотвращения brute force
-                await new Promise(resolve => setTimeout(resolve, 1000));
                 return res.status(401).json({
                     success: false,
                     message: 'Неверные данные для входа'
@@ -1025,8 +1019,16 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
                 audience: 'admin'
             });
 
-            // Обновляем ежедневный стрик админа
-            await updateUserDailyStreak(null, true, email);
+            // Обновляем ежедневный стрик админа с timeout
+            try {
+                await Promise.race([
+                    updateUserDailyStreak(null, true, email),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('Admin streak timeout')), 3000))
+                ]);
+            } catch (error) {
+                console.warn('Admin daily streak update failed:', error.message);
+                // Продолжаем без обновления стрика
+            }
 
             console.log(`Successful admin login from IP: ${clientIP}`);
 
@@ -1042,7 +1044,7 @@ app.post('/api/admin/login', loginLimiter, validateCSRFToken, asyncHandler(async
             const user = await User.findOne({ 
                 email: email.toLowerCase(),
                 isActive: true 
-            });
+            }).maxTimeMS(5000); // 5 секунд timeout
 
             console.log(`User found: ${user ? 'Yes' : 'No'}`);
             if (user) {
@@ -1262,8 +1264,11 @@ app.post('/api/user/login', loginLimiter, validateCSRFToken, asyncHandler(async 
 
         const clientIP = getClientIP(req);
 
-        // Find user
-        const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
+        // Find user с timeout
+        const user = await User.findOne({ email: email.toLowerCase() })
+            .select('+password')
+            .maxTimeMS(5000); // 5 секунд timeout
+            
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -1287,8 +1292,16 @@ app.post('/api/user/login', loginLimiter, validateCSRFToken, asyncHandler(async 
             console.log(`Fixed missing name for user: ${user.email}`);
         }
 
-        // Update daily streak
-        await updateUserDailyStreak(user._id.toString());
+        // Update daily streak с timeout
+        try {
+            await Promise.race([
+                updateUserDailyStreak(user._id.toString()),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Streak update timeout')), 3000))
+            ]);
+        } catch (error) {
+            console.warn('Daily streak update failed:', error.message);
+            // Продолжаем без обновления стрика
+        }
 
         // Create token
         const token = jwt.sign({
