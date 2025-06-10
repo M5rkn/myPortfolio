@@ -592,14 +592,9 @@
                     return false;
                 }
                 
-                // Перенаправляем в зависимости от роли
-                if (userInfo.isAdmin === true || userInfo.role === 'admin') {
-                    console.log('Redirecting admin to admin panel');
-                    window.location.replace('admin.html');
-                } else {
-                    console.log('Redirecting user to main page');
-                    window.location.replace('index.html');
-                }
+                // Все пользователи перенаправляются на главную страницу
+                console.log('Redirecting to main page');
+                window.location.replace('index.html');
                 
                 return true;
             } catch (error) {
@@ -696,19 +691,14 @@
                     
                     showSuccess('Вход выполнен успешно');
                     
-                    // Проверяем роль пользователя и перенаправляем соответственно
+                    // Все пользователи (включая админа) перенаправляются на главную страницу
                     const userInfo = getUserFromToken(data.token);
                     console.log('User info from token:', userInfo); // Отладка
                     console.log('Token raw:', data.token); // Отладка
                     
                     setTimeout(() => {
-                        if (userInfo && (userInfo.isAdmin === true || userInfo.role === 'admin')) {
-                            console.log('Redirecting to admin panel'); // Отладка
-                            window.location.replace('admin.html');
-                        } else {
-                            console.log('Redirecting to main page'); // Отладка
-                            window.location.replace('index.html');
-                        }
+                        console.log('Redirecting to main page'); // Отладка
+                        window.location.replace('index.html');
                     }, 1000);
                 } else {
                     // Increment failed attempts

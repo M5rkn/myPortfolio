@@ -272,6 +272,24 @@
             box-shadow: 0 4px 8px rgba(255, 68, 68, 0.3);
         }
         
+        .admin-panel-btn {
+            background: linear-gradient(135deg, var(--color-primary), #4f46e5);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: var(--spacing-sm);
+            transition: all 0.3s ease;
+            font-size: var(--font-size-base);
+        }
+        
+        .admin-panel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(103, 58, 183, 0.3);
+        }
+        
         @media (max-width: 768px) {
             .profile-header {
                 flex-direction: column;
@@ -337,6 +355,9 @@
                         </div>
                     </div>
                     <button class="logout-btn" onclick="logout()">Выйти из аккаунта</button>
+                    <button class="admin-panel-btn" id="adminPanelBtn" style="display: none;" onclick="window.location.href='admin.html'">
+                        🛠️ Админ панель
+                    </button>
                 </div>
             </div>
 
@@ -410,11 +431,17 @@
         function getUserFromToken(token) {
             try {
                 const payload = JSON.parse(atob(token.split('.')[1]));
+                
+                // Проверяем срок действия токена
+                if (payload.exp && payload.exp * 1000 < Date.now()) {
+                    return null;
+                }
+                
                 return {
                     userId: payload.userId,
                     email: payload.email,
-                    name: payload.name || payload.email.split('@')[0],
-                    isAdmin: payload.isAdmin === true || payload.admin === true,
+                    name: payload.name || payload.email?.split('@')[0],
+                    isAdmin: payload.isAdmin === true || payload.admin === true || payload.role === 'admin',
                     role: payload.role
                 };
             } catch (error) {
@@ -439,6 +466,14 @@
             // Устанавливаем первую букву имени для аватарки
             const firstLetter = userInfo.name.charAt(0).toUpperCase();
             document.getElementById('avatarLetter').textContent = firstLetter;
+            
+            // Показываем кнопку админ-панели для админов
+            if (userInfo.isAdmin === true || userInfo.role === 'admin') {
+                const adminBtn = document.getElementById('adminPanelBtn');
+                if (adminBtn) {
+                    adminBtn.style.display = 'block';
+                }
+            }
         }
 
         async function loadUserData(userId) {
