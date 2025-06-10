@@ -2016,10 +2016,47 @@ app.get('/api/user/orders', authenticateUser, asyncHandler(async (req, res) => {
     }
 }));
 
+// Admin profile endpoint
+app.get('/api/admin/profile', authenticateUser, asyncHandler(async (req, res) => {
+    try {
+        // Проверяем что это админ
+        if (!req.user.isAdmin && req.user.role !== 'admin') {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Доступ только для администраторов' 
+            });
+        }
+        
+        res.json({
+            success: true,
+            user: {
+                name: req.user.name,
+                email: req.user.email,
+                role: 'admin'
+            },
+            stats: {
+                calculationsCount: 0,
+                ordersCount: 0,
+                joinDays: 0
+            },
+            bonus: {
+                dailyStreak: 0,
+                bonusDiscount: 0,
+                hasActiveBonus: false,
+                streakExpiry: null,
+                daysUntilBonus: 0
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching admin profile:', error);
+        handleError(res, error, 'Ошибка загрузки профиля');
+    }
+}));
+
 app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => {
     try {
-        // Проверяем что это не админ
-        if (!req.user.userId || req.user.isAdmin) {
+        // Проверяем что есть userId и это не админ
+        if (!req.user.userId || req.user.isAdmin || req.user.role === 'admin') {
             return res.status(403).json({ 
                 success: false, 
                 message: 'Доступ только для обычных пользователей' 

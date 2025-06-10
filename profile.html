@@ -577,6 +577,8 @@
         }
 
         function updateUserInfo(userInfo) {
+            console.log('UpdateUserInfo called with:', userInfo); // Debug log
+            
             document.getElementById('userName').textContent = userInfo.name;
             document.getElementById('userEmail').textContent = userInfo.email;
             
@@ -585,11 +587,19 @@
             document.getElementById('avatarLetter').textContent = firstLetter;
             
             // Показываем кнопку админ-панели для админов
+            console.log('Checking admin status:', { isAdmin: userInfo.isAdmin, role: userInfo.role }); // Debug log
+            
             if (userInfo.isAdmin === true || userInfo.role === 'admin') {
+                console.log('User is admin, showing admin panel button'); // Debug log
                 const adminBtn = document.getElementById('adminPanelBtn');
                 if (adminBtn) {
                     adminBtn.style.display = 'block';
+                    console.log('Admin panel button shown'); // Debug log
+                } else {
+                    console.log('Admin panel button not found'); // Debug log
                 }
+            } else {
+                console.log('User is not admin'); // Debug log
             }
         }
 
@@ -639,7 +649,10 @@
                 }
 
                 // Загружаем профиль для получения даты регистрации
-                const profileResponse = await fetch(`/api/user/profile`, {
+                const userInfo = getUserFromToken(token);
+                const profileEndpoint = userInfo && userInfo.isAdmin ? '/api/admin/profile' : '/api/user/profile';
+                
+                const profileResponse = await fetch(profileEndpoint, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
