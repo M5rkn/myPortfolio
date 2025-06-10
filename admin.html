@@ -337,7 +337,7 @@
                 <h2 class="section-title">Заявки</h2>
                 <div style="display: flex; gap: 1rem;">
                     <button class="refresh-btn" id="refreshBtn">Обновить</button>
-                    <button class="refresh-btn" id="logoutBtn" style="background: #f44336;">Выйти</button>
+                    <button class="refresh-btn" id="logoutBtn" style="background: #f44336;">← Выйти из админ панели</button>
                 </div>
             </div>
             
@@ -495,12 +495,19 @@
             window.location.replace('/login.html');
         }
 
-        // Logout function
+        // Logout function (полный выход из аккаунта)
         function logout() {
             localStorage.removeItem('authToken');
             sessionStorage.removeItem('adminToken');
             sessionStorage.clear();
             window.location.replace('/login.html');
+        }
+        
+        // Exit admin panel function (только выход из админ панели)
+        function exitAdminPanel() {
+            if (confirm('Выйти из админ панели?')) {
+                window.location.replace('/');
+            }
         }
 
         // Telegram functions
@@ -1270,7 +1277,7 @@
 
         // Event listeners
         document.getElementById('refreshBtn').addEventListener('click', loadContacts);
-        document.getElementById('logoutBtn').addEventListener('click', logout);
+        document.getElementById('logoutBtn').addEventListener('click', exitAdminPanel);
 
         // Secure confirm dialog
         function showSecureConfirm(message) {
