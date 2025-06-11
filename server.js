@@ -1326,7 +1326,7 @@ app.post('/api/user/login', loginLimiter, validateCSRFToken, asyncHandler(async 
         const token = jwt.sign({
             userId: user._id.toString(),
             email: user.email,
-            name: user.name,
+            name: decodeName(user.name),
             role: user.role || 'user',
             timestamp: Date.now()
         }, JWT_SECRET, { expiresIn: '24h' });
@@ -1339,7 +1339,7 @@ app.post('/api/user/login', loginLimiter, validateCSRFToken, asyncHandler(async 
             token,
             user: {
                 id: user._id,
-                name: user.name,
+                name: decodeName(user.name),
                 email: user.email,
                 role: user.role || 'user'
             }
@@ -1529,9 +1529,15 @@ app.get('/api/admin/contacts', authenticateAdmin, async (req, res) => {
             Contact.countDocuments()
         ]);
 
+        // Декодируем имена в контактах
+        const decodedContacts = contacts.map(contact => ({
+            ...contact,
+            name: decodeName(contact.name)
+        }));
+
         res.json({
             success: true,
-            contacts: contacts,
+            contacts: decodedContacts,
             pagination: {
                 page,
                 limit,
@@ -2137,6 +2143,29 @@ app.get('/api/admin/profile', authenticateUser, asyncHandler(async (req, res) =>
     }
 }));
 
+// Функция для декодирования имен пользователей
+const decodeName = (name) => {
+    if (!name || typeof name !== 'string') return name;
+    
+    // Проверяем, содержит ли имя латинские символы с диакритикой (признак неправильной кодировки)
+    if (/[À-ÿ]{2,}/.test(name)) {
+        try {
+            // Пытаемся декодировать из latin-1 в utf-8
+            const buffer = Buffer.from(name, 'latin1');
+            const decodedName = buffer.toString('utf8');
+            
+            // Проверяем, что результат содержит кириллицу
+            if (/[а-яё]/i.test(decodedName)) {
+                return decodedName;
+            }
+        } catch (error) {
+            // Игнорируем ошибки декодирования
+        }
+    }
+    
+    return name;
+};
+
 app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => {
     try {
         // Проверяем что есть userId и это не админ
@@ -2181,7 +2210,7 @@ app.get('/api/user/profile', authenticateUser, asyncHandler(async (req, res) => 
         res.json({
             success: true,
             user: {
-                name: user.name,
+                name: decodeName(user.name),
                 email: user.email,
                 createdAt: user.createdAt
             },
