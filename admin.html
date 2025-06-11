@@ -374,19 +374,17 @@
             }
         }
 
-        // Input sanitization
+        // Input sanitization - убираем только действительно опасные символы
         function sanitizeText(text) {
             if (typeof text !== 'string') return '';
-            return text.replace(/[<>&"']/g, function(match) {
-                const escapeMap = {
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '&': '&amp;',
-                    '"': '&quot;',
-                    "'": '&#x27;'
-                };
-                return escapeMap[match];
-            });
+            // Убираем только скрипты и потенциально опасные элементы, сохраняя русские символы
+            return text
+                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                .replace(/javascript:/gi, '')
+                .replace(/on\w+\s*=/gi, '')
+                .replace(/data:/gi, '')
+                .replace(/&lt;script/gi, '')
+                .replace(/&lt;\/script&gt;/gi, '');
         }
 
         // Validate contact data

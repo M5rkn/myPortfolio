@@ -61,6 +61,14 @@ app.use((req, res, next) => {
     next();
 });
 
+// Middleware для HTML файлов с UTF-8
+app.use((req, res, next) => {
+    if (req.path.endsWith('.html') || req.path === '/') {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    }
+    next();
+});
+
 // Compression
 app.use(compression());
 
@@ -174,7 +182,7 @@ app.use(mongoSanitize({
     }
 }));
 
-// Body parsing middleware with strict limits
+// Body parsing middleware with strict limits and UTF-8 support
 app.use(express.json({
     limit: '10kb', // Very small limit
     strict: true,
@@ -185,13 +193,24 @@ app.use(express.urlencoded({
     limit: '10kb'
 }));
 
+// Middleware для установки правильного Content-Type для JSON
+app.use('/api', (req, res, next) => {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    next();
+});
+
 // Input sanitization middleware
 const sanitizeInput = (req, res, next) => {
     const sanitize = (obj) => {
         for (let key in obj) {
             if (typeof obj[key] === 'string') {
-                // Remove potentially dangerous characters
-                obj[key] = validator.escape(obj[key].trim());
+                // Убираем только опасные символы, сохраняя кириллицу
+                obj[key] = obj[key].trim()
+                    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Удаляем script теги
+                    .replace(/javascript:/gi, '') // Удаляем javascript: протокол
+                    .replace(/on\w+\s*=/gi, '') // Удаляем on-события
+                    .replace(/data:/gi, ''); // Удаляем data: протокол
+                
                 // Limit length
                 if (obj[key].length > 1000) {
                     obj[key] = obj[key].substring(0, 1000);
@@ -399,7 +418,7 @@ if (process.env.NODE_ENV === 'production') {
     }
 }
 
-// MongoDB подключение с автопереподключением
+// MongoDB подключение с автопереподключением и правильной кодировкой
 mongoose.connect(MONGODB_URI, {
     maxPoolSize: 10,
     serverSelectionTimeoutMS: 5000,
@@ -443,7 +462,7 @@ mongoose.connection.on('error', (err) => {
     console.error('❌ Ошибка MongoDB:', err.message);
 });
 
-// Enhanced contact form schema with validation
+// Enhanced contact form schema with validation and UTF-8 support
 const contactSchema = new mongoose.Schema({
     name: {
         type: String,
