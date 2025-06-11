@@ -1322,6 +1322,12 @@ app.post('/api/user/login', loginLimiter, validateCSRFToken, asyncHandler(async 
             // Продолжаем без обновления стрика
         }
 
+        // Отладочное логирование для диагностики кодировки
+        console.log('🔍 DEBUG Login data:');
+        console.log('  Original name from DB:', JSON.stringify(user.name));
+        console.log('  Decoded name:', JSON.stringify(decodeName(user.name)));
+        console.log('  Name chars:', user.name ? Array.from(user.name).map(c => `${c}(${c.charCodeAt(0)})`).join(' ') : 'null');
+
         // Create token
         const token = jwt.sign({
             userId: user._id.toString(),
@@ -1354,6 +1360,12 @@ app.post('/api/user/login', loginLimiter, validateCSRFToken, asyncHandler(async 
 app.post('/api/user/register', loginLimiter, validateCSRFToken, asyncHandler(async (req, res) => {
     try {
         const { name, email, password } = req.body;
+
+        // Отладочное логирование для диагностики кодировки
+        console.log('🔍 DEBUG Registration data:');
+        console.log('  Raw name:', JSON.stringify(name));
+        console.log('  Name bytes:', name ? Buffer.from(name, 'utf8') : 'null');
+        console.log('  Name chars:', name ? Array.from(name).map(c => `${c}(${c.charCodeAt(0)})`).join(' ') : 'null');
 
         if (!name || !email || !password || typeof name !== 'string' || typeof email !== 'string' || typeof password !== 'string') {
             return res.status(400).json({
@@ -2143,23 +2155,42 @@ app.get('/api/admin/profile', authenticateUser, asyncHandler(async (req, res) =>
     }
 }));
 
-// Функция для декодирования имен пользователей
+// Улучшенная функция для декодирования имен пользователей
 const decodeName = (name) => {
     if (!name || typeof name !== 'string') return name;
     
-    // Проверяем, содержит ли имя латинские символы с диакритикой (признак неправильной кодировки)
-    if (/[À-ÿ]{2,}/.test(name)) {
+    // Проверяем наличие испорченной кодировки (символы типа Ð³ÐµÐ¹)
+    if (/[ÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]/.test(name)) {
         try {
-            // Пытаемся декодировать из latin-1 в utf-8
-            const buffer = Buffer.from(name, 'latin1');
-            const decodedName = buffer.toString('utf8');
+            // Метод 1: latin1 -> utf8 декодирование
+            let decoded = Buffer.from(name, 'latin1').toString('utf8');
             
-            // Проверяем, что результат содержит кириллицу
-            if (/[а-яё]/i.test(decodedName)) {
-                return decodedName;
+            // Проверяем результат на валидность
+            if (/^[А-Яа-яЁё\w\s\-\.]+$/.test(decoded)) {
+                return decoded;
             }
+            
+            // Метод 2: Ручное исправление распространенных случаев
+            const fixMap = {
+                'Ð³': 'г', 'Ðµ': 'е', 'Ð¹': 'й', 'Ð°': 'а', 'Ð½': 'н', 
+                'Ð´': 'д', 'Ñ€': 'р', 'Ðº': 'к', 'Ð»': 'л', 'Ð¼': 'м', 
+                'Ð¾': 'о', 'Ñ‚': 'т', 'Ð¸': 'и', 'Ð²': 'в', 'Ñƒ': 'у',
+                'Ñ„': 'ф', 'Ñ…': 'х', 'Ñ†': 'ц', 'Ñ‡': 'ч', 'Ñˆ': 'ш',
+                'Ñ‰': 'щ', 'ÑŠ': 'ъ', 'Ñ‹': 'ы', 'ÑŒ': 'ь', 'Ñ': 'э',
+                'ÑŽ': 'ю', 'Ñ': 'я', 'Ñ': 'с'
+            };
+            
+            let fixed = name;
+            for (const [wrong, correct] of Object.entries(fixMap)) {
+                fixed = fixed.replace(new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), correct);
+            }
+            
+            if (fixed !== name && /^[А-Яа-яЁё\w\s\-\.]+$/.test(fixed)) {
+                return fixed;
+            }
+            
         } catch (error) {
-            // Игнорируем ошибки декодирования
+            console.warn('Ошибка декодирования имени:', error.message);
         }
     }
     

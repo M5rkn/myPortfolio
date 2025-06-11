@@ -900,8 +900,15 @@
                 const timeoutId = setTimeout(() => controller.abort(), SECURITY_CONFIG.requestTimeout);
 
                 const requestBody = { name, email, password };
+                
+                // Отладочное логирование
+                console.log('🔍 DEBUG Client registration data:');
+                console.log('  Name value:', JSON.stringify(name));
+                console.log('  Name chars:', Array.from(name).map(c => `${c}(${c.charCodeAt(0)})`).join(' '));
+                console.log('  JSON body:', JSON.stringify(requestBody));
+                
                 const headers = {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json; charset=utf-8',
                     'X-Requested-With': 'XMLHttpRequest'
                 };
 
