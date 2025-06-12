@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impressum - Выходные данные | TechPortal</title>
+    <meta name="description" content="Impressum и выходные данные сайта TechPortal. Юридическая информация, контактные данные и информация об ответственности.">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        .policy-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--spacing-xl);
+            background: var(--color-bg-primary);
+            min-height: 100vh;
+        }
+        
+        .policy-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            padding-top: var(--spacing-xl);
+        }
+        
+        .policy-title {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .policy-subtitle {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .policy-updated {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-muted);
+        }
+        
+        .policy-content {
+            background: var(--color-bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .policy-section {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .policy-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .policy-text {
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .contact-info {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-md) 0;
+        }
+        
+        .contact-info p {
+            margin: var(--spacing-xs) 0;
+            color: var(--color-text-secondary);
+        }
+        
+        .contact-info strong {
+            color: var(--color-text-primary);
+        }
+        
+        .contact-info a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: var(--spacing-lg);
+            transition: color 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: var(--color-primary-hover);
+        }
+        
+        .back-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .disclaimer {
+            background: var(--color-warning-bg);
+            border-left: 4px solid var(--color-warning);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        }
+        
+        .disclaimer p {
+            margin: 0;
+            color: var(--color-text-secondary);
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .policy-container {
+                padding: var(--spacing-lg);
+            }
+            
+            .policy-content {
+                padding: var(--spacing-lg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="policy-container">
+        <a href="/" class="back-link">
+            <svg class="back-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Вернуться на главную
+        </a>
+        
+        <div class="policy-header">
+            <h1 class="policy-title">Impressum</h1>
+            <p class="policy-subtitle">Выходные данные согласно § 5 TMG</p>
+            <p class="policy-updated">Последнее обновление: 10 января 2025 г.</p>
+        </div>
+        
+        <div class="policy-content">
+            <div class="policy-section">
+                <h2 class="section-title">Ответственный за содержание</h2>
+                
+                <div class="contact-info">
+                    <p><strong>Веб-сайт:</strong> TechPortal</p>
+                    <p><strong>Деятельность:</strong> Веб-разработка и IT-консультирование</p>
+                    <p><strong>Email:</strong> <a href="mailto:markoilynickiy@gmail.com">markoilynickiy@gmail.com</a></p>
+                    <p><strong>Телефон:</strong> <a href="tel:+491605479381">+49 160 547 9381</a></p>
+                    <p><strong>Веб-сайт:</strong> <a href="https://techportal.up.railway.app" target="_blank">techportal.up.railway.app</a></p>
+                </div>
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">Ответственность за содержание</h2>
+                <p class="policy-text">
+                    Содержание наших страниц создано с особой тщательностью. Однако мы не можем гарантировать точность, полноту и актуальность содержания. Как поставщик услуг, мы несем ответственность за собственное содержание на этих страницах в соответствии с общими законами согласно § 7, абз. 1 TMG.
+                </p>
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">Ответственность за ссылки</h2>
+                <p class="policy-text">
+                    Наш сайт содержит ссылки на внешние веб-сайты третьих лиц. За содержание связанных страниц всегда несет ответственность соответствующий поставщик или оператор страниц. Связанные страницы были проверены на возможные правонарушения во время установления ссылки.
+                </p>
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">Авторское право</h2>
+                <p class="policy-text">
+                    Содержание и работы на этих страницах, созданные операторами сайта, подчиняются авторскому праву. Дублирование, обработка, распространение и любое использование за пределами авторского права требует письменного согласия автора.
+                </p>
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">Защита данных</h2>
+                <p class="policy-text">
+                    Подробную информацию о том, как мы обрабатываем ваши данные, можно найти в нашей 
+                    <a href="privacy-policy.html">Политике конфиденциальности</a> и 
+                    <a href="cookie-policy.html">Политике использования cookies</a>.
+                </p>
+            </div>
+            
+            <div class="policy-section">
+                <h2 class="section-title">Разрешение споров онлайн</h2>
+                <p class="policy-text">
+                    Европейская комиссия предоставляет платформу для онлайн-разрешения споров (ODR): 
+                    <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>
+                </p>
+                <p class="policy-text">
+                    Мы не обязаны и не готовы участвовать в процедуре разрешения споров перед потребительским арбитражем.
+                </p>
+            </div>
+        </div>
+        
+        <div class="disclaimer">
+            <p>
+                Этот Impressum создан в соответствии с требованиями европейского законодательства, включая TMG (Telemediengesetz) и GDPR (General Data Protection Regulation).
+            </p>
+        </div>
+    </div>
+</body>
+</html> 
