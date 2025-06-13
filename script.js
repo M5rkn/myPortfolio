@@ -173,6 +173,7 @@ function showToast(type, message) {
 // Инициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔍 DEBUG DOM loaded, starting initialization');
+    console.log('🔍 DEBUG Token on page load:', localStorage.getItem('authToken'));
     
     // Инициализируем все компоненты сразу
     initPreloader();

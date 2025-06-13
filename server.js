@@ -66,7 +66,7 @@ app.use((req, res, next) => {
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
             "font-src 'self' https://fonts.gstatic.com; " +
             "img-src 'self' data: blob: https://www.google-analytics.com; " +
-            "connect-src 'self' https://www.google-analytics.com https://analytics.google.com; " +
+            "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com; " +
             "base-uri 'self'; " +
             "form-action 'self'; " +
             "object-src 'none'; " +

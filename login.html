@@ -877,6 +877,11 @@
                     // Save token securely
                     localStorage.setItem('authToken', data.token);
                     
+                    // Проверяем что токен действительно сохранился
+                    const savedToken = localStorage.getItem('authToken');
+                    console.log('🔍 DEBUG Token saved successfully:', !!savedToken); // Отладка
+                    console.log('🔍 DEBUG Saved token matches:', savedToken === data.token); // Отладка
+                    
                     showSuccess('Вход выполнен успешно');
                     
                     // Все пользователи (включая админа) перенаправляются на главную страницу
@@ -885,8 +890,14 @@
                     console.log('🔍 DEBUG Token raw:', data.token); // Отладка
                     console.log('🔍 DEBUG Token stored in localStorage'); // Отладка
                     
+                    // Добавляем обработчик для отслеживания перехода
+                    window.addEventListener('beforeunload', function() {
+                        console.log('🔍 DEBUG Page unloading, token:', localStorage.getItem('authToken'));
+                    });
+                    
                     setTimeout(() => {
                         console.log('🔍 DEBUG Redirecting to main page'); // Отладка
+                        console.log('🔍 DEBUG Token before redirect:', localStorage.getItem('authToken')); // Отладка
                         window.location.replace('index.html');
                     }, 1000);
                 } else {
