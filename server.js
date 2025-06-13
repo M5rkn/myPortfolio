@@ -206,7 +206,8 @@ app.use(express.json({
 }));
 app.use(express.urlencoded({
     extended: false, // Disable extended parsing for security
-    limit: '10kb'
+    limit: '10kb',
+    parameterLimit: 100
 }));
 
 // Middleware для установки правильного Content-Type для JSON
@@ -1441,13 +1442,14 @@ app.post('/api/user/register', loginLimiter, validateCSRFToken, asyncHandler(asy
         const saltRounds = 12;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Обеспечиваем правильную кодировку имени
-        const encodedName = Buffer.from(name.trim(), 'utf8').toString('utf8');
-        console.log('🔍 DEBUG Encoded name for user registration:', encodedName);
+        // Убираем проблемное двойное кодирование - просто используем имя как есть
+        const trimmedName = name.trim();
+        console.log('🔍 DEBUG Final name for user registration:', JSON.stringify(trimmedName));
+        console.log('🔍 DEBUG Final name chars:', Array.from(trimmedName).map(c => `${c}(${c.charCodeAt(0)})`).join(' '));
 
         // Create new user
         const newUser = new User({
-            name: encodedName,
+            name: trimmedName,
             email: email.toLowerCase(),
             password: hashedPassword,
             role: 'user'
@@ -1522,12 +1524,13 @@ app.post('/api/contact', apiLimiter, validateCSRFToken, async (req, res) => {
             });
         }
 
-        // Обеспечиваем правильную кодировку имени в контактах
-        const encodedContactName = Buffer.from(name.trim(), 'utf8').toString('utf8');
+        // Убираем двойное кодирование и в контактах тоже
+        const trimmedContactName = name.trim();
+        console.log('🔍 DEBUG Contact name:', JSON.stringify(trimmedContactName));
         
         // Save to database with additional security (данные уже санитизированы в middleware)
         const contact = new Contact({
-            name: encodedContactName.slice(0, 50),
+            name: trimmedContactName.slice(0, 50),
             email: validator.normalizeEmail(email.trim()).slice(0, 254),
             message: message.trim().slice(0, 1000),
             ipAddress: clientIP
