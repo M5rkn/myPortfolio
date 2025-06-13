@@ -387,19 +387,62 @@
         }
 
         /* === Требования к паролю === */
+        .password-requirements {
+            margin-top: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
         .password-req-list {
-            margin: 8px 0 0 0;
-            padding: 0 0 0 18px;
-            font-size: 13px;
-            color: #aaa;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: 0.85rem;
         }
-        .password-req-list .req-item {
-            margin-bottom: 2px;
-            transition: color 0.2s;
+
+        .req-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            color: #888;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 1.5rem;
+            text-align: left;
         }
-        .password-req-list .req-ok {
-            color: #4CAF50;
+
+        .req-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .req-item::before {
+            content: "✗";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #f44336;
             font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .req-item.req-ok {
+            color: #4CAF50;
+        }
+
+        .req-item.req-ok::before {
+            content: "✓";
+            color: #4CAF50;
+        }
+
+        .password-req-title {
+            font-size: 0.8rem;
+            color: #b0b0b0;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            text-align: left;
         }
     </style>
 </head>
@@ -496,8 +539,6 @@
                 >
             </div>
 
-            <div id="registerPasswordReqs"></div>
-
             <div class="form-group">
                 <label for="confirmPassword">Подтвердите пароль</label>
                 <input 
@@ -512,6 +553,8 @@
                     spellcheck="false"
                 >
             </div>
+
+            <div id="registerPasswordReqs"></div>
 
             <button type="submit" class="btn" id="registerBtn">Зарегистрироваться</button>
         </form>
@@ -1001,12 +1044,15 @@
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = `
-                <ul class="password-req-list">
-                    <li id="${prefix}-req-length" class="req-item">От 8 до 128 символов</li>
-                    <li id="${prefix}-req-letter" class="req-item">Хотя бы одна буква</li>
-                    <li id="${prefix}-req-digit" class="req-item">Хотя бы одна цифра</li>
-                    <li id="${prefix}-req-special" class="req-item">Хотя бы один спецсимвол</li>
-                </ul>
+                <div class="password-requirements">
+                    <div class="password-req-title">Требования к паролю:</div>
+                    <ul class="password-req-list">
+                        <li id="${prefix}-req-length" class="req-item">От 8 до 128 символов</li>
+                        <li id="${prefix}-req-letter" class="req-item">Хотя бы одна буква</li>
+                        <li id="${prefix}-req-digit" class="req-item">Хотя бы одна цифра</li>
+                        <li id="${prefix}-req-special" class="req-item">Хотя бы один спецсимвол (!@#$%^&*)</li>
+                    </ul>
+                </div>
             `;
         }
 
