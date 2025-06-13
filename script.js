@@ -175,8 +175,12 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🔍 DEBUG DOM loaded, starting initialization');
     console.log('🔍 DEBUG Token on page load:', localStorage.getItem('authToken'));
     
-    // Инициализируем все компоненты сразу
-    initPreloader();
+    // Убираем прелоадер сразу
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        preloader.classList.add('hidden');
+        document.body.classList.remove('loading');
+    }
     initCustomCursor();
     initSideNav();
     initMobileNav();
@@ -1045,86 +1049,20 @@ function initChatbot() {
 
 // ===== Модули =====
 
-// Прелоадер с прогресс-баром
+// Быстрая инициализация без задержек
 function initPreloader() {
     const preloader = document.getElementById('preloader');
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
-    const progressPercent = document.getElementById('progressPercent');
-
-    if (!preloader || !progressFill) return;
-
-    let progress = 0;
-    const loadingSteps = [
-        { text: 'Загрузка ресурсов...', duration: 300 },
-        { text: 'Инициализация компонентов...', duration: 400 },
-        { text: 'Подготовка интерфейса...', duration: 300 },
-        { text: 'Финальная настройка...', duration: 200 },
-        { text: 'Готово!', duration: 200 }
-    ];
-
-    let currentStep = 0;
-
-    function updateProgress() {
-        const targetProgress = Math.min(100, (currentStep + 1) * 20);
-        const step = (targetProgress - progress) / 20;
-
-        const interval = setInterval(() => {
-            progress += step;
-            progressFill.style.width = progress + '%';
-            progressPercent.textContent = Math.round(progress) + '%';
-
-            if (progress >= targetProgress) {
-                clearInterval(interval);
-                currentStep++;
-
-                if (currentStep < loadingSteps.length) {
-                    progressText.textContent = loadingSteps[currentStep].text;
-                    setTimeout(() => {
-                        updateProgress();
-                    }, loadingSteps[currentStep].duration);
-                } else {
-                    // Завершение загрузки
-                    setTimeout(() => {
-                        preloader.classList.add('hidden');
-
-                        // Запуск анимаций после загрузки страницы
-                        document.querySelectorAll('.animate-on-load').forEach(el => {
-                            el.classList.add('animate');
-                        });
-                    }, 500);
-                }
-            }
-        }, 20);
+    
+    if (preloader) {
+        // Мгновенно убираем прелоадер
+        preloader.classList.add('hidden');
+        document.body.classList.remove('loading');
+        
+        // Запуск анимаций
+        document.querySelectorAll('.animate-on-load').forEach(el => {
+            el.classList.add('animate');
+        });
     }
-
-    // Запуск первого шага
-    progressText.textContent = loadingSteps[0].text;
-
-    // Начинаем прогресс после небольшой задержки
-    setTimeout(() => {
-        updateProgress();
-    }, 200);
-
-    // Fallback для быстрой загрузки
-    window.addEventListener('load', function() {
-        setTimeout(() => {
-            if (!preloader.classList.contains('hidden')) {
-                progress = 100;
-                progressFill.style.width = '100%';
-                progressPercent.textContent = '100%';
-                progressText.textContent = 'Готово!';
-
-                setTimeout(() => {
-                    preloader.classList.add('hidden');
-
-                    document.querySelectorAll('.animate-on-load').forEach(el => {
-                        el.classList.add('animate');
-                    });
-                }, 300);
-            }
-        }, 2000);
-    });
 }
 
 // Кастомный курсор
@@ -1533,15 +1471,42 @@ function initModal() {
         }
     });
 
-    // Открытие модального окна
+    // Открытие модального окна при клике на карточку
+    const workItems = document.querySelectorAll('.work-item');
+    
+    workItems.forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            // Предотвращаем двойное срабатывание если кликнули на ссылку
+            if (e.target.closest('.work-link')) return;
+            
+            const projectId = this.getAttribute('data-project') || 
+                             this.querySelector('.work-link')?.getAttribute('data-project');
+            
+            if (projectId) {
+                openProjectModal(projectId);
+            }
+        });
+    });
+    
+    // Открытие модального окна при клике на ссылку
     workLinks.forEach(function(link) {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             const projectId = this.getAttribute('data-project');
+            
+            if (projectId) {
+                openProjectModal(projectId);
+            }
+        });
+    });
+    
+    // Функция для открытия модального окна
+    function openProjectModal(projectId) {
+        // Получение данных проекта
+        const projectData = getProjectData(projectId);
 
-            // Получение данных проекта
-            const projectData = getProjectData(projectId);
-
-            if (projectData) {
+        if (projectData) {
                 // Заполнение модального окна
                 document.getElementById('modalTitle').textContent = projectData.title;
                 document.getElementById('modalDescription').textContent = projectData.description;
@@ -1588,8 +1553,7 @@ function initModal() {
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
-        });
-    });
+    }
 }
 
 // Форма обратной связи
