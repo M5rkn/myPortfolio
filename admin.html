@@ -407,6 +407,50 @@
         }
 
         // Helper function to get user info from token
+        // Функция декодирования русских имен (клиентская версия)
+        function decodeName(name) {
+            if (!name || typeof name !== 'string') return name;
+            
+            // Проверяем наличие испорченной кодировки (символы типа Ð³ÐµÐ¹)
+            if (/[ÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]/.test(name)) {
+                try {
+                    // Метод 1: latin1 -> utf8 декодирование
+                    const bytes = new Uint8Array(name.length);
+                    for (let i = 0; i < name.length; i++) {
+                        bytes[i] = name.charCodeAt(i) & 0xFF;
+                    }
+                    let decoded = new TextDecoder('utf-8').decode(bytes);
+                    
+                    // Проверяем результат на валидность
+                    if (/^[А-Яа-яЁё\w\s\-\.]+$/.test(decoded)) {
+                        return decoded;
+                    }
+                    
+                    // Метод 2: Словарь замен для основных проблемных случаев
+                    const fixMap = {
+                        'Ð³ÐµÐ¹': 'гей',
+                        'ÑÐµÑÑ': 'тест',
+                        'ÐÐ»ÐµÐºÑÐ°Ð½Ð´Ñ€': 'Александр',
+                        'ÐÐ»ÐµÐºÑÐ°Ð½Ð´Ñ€ ÐÐµÑÑ‚Ð¾Ð²': 'Александр Тестов',
+                        'ÑÐµÑÑ‚': 'тест',
+                        'Ð°Ð´Ð¼Ð¸Ð½': 'админ',
+                        'ÐÐ´Ð¼Ð¸Ð½': 'Админ'
+                    };
+                    
+                    for (const [wrong, correct] of Object.entries(fixMap)) {
+                        if (name.includes(wrong)) {
+                            return name.replace(new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), correct);
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.warn('Ошибка декодирования имени:', error.message);
+                }
+            }
+            
+            return name;
+        }
+
         function getUserFromToken(token) {
             try {
                 if (!token) return null;
@@ -417,10 +461,15 @@
                     return null;
                 }
                 
+                let userName = payload.name || payload.email?.split('@')[0];
+                
+                // Применяем декодирование имени
+                userName = decodeName(userName);
+                
                 return {
                     userId: payload.userId,
                     email: payload.email,
-                    name: payload.name || payload.email?.split('@')[0],
+                    name: userName,
                     isAdmin: payload.isAdmin === true || payload.admin === true || payload.role === 'admin',
                     role: payload.role
                 };
