@@ -489,8 +489,6 @@
                 >
             </div>
 
-            <div id="loginPasswordReqs"></div>
-
             <button type="submit" class="btn" id="loginBtn">Войти</button>
         </form>
 
@@ -943,8 +941,22 @@
                 return;
             }
             
-            if (!validatePassword(password)) {
+            // Проверяем требования к паролю
+            const passwordReqs = checkPasswordReqs(password);
+            if (!passwordReqs.length) {
                 showError('Пароль должен содержать от 8 до 128 символов');
+                return;
+            }
+            if (!passwordReqs.letter) {
+                showError('Пароль должен содержать хотя бы одну букву');
+                return;
+            }
+            if (!passwordReqs.digit) {
+                showError('Пароль должен содержать хотя бы одну цифру');
+                return;
+            }
+            if (!passwordReqs.special) {
+                showError('Пароль должен содержать хотя бы один спецсимвол (!@#$%^&*)');
                 return;
             }
             
@@ -1027,17 +1039,7 @@
         loginTab.addEventListener('click', () => switchTab('login'));
         registerTab.addEventListener('click', () => switchTab('register'));
 
-        // Real-time password validation
-        loginPasswordInput.addEventListener('input', function() {
-            const password = this.value;
-            const isValid = validatePassword(password);
-            
-            if (password.length > 0) {
-                this.style.borderColor = isValid ? '#4CAF50' : '#f44336';
-            } else {
-                this.style.borderColor = '#333';
-                    }
-                });
+
 
         // === Требования к паролю ===
         function renderPasswordRequirements(containerId, prefix) {
@@ -1056,15 +1058,8 @@
             `;
         }
 
-        // Вставляем требования под полями пароля
-        const loginPasswordInputEl = document.getElementById('loginPassword');
+        // Вставляем требования только для регистрации
         const registerPasswordInputEl = document.getElementById('registerPassword');
-        if (loginPasswordInputEl) {
-            renderPasswordRequirements('loginPasswordReqs', 'login');
-            loginPasswordInputEl.addEventListener('input', function() {
-                updatePasswordReqs(this, 'login');
-            });
-        }
         if (registerPasswordInputEl) {
             renderPasswordRequirements('registerPasswordReqs', 'register');
             registerPasswordInputEl.addEventListener('input', function() {
