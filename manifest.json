@@ -1,16 +1,16 @@
 {
-    "name": "TechPortal - Веб-разработка",
+    "name": "TechPortal - Креативная веб-разработка",
     "short_name": "TechPortal",
     "description": "Профессиональная веб-разработка с фокусом на стильный дизайн и современные технологии",
     "start_url": "/",
     "scope": "/",
     "display": "standalone",
-    "background_color": "#0f172a",
-    "theme_color": "#667eea",
+    "background_color": "#0a0f1d",
+    "theme_color": "#0a0f1d",
     "orientation": "portrait-primary",
-    "lang": "ru",
+    "lang": "ru-RU",
     "dir": "ltr",
-    "categories": ["business", "productivity", "technology"],
+    "categories": ["business", "productivity", "web development", "portfolio"],
     "prefer_related_applications": false,
     "icons": [
         {
@@ -26,73 +26,22 @@
             "purpose": "any maskable"
         }
     ],
-    "screenshots": [
-        {
-            "src": "/screenshot-desktop.jpg",
-            "sizes": "1280x720",
-            "type": "image/jpeg",
-            "form_factor": "wide",
-            "label": "Главная страница TechPortal на десктопе"
-        },
-        {
-            "src": "/screenshot-mobile.jpg", 
-            "sizes": "390x844",
-            "type": "image/jpeg",
-            "form_factor": "narrow",
-            "label": "Главная страница TechPortal на мобильном"
-        }
-    ],
     "shortcuts": [
         {
-            "name": "Калькулятор стоимости",
-            "short_name": "Калькулятор",
-            "description": "Рассчитать стоимость проекта",
-            "url": "/#calculator",
-            "icons": [
-                {
-                    "src": "/icon-192.svg",
-                    "sizes": "192x192",
-                    "type": "image/svg+xml"
-                }
-            ]
-        },
-        {
             "name": "Мои работы",
-            "short_name": "Портфолио", 
-            "description": "Посмотреть портфолио проектов",
             "url": "/#works",
-            "icons": [
-                {
-                    "src": "/icon-192.svg",
-                    "sizes": "192x192", 
-                    "type": "image/svg+xml"
-                }
-            ]
+            "description": "Просмотреть портфолио проектов"
         },
         {
             "name": "Связаться",
-            "short_name": "Контакты",
-            "description": "Связаться для обсуждения проекта",
             "url": "/#contact",
-            "icons": [
-                {
-                    "src": "/icon-192.svg",
-                    "sizes": "192x192",
-                    "type": "image/svg+xml"
-                }
-            ]
+            "description": "Связаться для обсуждения проекта"
         }
     ],
-    "protocol_handlers": [
-        {
-            "protocol": "mailto",
-            "url": "/#contact?email=%s"
-        }
-    ],
+    "protocol_handlers": [],
     "file_handlers": [],
     "share_target": {},
-    "edge_side_panel": {
-        "preferred_width": 400
-    },
+    "edge_side_panel": {},
+    "screenshots": [],
     "related_applications": []
 } 
