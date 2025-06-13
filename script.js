@@ -172,6 +172,8 @@ function showToast(type, message) {
 
 // Инициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔍 DEBUG DOM loaded, starting initialization');
+    
     // Инициализируем все компоненты сразу
     initPreloader();
     initCustomCursor();
@@ -1962,37 +1964,66 @@ function decodeName(name) {
 
 // Инициализация кнопки авторизации
 function initAuthButton() {
+    console.log('🔍 DEBUG initAuthButton called');
+    
     const authLink = document.getElementById('authLink');
     const authText = document.getElementById('authText');
     const authLinkMobile = document.getElementById('authLinkMobile');
     const authTextMobile = document.getElementById('authTextMobile');
 
-    if (!authLink || !authText || !authLinkMobile || !authTextMobile) return;
+    console.log('🔍 DEBUG Auth elements found:', {
+        authLink: !!authLink,
+        authText: !!authText,
+        authLinkMobile: !!authLinkMobile,
+        authTextMobile: !!authTextMobile
+    });
+
+    if (!authLink || !authText || !authLinkMobile || !authTextMobile) {
+        console.log('🔍 DEBUG Missing auth elements, returning');
+        return;
+    }
 
     // Проверяем авторизацию при загрузке страницы
+    console.log('🔍 DEBUG Calling checkAuthStatus');
     checkAuthStatus();
 
     function checkAuthStatus() {
         const token = localStorage.getItem('authToken');
-        const isLoggedIn = token && !isTokenExpired(token);
-
-        if (isLoggedIn) {
-            // Пользователь авторизован - показываем "Выйти"
-            updateAuthButton(true);
-        } else {
-            // Пользователь не авторизован - показываем "Войти"
+        console.log('🔍 DEBUG checkAuthStatus - token exists:', !!token);
+        
+        if (!token) {
+            console.log('🔍 DEBUG No token found');
             updateAuthButton(false);
+            return;
         }
+        
+        const isExpired = isTokenExpired(token);
+        console.log('🔍 DEBUG Token expired:', isExpired);
+        
+        if (isExpired) {
+            console.log('🔍 DEBUG Token expired, removing');
+            localStorage.removeItem('authToken');
+            updateAuthButton(false);
+            return;
+        }
+        
+        console.log('🔍 DEBUG Token valid, updating auth button');
+        updateAuthButton(true);
     }
 
     function updateAuthButton(isLoggedIn) {
+        console.log('🔍 DEBUG updateAuthButton called with isLoggedIn:', isLoggedIn);
+        
         if (isLoggedIn) {
             const token = localStorage.getItem('authToken');
             const userInfo = getUserFromToken(token);
             
+            console.log('🔍 DEBUG userInfo from token:', userInfo);
+            
             if (userInfo) {
                 // Показываем аватарку пользователя
                 const firstLetter = userInfo.name.charAt(0).toUpperCase();
+                console.log('🔍 DEBUG Setting user avatar with letter:', firstLetter);
                 
                 // Обновляем боковую навигацию
                 authText.innerHTML = `<div class="user-avatar">${firstLetter}</div>`;
@@ -2003,8 +2034,14 @@ function initAuthButton() {
                 authTextMobile.innerHTML = `<div class="user-avatar-mobile">${firstLetter}</div> ${userInfo.name}`;
                 authLinkMobile.href = 'profile.html';
                 authLinkMobile.onclick = null;
+                
+                console.log('🔍 DEBUG Auth button updated for logged in user');
+            } else {
+                console.log('🔍 DEBUG No userInfo, showing login');
+                updateAuthButton(false);
             }
         } else {
+            console.log('🔍 DEBUG Setting login state');
             authText.textContent = 'Войти';
             authTextMobile.textContent = 'Войти';
             authLink.href = 'login.html';
