@@ -385,6 +385,22 @@
                 font-size: 0.8rem;
             }
         }
+
+        /* === Требования к паролю === */
+        .password-req-list {
+            margin: 8px 0 0 0;
+            padding: 0 0 0 18px;
+            font-size: 13px;
+            color: #aaa;
+        }
+        .password-req-list .req-item {
+            margin-bottom: 2px;
+            transition: color 0.2s;
+        }
+        .password-req-list .req-ok {
+            color: #4CAF50;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -429,6 +445,8 @@
                     spellcheck="false"
                 >
             </div>
+
+            <div id="loginPasswordReqs"></div>
 
             <button type="submit" class="btn" id="loginBtn">Войти</button>
         </form>
@@ -477,6 +495,8 @@
                     spellcheck="false"
                 >
             </div>
+
+            <div id="registerPasswordReqs"></div>
 
             <div class="form-group">
                 <label for="confirmPassword">Подтвердите пароль</label>
@@ -975,6 +995,55 @@
                 this.style.borderColor = '#333';
                     }
                 });
+
+        // === Требования к паролю ===
+        function renderPasswordRequirements(containerId, prefix) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = `
+                <ul class="password-req-list">
+                    <li id="${prefix}-req-length" class="req-item">От 8 до 128 символов</li>
+                    <li id="${prefix}-req-letter" class="req-item">Хотя бы одна буква</li>
+                    <li id="${prefix}-req-digit" class="req-item">Хотя бы одна цифра</li>
+                    <li id="${prefix}-req-special" class="req-item">Хотя бы один спецсимвол</li>
+                </ul>
+            `;
+        }
+
+        // Вставляем требования под полями пароля
+        const loginPasswordInputEl = document.getElementById('loginPassword');
+        const registerPasswordInputEl = document.getElementById('registerPassword');
+        if (loginPasswordInputEl) {
+            renderPasswordRequirements('loginPasswordReqs', 'login');
+            loginPasswordInputEl.addEventListener('input', function() {
+                updatePasswordReqs(this, 'login');
+            });
+        }
+        if (registerPasswordInputEl) {
+            renderPasswordRequirements('registerPasswordReqs', 'register');
+            registerPasswordInputEl.addEventListener('input', function() {
+                updatePasswordReqs(this, 'register');
+            });
+        }
+
+        // Проверка требований
+        function checkPasswordReqs(password) {
+            return {
+                length: password.length >= 8 && password.length <= 128,
+                letter: /[A-Za-zА-Яа-яЁё]/.test(password),
+                digit: /\d/.test(password),
+                special: /[^A-Za-zА-Яа-яЁё0-9]/.test(password)
+            };
+        }
+
+        function updatePasswordReqs(input, prefix) {
+            const val = input.value;
+            const reqs = checkPasswordReqs(val);
+            document.getElementById(prefix+'-req-length').classList.toggle('req-ok', reqs.length);
+            document.getElementById(prefix+'-req-letter').classList.toggle('req-ok', reqs.letter);
+            document.getElementById(prefix+'-req-digit').classList.toggle('req-ok', reqs.digit);
+            document.getElementById(prefix+'-req-special').classList.toggle('req-ok', reqs.special);
+        }
 
         // Initialize page
         window.addEventListener('load', async () => {
