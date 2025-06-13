@@ -294,7 +294,8 @@ function initCalculator() {
         });
 
         // Получаем бонусную скидку пользователя
-        const bonusDiscount = await getUserBonusDiscount();
+        // Временно отключено для отладки
+        const bonusDiscount = 0; // await getUserBonusDiscount();
         let finalTotal = total;
         
         if (bonusDiscount > 0 && total > 0) {
@@ -344,11 +345,18 @@ function initCalculator() {
             // Проверяем, что токен не истек
             try {
                 const payload = JSON.parse(atob(token.split('.')[1]));
+                console.log('🔍 DEBUG getUserBonusDiscount - token payload:', payload);
+                console.log('🔍 DEBUG getUserBonusDiscount - current time:', Date.now());
+                console.log('🔍 DEBUG getUserBonusDiscount - token exp:', payload.exp * 1000);
+                
                 if (Date.now() >= payload.exp * 1000) {
+                    console.log('🔍 DEBUG getUserBonusDiscount - token expired, removing');
                     localStorage.removeItem('authToken');
                     return 0;
                 }
             } catch (error) {
+                console.log('🔍 DEBUG getUserBonusDiscount - token parse error:', error);
+                console.log('🔍 DEBUG getUserBonusDiscount - removing invalid token');
                 localStorage.removeItem('authToken');
                 return 0;
             }
@@ -1966,6 +1974,7 @@ function decodeName(name) {
 // Инициализация кнопки авторизации
 function initAuthButton() {
     console.log('🔍 DEBUG initAuthButton called');
+    console.log('🔍 DEBUG Token in initAuthButton:', localStorage.getItem('authToken'));
     
     const authLink = document.getElementById('authLink');
     const authText = document.getElementById('authText');
@@ -1986,11 +1995,17 @@ function initAuthButton() {
 
     // Проверяем авторизацию при загрузке страницы
     console.log('🔍 DEBUG Calling checkAuthStatus');
-    checkAuthStatus();
+    
+    // Добавляем небольшую задержку для гарантии загрузки localStorage
+    setTimeout(() => {
+        console.log('🔍 DEBUG Delayed checkAuthStatus call');
+        checkAuthStatus();
+    }, 100);
 
     function checkAuthStatus() {
         const token = localStorage.getItem('authToken');
         console.log('🔍 DEBUG checkAuthStatus - token exists:', !!token);
+        console.log('🔍 DEBUG checkAuthStatus - token value:', token ? token.substring(0, 50) + '...' : 'null');
         
         if (!token) {
             console.log('🔍 DEBUG No token found');
