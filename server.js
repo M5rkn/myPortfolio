@@ -1324,6 +1324,9 @@ app.post('/api/user/login', loginLimiter, validateCSRFToken, asyncHandler(async 
 
         // Отладочное логирование для диагностики кодировки
         console.log('🔍 DEBUG Login data:');
+        console.log('  User ID:', user._id);
+        console.log('  User email:', user.email);
+        console.log('  User role:', user.role);
         console.log('  Original name from DB:', JSON.stringify(user.name));
         console.log('  Decoded name:', JSON.stringify(decodeName(user.name)));
         console.log('  Name chars:', user.name ? Array.from(user.name).map(c => `${c}(${c.charCodeAt(0)})`).join(' ') : 'null');

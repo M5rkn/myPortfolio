@@ -881,11 +881,12 @@
                     
                     // Все пользователи (включая админа) перенаправляются на главную страницу
                     const userInfo = getUserFromToken(data.token);
-                    console.log('User info from token:', userInfo); // Отладка
-                    console.log('Token raw:', data.token); // Отладка
+                    console.log('🔍 DEBUG User info from token:', userInfo); // Отладка
+                    console.log('🔍 DEBUG Token raw:', data.token); // Отладка
+                    console.log('🔍 DEBUG Token stored in localStorage'); // Отладка
                     
                     setTimeout(() => {
-                        console.log('Redirecting to main page'); // Отладка
+                        console.log('🔍 DEBUG Redirecting to main page'); // Отладка
                         window.location.replace('index.html');
                     }, 1000);
                 } else {

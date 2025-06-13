@@ -1915,6 +1915,45 @@ function initFAQ() {
     });
 }
 
+// Функция для декодирования имен пользователей (исправление кодировки)
+function decodeName(name) {
+    if (!name || typeof name !== 'string') return name;
+    
+    try {
+        // Метод 1: Попытка декодирования latin1 -> utf8
+        const bytes = new Uint8Array(name.length);
+        for (let i = 0; i < name.length; i++) {
+            bytes[i] = name.charCodeAt(i);
+        }
+        const decoded = new TextDecoder('utf-8').decode(bytes);
+        
+        // Проверяем, содержит ли результат кириллицу
+        if (/[\u0400-\u04FF]/.test(decoded)) {
+            return decoded;
+        }
+    } catch (e) {
+        // Игнорируем ошибки декодирования
+    }
+    
+    // Метод 2: Словарь замен для распространенных искажений
+    const replacements = {
+        'Ð³ÐµÐ¹': 'гей',
+        'Ñ‚ÐµÑÑ‚': 'тест',
+        'Ð´Ð»Ð´Ð¾': 'длдо',
+        'Ð°Ð°Ð°': 'ааа',
+        'Ð°Ð´Ð¼Ð¸Ð½': 'админ',
+        'ÐÐ´Ð¼Ð¸Ð½': 'Админ',
+        'Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ': 'пользователь'
+    };
+    
+    let result = name;
+    for (const [corrupted, correct] of Object.entries(replacements)) {
+        result = result.replace(new RegExp(corrupted, 'g'), correct);
+    }
+    
+    return result;
+}
+
 // Инициализация кнопки авторизации
 function initAuthButton() {
     const authLink = document.getElementById('authLink');
@@ -1972,18 +2011,31 @@ function initAuthButton() {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
             
+            console.log('🔍 DEBUG Token payload:', payload); // Отладка
+            
             // Проверяем срок действия токена
             if (payload.exp && payload.exp * 1000 < Date.now()) {
+                console.log('🔍 DEBUG Token expired');
                 return null;
             }
             
-            return {
+            // Декодируем имя пользователя если нужно
+            let decodedName = payload.name || payload.email?.split('@')[0];
+            if (decodedName && typeof decodedName === 'string') {
+                decodedName = decodeName(decodedName);
+            }
+            
+            const userInfo = {
                 userId: payload.userId,
                 email: payload.email,
-                name: payload.name || payload.email?.split('@')[0],
+                name: decodedName,
                 isAdmin: payload.isAdmin === true || payload.admin === true || payload.role === 'admin',
                 role: payload.role
             };
+            
+            console.log('🔍 DEBUG Parsed user info:', userInfo); // Отладка
+            
+            return userInfo;
         } catch (error) {
             console.error('Error parsing token:', error);
             return null;
