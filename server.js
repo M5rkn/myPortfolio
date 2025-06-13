@@ -52,12 +52,28 @@ app.use(helmet({
 // Additional security headers
 app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Server', 'TechPortal'); // Hide server info
+    
+    // CSP заголовки только для HTML страниц
+    if (req.path.endsWith('.html') || req.path === '/') {
+        res.setHeader('Content-Security-Policy', 
+            "default-src 'self'; " +
+            "script-src 'self' 'unsafe-inline' https://unpkg.com/ https://cdn.jsdelivr.net/ https://www.googletagmanager.com https://www.google-analytics.com; " +
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+            "font-src 'self' https://fonts.gstatic.com; " +
+            "img-src 'self' data: blob: https://www.google-analytics.com; " +
+            "connect-src 'self' https://www.google-analytics.com https://analytics.google.com; " +
+            "base-uri 'self'; " +
+            "form-action 'self'; " +
+            "object-src 'none'; " +
+            "media-src 'self';"
+        );
+    }
+    
     next();
 });
 
