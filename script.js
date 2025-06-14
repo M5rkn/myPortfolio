@@ -2160,3 +2160,47 @@ function initAuthButton() {
         }
     }
 }
+
+// Инициализация переключателя языков
+function initLangSwitcher() {
+    const langLinks = document.querySelectorAll('.lang-link');
+    const savedLang = localStorage.getItem('language') || 'ru';
+
+    function setLanguage(lang) {
+        langLinks.forEach(link => {
+            link.classList.toggle('active', link.dataset.lang === lang);
+        });
+        localStorage.setItem('language', lang);
+        // Здесь должна быть логика для смены контента на странице
+        // Например, document.documentElement.lang = lang;
+        console.log(`Language set to ${lang}`);
+    }
+
+    langLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const selectedLang = link.dataset.lang;
+            setLanguage(selectedLang);
+        });
+    });
+
+    setLanguage(savedLang);
+}
+
+// Инициализация всех компонентов при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    initPreloader();
+    initScrollProgress();
+    initSideNav();
+    initMobileNav();
+    initAOS();
+    initCounters();
+    initWorkItems();
+    initContactForm();
+    initCalculator();
+    initAdvancedCalculatorFeatures();
+    initFAQ();
+    initAuthLink();
+    initChatbot();
+    initLangSwitcher();
+});
