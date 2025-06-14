@@ -1055,13 +1055,13 @@ function initPreloader() {
     
     if (preloader) {
         // Мгновенно убираем прелоадер
-        preloader.classList.add('hidden');
+                        preloader.classList.add('hidden');
         document.body.classList.remove('loading');
-        
+
         // Запуск анимаций
-        document.querySelectorAll('.animate-on-load').forEach(el => {
-            el.classList.add('animate');
-        });
+                        document.querySelectorAll('.animate-on-load').forEach(el => {
+                            el.classList.add('animate');
+                        });
     }
 }
 
@@ -1494,7 +1494,7 @@ function initModal() {
             e.preventDefault();
             e.stopPropagation();
             const projectId = this.getAttribute('data-project');
-            
+
             if (projectId) {
                 openProjectModal(projectId);
             }
@@ -1503,10 +1503,10 @@ function initModal() {
     
     // Функция для открытия модального окна
     function openProjectModal(projectId) {
-        // Получение данных проекта
-        const projectData = getProjectData(projectId);
+            // Получение данных проекта
+            const projectData = getProjectData(projectId);
 
-        if (projectData) {
+            if (projectData) {
                 // Заполнение модального окна
                 document.getElementById('modalTitle').textContent = projectData.title;
                 document.getElementById('modalDescription').textContent = projectData.description;
@@ -1998,7 +1998,7 @@ function initAuthButton() {
     // Добавляем небольшую задержку для гарантии загрузки localStorage
     setTimeout(() => {
         console.log('🔍 DEBUG Delayed checkAuthStatus call');
-        checkAuthStatus();
+    checkAuthStatus();
     }, 100);
 
     function checkAuthStatus() {

@@ -3128,26 +3128,20 @@ button {
   background: linear-gradient(145deg, 
     rgba(255, 255, 255, 0.08) 0%, 
     rgba(255, 255, 255, 0.02) 100%);
-  height: auto;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.2),
-    0 2px 8px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-bottom: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+  backface-visibility: hidden;
 }
 
 .work-item:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.25),
-    0 8px 24px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 0 0 1px rgba(59, 130, 246, 0.3);
+  transform: translateY(-8px) translateZ(0);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
 }
 
 .work-image {
