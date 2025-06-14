@@ -5086,271 +5086,124 @@ button {
     }
 }
 
-/* Адаптация для очень маленьких экранов */
-@media (max-width: 430px) {
-  .section {
-    padding: var(--spacing-xl) 0;
-  }
-  
-  .section-title {
-    font-size: 1.5rem;
-    margin-bottom: var(--spacing-md);
-  }
-  
-  .section-subtitle {
-    font-size: 0.9rem;
-  }
-  
-  .services-grid {
-    gap: var(--spacing-md);
-    grid-template-columns: 1fr;
-  }
-  
-  .service-card {
-    padding: var(--spacing-md);
-  }
-  
-  .hero-title {
-    font-size: 1.8rem;
-  }
-  
-  .works-grid {
-    gap: var(--spacing-md);
-  }
-  
-  .calculator-content {
-    gap: var(--spacing-lg);
-  }
-  
-  .calculator-section-title {
-    font-size: 1.2rem;
-  }
-  
-  .package-card {
-    padding: var(--spacing-md);
-  }
-  
-  .review-card {
-    padding: var(--spacing-md);
-  }
-}
+/* ===== Theme Switcher & Light Theme ===== */
 
-@media (max-width: 375px) {
-  .section {
-    padding: var(--spacing-lg) 0;
-  }
-  
-  .section-title {
-    font-size: 1.3rem;
-    margin-bottom: var(--spacing-sm);
-  }
-  
-  .section-subtitle {
-    font-size: 0.85rem;
-  }
-  
-  .service-card {
-    padding: var(--spacing-sm);
-  }
-  
-  .service-icon {
+/* Стили для кнопки переключения темы */
+.theme-toggle-btn {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
     width: 40px;
     height: 40px;
-  }
-  
-  .service-icon svg {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .hero-title {
-    font-size: 1.6rem;
-  }
-  
-  .hero-description {
-    font-size: 0.85rem;
-  }
-  
-  .calculator-section-title {
-    font-size: 1.1rem;
-  }
-  
-  .package-title {
-    font-size: 1.1rem;
-  }
-  
-  .package-card {
-    padding: var(--spacing-sm);
-  }
-  
-  .service-option {
-    padding: var(--spacing-sm);
-  }
-  
-  .review-card {
-    padding: var(--spacing-sm);
-  }
-  
-  .reviewer-avatar {
-    width: 40px;
-    height: 40px;
-  }
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    transition: all 0.3s ease;
+    order: -1;
 }
-
-@media (max-width: 320px) {
-  .section {
-    padding: var(--spacing-md) 0;
-  }
-  
-  .section-title {
-    font-size: 1.2rem;
-    margin-bottom: var(--spacing-xs);
-  }
-  
-  .section-subtitle {
-    font-size: 0.8rem;
-    margin-bottom: var(--spacing-sm);
-  }
-  
-  .service-card {
-    padding: 10px;
-    border-radius: 8px;
-  }
-  
-  .service-icon {
-    width: 36px;
-    height: 36px;
-  }
-  
-  .service-icon svg {
-    width: 18px;
-    height: 18px;
-  }
-  
-  .service-title {
-    font-size: 1rem;
-  }
-  
-  .service-description {
-    font-size: 0.75rem;
-  }
-  
-  .hero-title {
-    font-size: 1.4rem;
-  }
-  
-  .hero-description {
-    font-size: 0.8rem;
-  }
-  
-  .works-grid {
-    gap: var(--spacing-sm);
-  }
-  
-  .work-item {
-    aspect-ratio: unset;
-    height: auto;
-    margin: 0;
-  }
-  
-  .work-image {
-    height: 160px;
-  }
-  
-  .work-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
+.theme-toggle-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+.theme-toggle-btn svg {
     width: 100%;
     height: 100%;
-    padding: var(--spacing-sm);
-    background: linear-gradient(to top, 
-      rgba(10, 15, 29, 0.98) 0%, 
-      rgba(10, 15, 29, 0.85) 40%, 
-      rgba(10, 15, 29, 0.5) 70%,
-      rgba(10, 15, 29, 0.2) 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    opacity: 1;
-  }
+    transition: transform 0.3s ease;
+}
+.theme-toggle-btn .icon-moon { display: block; }
+.theme-toggle-btn .icon-sun { display: none; }
+
+/* Светлая тема */
+body.light-theme .theme-toggle-btn .icon-moon { display: none; }
+body.light-theme .theme-toggle-btn .icon-sun { display: block; }
+
+body.light-theme {
+  /* Основные цвета */
+  --color-bg-primary: #f4f7f9;
+  --color-bg-secondary: #ffffff;
+  --color-bg-tertiary: #e9ecef;
+  --color-bg-card: #ffffff;
+  --color-bg-card-hover: #f8f9fa;
   
-  .work-title {
-    font-size: 1rem;
-    margin-bottom: 4px;
-  }
-  
-  .work-description {
-    font-size: 0.75rem;
-    margin-bottom: 6px;
-    line-height: 1.3;
-  }
-  
-  .work-tags {
-    margin-bottom: 4px;
-    gap: 3px;
-  }
-  
-  .tag {
-    font-size: 8px;
-    padding: 2px 5px;
-  }
-  
-  .filter-button {
-    padding: 6px 10px;
-    font-size: 0.7rem;
-  }
-  
-  .calculator-section-title {
-    font-size: 1rem;
-  }
-  
-  .package-title {
-    font-size: 1rem;
-  }
-  
-  .package-card {
-    padding: 8px;
-  }
-  
-  .service-option {
-    padding: 8px;
-  }
-  
-  .review-card {
-    padding: 10px;
-  }
-  
-  .reviewer-avatar {
-    width: 36px;
-    height: 36px;
-  }
-  
-  .faq-question {
-    padding: var(--spacing-sm);
-  }
-  
-  .faq-question h3 {
-    font-size: 1rem;
-  }
-  
-  .faq-answer {
-    padding: 0 var(--spacing-sm) var(--spacing-sm);
-  }
-  
-  .modal-content {
-    padding: var(--spacing-sm);
-  }
-  
-  .modal-title {
-    font-size: 1.1rem;
-  }
-  
-  .contact-form {
-    padding: var(--spacing-md);
-  }
-  
-  .form-title {
-    font-size: 1.2rem;
-  }
+  /* Текстовые цвета */
+  --color-text-primary: #212529;
+  --color-text-secondary: #495057;
+  --color-text-tertiary: #6c757d;
+  --color-text-muted: #adb5bd;
+
+  /* Тени */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+/* Адаптация конкретных элементов для светлой темы */
+body.light-theme .side-nav,
+body.light-theme .mobile-nav {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .side-nav-link:hover, 
+body.light-theme .side-nav-link.active {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .work-item {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-bg-tertiary);
+}
+
+body.light-theme .work-overlay {
+    background: linear-gradient(to top, rgba(20, 30, 40, 0.9) 0%, rgba(20, 30, 40, 0.7) 40%, transparent 100%);
+}
+
+body.light-theme .work-title,
+body.light-theme .work-description {
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+body.light-theme .tag {
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+body.light-theme .background-lines {
+    opacity: 0.1;
+}
+
+body.light-theme .line {
+    background: linear-gradient(to bottom, transparent 0%, var(--color-text-muted) 20%, var(--color-text-muted) 80%, transparent 100%);
+}
+
+body.light-theme .social-icon,
+body.light-theme .contact-info-icon,
+body.light-theme .form-input,
+body.light-theme .chatbot-input input {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+    border-color: #dee2e6;
+}
+
+body.light-theme .social-icon:hover {
+    color: var(--color-primary);
+}
+
+body.light-theme .form-input:focus {
+    background-color: white;
+}
+
+body.light-theme .footer {
+    background-color: #e9ecef;
+}
+
+body.light-theme .footer-bottom {
+    border-top-color: rgba(0,0,0,0.1);
 }
