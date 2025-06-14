@@ -2171,8 +2171,7 @@ function initLangSwitcher() {
             link.classList.toggle('active', link.dataset.lang === lang);
         });
         localStorage.setItem('language', lang);
-        // Здесь должна быть логика для смены контента на странице
-        // Например, document.documentElement.lang = lang;
+        applyTranslations(lang);
         console.log(`Language set to ${lang}`);
     }
 
@@ -2185,6 +2184,23 @@ function initLangSwitcher() {
     });
 
     setLanguage(savedLang);
+}
+
+// --- Language Switcher Logic ---
+
+function applyTranslations(lang) {
+    if (!window.translations) {
+        console.error('Translations not loaded!');
+        return;
+    }
+    document.querySelectorAll('[data-translate-key]').forEach(el => {
+        const key = el.dataset.translateKey;
+        const translation = translations[lang]?.[key];
+        if (translation) {
+            el.innerHTML = translation;
+        }
+    });
+    document.documentElement.lang = lang;
 }
 
 // Инициализация всех компонентов при загрузке страницы
