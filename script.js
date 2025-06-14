@@ -2165,49 +2165,59 @@ function initAuthButton() {
 function initLangSwitcher() {
     const langLinks = document.querySelectorAll('.lang-link');
     const savedLang = localStorage.getItem('language') || 'ru';
+    let translations = {};
+
+    async function fetchTranslations() {
+        try {
+            const response = await fetch('translations.json');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            translations = await response.json();
+            setLanguage(savedLang);
+        } catch (error) {
+            console.error('Failed to fetch translations:', error);
+        }
+    }
+
+    function applyTranslations(lang) {
+        document.documentElement.lang = lang;
+        const elements = document.querySelectorAll('[data-translate]');
+        elements.forEach(el => {
+            const key = el.dataset.translate;
+            if (translations[lang] && translations[lang][key]) {
+                el.innerHTML = translations[lang][key];
+            }
+        });
+
+        const placeholderElements = document.querySelectorAll('[data-translate-placeholder]');
+        placeholderElements.forEach(el => {
+            const key = el.dataset.translatePlaceholder;
+            if (translations[lang] && translations[lang][key]) {
+                el.placeholder = translations[lang][key];
+            }
+        });
+    }
 
     function setLanguage(lang) {
-        // Сначала убираем класс 'active' со всех ссылок
         langLinks.forEach(link => {
-            link.classList.remove('active');
+            link.classList.toggle('active', link.dataset.lang === lang);
         });
-
-        // Затем добавляем класс 'active' только нужным ссылкам (для десктопа и мобильных)
-        document.querySelectorAll(`.lang-link[data-lang="${lang}"]`).forEach(link => {
-            link.classList.add('active');
-        });
-
         localStorage.setItem('language', lang);
         applyTranslations(lang);
-        console.log(`Language set to ${lang}`);
     }
 
     langLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            const selectedLang = e.currentTarget.dataset.lang;
-            setLanguage(selectedLang);
+            const selectedLang = link.dataset.lang;
+            if (selectedLang !== localStorage.getItem('language')) {
+                setLanguage(selectedLang);
+            }
         });
     });
 
-    setLanguage(savedLang);
-}
-
-// --- Language Switcher Logic ---
-
-function applyTranslations(lang) {
-    if (!window.translations) {
-        console.error('Translations not loaded!');
-        return;
-    }
-    document.querySelectorAll('[data-translate-key]').forEach(el => {
-        const key = el.dataset.translateKey;
-        const translation = translations[lang]?.[key];
-        if (translation) {
-            el.innerHTML = translation;
-        }
-    });
-    document.documentElement.lang = lang;
+    fetchTranslations();
 }
 
 // Инициализация всех компонентов при загрузке страницы

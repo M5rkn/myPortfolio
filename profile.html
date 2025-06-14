@@ -389,6 +389,12 @@
             margin-top: var(--spacing-md);
         }
         
+        .lang-switcher-profile {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-left: auto;
+        }
+        
         @media (max-width: 768px) {
             .profile-header {
                 flex-direction: column;
@@ -418,6 +424,11 @@
             
             .profile-wrapper {
                 padding: 0 var(--spacing-md);
+            }
+            
+            .lang-switcher-profile {
+                margin-left: 0;
+                margin-top: var(--spacing-lg);
             }
         }
     </style>
@@ -459,6 +470,10 @@
                             🛠️ Админ панель
                         </button>
                     </div>
+                </div>
+                <div class="lang-switcher-profile">
+                     <a href="#" class="lang-link active" data-lang="ru">RU</a>
+                     <a href="#" class="lang-link" data-lang="en">EN</a>
                 </div>
             </div>
 
