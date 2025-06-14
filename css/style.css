@@ -5088,37 +5088,68 @@ button {
 
 /* ===== Theme Switcher & Light Theme ===== */
 
-/* Стили для кнопки переключения темы */
-.theme-toggle-btn {
+/* Стили для плавающей кнопки переключения темы */
+.floating-theme-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
     background: var(--color-bg-secondary);
     border: 1px solid var(--color-bg-tertiary);
     color: var(--color-text-secondary);
-    width: 40px;
-    height: 40px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 8px;
+    z-index: 999;
+    box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
-    order: -1;
 }
-.theme-toggle-btn:hover {
+.floating-theme-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
     border-color: var(--color-primary);
     color: var(--color-primary);
 }
-.theme-toggle-btn svg {
-    width: 100%;
-    height: 100%;
-    transition: transform 0.3s ease;
+.floating-theme-btn svg {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    position: absolute;
 }
-.theme-toggle-btn .icon-moon { display: block; }
-.theme-toggle-btn .icon-sun { display: none; }
+.floating-theme-btn .icon-moon { 
+    display: block;
+    opacity: 1;
+    transform: scale(1);
+}
+.floating-theme-btn .icon-sun { 
+    display: block;
+    opacity: 0;
+    transform: scale(0);
+}
+
+/* Позиция кнопки относительно чат-бота */
+.chatbot-container + .floating-theme-btn {
+    bottom: 90px;
+}
+
+@media (max-width: 768px) {
+    .chatbot-container + .floating-theme-btn {
+        bottom: 80px;
+    }
+}
 
 /* Светлая тема */
-body.light-theme .theme-toggle-btn .icon-moon { display: none; }
-body.light-theme .theme-toggle-btn .icon-sun { display: block; }
+body.light-theme .floating-theme-btn .icon-moon { 
+    opacity: 0;
+    transform: scale(0);
+}
+body.light-theme .floating-theme-btn .icon-sun { 
+    opacity: 1;
+    transform: scale(1);
+}
 
 body.light-theme {
   /* Основные цвета */
