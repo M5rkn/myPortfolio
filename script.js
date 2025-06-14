@@ -2167,9 +2167,16 @@ function initLangSwitcher() {
     const savedLang = localStorage.getItem('language') || 'ru';
 
     function setLanguage(lang) {
+        // Сначала убираем класс 'active' со всех ссылок
         langLinks.forEach(link => {
-            link.classList.toggle('active', link.dataset.lang === lang);
+            link.classList.remove('active');
         });
+
+        // Затем добавляем класс 'active' только нужным ссылкам (для десктопа и мобильных)
+        document.querySelectorAll(`.lang-link[data-lang="${lang}"]`).forEach(link => {
+            link.classList.add('active');
+        });
+
         localStorage.setItem('language', lang);
         applyTranslations(lang);
         console.log(`Language set to ${lang}`);
@@ -2178,7 +2185,7 @@ function initLangSwitcher() {
     langLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            const selectedLang = link.dataset.lang;
+            const selectedLang = e.currentTarget.dataset.lang;
             setLanguage(selectedLang);
         });
     });
