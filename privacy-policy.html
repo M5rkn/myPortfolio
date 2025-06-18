@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com/ https://cdn.jsdelivr.net/ https://cdnjs.cloudflare.com/ https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://region1.google-analytics.com; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
@@ -139,13 +139,13 @@
     <main class="main-content">
         <section class="section">
             <div class="container">
-                <div class="section-header" data-aos="fade-up">
+                <div class="section-header">
                     <h1 class="section-title">Политика конфиденциальности</h1>
                     <p class="section-subtitle">Последнее обновление: 8 июня 2024 г.</p>
                 </div>
                 
                 <div class="privacy-content">
-                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="100">
+                    <div class="privacy-section">
                         <h2 class="privacy-title">1. Введение</h2>
                         <p class="privacy-text">
                             Добро пожаловать на сайт TechPortal. Мы уважаем вашу конфиденциальность и стремимся защищать ваши личные данные. 
@@ -154,7 +154,7 @@
                         </p>
                     </div>
                     
-                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="150">
+                    <div class="privacy-section">
                         <h2 class="privacy-title">2. Какую информацию мы собираем</h2>
                         <p class="privacy-text">Мы можем собирать следующие типы информации:</p>
                         <ul class="privacy-list">
@@ -164,7 +164,7 @@
                         </ul>
                     </div>
                     
-                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="200">
+                    <div class="privacy-section">
                         <h2 class="privacy-title">3. Как мы используем вашу информацию</h2>
                         <p class="privacy-text">Мы используем собранную информацию для:</p>
                         <ul class="privacy-list">
@@ -175,7 +175,7 @@
                         </ul>
                     </div>
                     
-                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="250">
+                    <div class="privacy-section">
                         <h2 class="privacy-title">4. Безопасность данных</h2>
                         <p class="privacy-text">
                             Мы принимаем разумные меры для защиты вашей информации от несанкционированного доступа, 
@@ -185,7 +185,7 @@
                         </p>
                     </div>
                     
-                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="300">
+                    <div class="privacy-section">
                         <h2 class="privacy-title">5. Сторонние сервисы</h2>
                         <p class="privacy-text">
                             Наш сайт может содержать ссылки на сторонние сайты или использовать сторонние сервисы, такие как 
@@ -194,7 +194,7 @@
                         </p>
                     </div>
                     
-                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="350">
+                    <div class="privacy-section">
                         <h2 class="privacy-title">6. Ваши права</h2>
                         <p class="privacy-text">В зависимости от вашего местоположения, вы можете иметь следующие права:</p>
                         <ul class="privacy-list">
@@ -206,7 +206,7 @@
                         </ul>
                     </div>
                     
-                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="400">
+                    <div class="privacy-section">
                         <h2 class="privacy-title">7. Изменения в политике конфиденциальности</h2>
                         <p class="privacy-text">
                             Мы можем обновлять эту политику конфиденциальности время от времени. Любые изменения 
@@ -214,7 +214,7 @@
                         </p>
                     </div>
                     
-                    <div class="privacy-section" data-aos="fade-up" data-aos-delay="450">
+                    <div class="privacy-section">
                         <h2 class="privacy-title">8. Контактная информация</h2>
                         <p class="privacy-text">
                             Если у вас есть вопросы или предложения относительно нашей политики конфиденциальности, 
@@ -222,7 +222,7 @@
                         </p>
                     </div>
                     
-                    <div class="back-btn" data-aos="fade-up" data-aos-delay="500">
+                    <div class="back-btn">
                         <a href="index.html" class="btn btn-primary">
                             <span>Вернуться на главную</span>
                             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -290,9 +290,6 @@
         </div>
     </footer>
 
-    <!-- AOS Animation Library -->
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    
     <!-- Main script -->
     <script src="script.js"></script>
     
@@ -306,14 +303,6 @@
                     document.body.style.overflow = 'visible';
                 }, 500);
             }
-        });
-
-        // Инициализация AOS
-        AOS.init({
-            duration: 1000,
-            easing: 'ease-out-cubic',
-            once: true,
-            offset: 50
         });
     </script>
 </body>

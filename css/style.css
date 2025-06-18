@@ -2348,13 +2348,13 @@ button {
 }
 
 .text-link {
-  color: var(--color-primary);
+  color: #2563eb;
   text-decoration: underline;
   transition: color 0.3s cubic-bezier(0.4,0,0.2,1), text-decoration 0.3s;
 }
 
 .text-link:hover {
-  color: var(--color-accent, #3b82f6);
+  color: #1e40af;
   text-decoration: underline;
 }
 

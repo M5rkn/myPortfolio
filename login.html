@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://region1.google-analytics.com; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
@@ -145,7 +145,7 @@
 
         .back-link a {
             color: #b0b0b0;
-            text-decoration: none;
+            text-decoration: underline;
             transition: color 0.3s ease;
         }
 
@@ -755,7 +755,7 @@
             }
         }
 
-            // Verify token and redirect if valid
+        // Verify token and redirect if valid
         async function verifyTokenAndRedirect(token) {
             try {
                 const userInfo = getUserFromToken(token);
@@ -798,7 +798,7 @@
             successMessage.style.display = 'none';
         }
 
-                // Login form submission handler  
+        // Login form submission handler  
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1050,8 +1050,6 @@
         // Tab switching handlers
         loginTab.addEventListener('click', () => switchTab('login'));
         registerTab.addEventListener('click', () => switchTab('register'));
-
-
 
         // === Требования к паролю ===
         function renderPasswordRequirements(containerId, prefix) {

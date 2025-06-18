@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 
     <!-- Security Headers -->
@@ -11,7 +11,7 @@
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), autoplay=()">
     <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com/ https://cdn.jsdelivr.net/ https://cdnjs.cloudflare.com/ https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://region1.google-analytics.com; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com/ https://cdn.jsdelivr.net/ https://cdnjs.cloudflare.com/ https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://region1.google-analytics.com https://www.google-analytics.com; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
     
     <title>TechPortal - Креативная веб-разработка | Портфолио</title>
     <meta name="description" content="Профессиональная веб-разработка с фокусом на стильный дизайн и современные технологии. Создаю уникальные цифровые решения для вашего бизнеса.">
@@ -52,7 +52,7 @@
     <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     
 
    
@@ -209,10 +209,8 @@
         }
     </style>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/rellax/1.12.1/rellax.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Удалены скрипты Rellax, GSAP, ScrollTrigger, Chart.js -->
+
 </head>
 
 <body>
@@ -373,21 +371,21 @@
 
     <main class="main-content">
     <!-- Hero Section -->
-        <section id="hero" class="section hero-section active rellax-bg" data-rellax-speed="-3">
+        <section id="hero" class="section hero-section active">
             <div class="container">
             <div class="hero-content">
                     <div class="hero-text">
-                        <div class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
+                        <div class="hero-subtitle">
                             <div class="badge">Веб-разработчик</div>
                         </div>
-                        <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
+                        <h1 class="hero-title">
                             Креативные <span class="gradient-text">цифровые</span> решения
                 </h1>
-                        <p class="hero-description" data-aos="fade-up" data-aos-delay="300">
+                        <p class="hero-description">
                             Преобразую идеи в элегантные и функциональные веб-проекты, 
                             объединяя инновационный дизайн с современными технологиями.
                         </p>
-                        <div class="hero-actions" data-aos="fade-up" data-aos-delay="400">
+                        <div class="hero-actions">
                             <a href="#works" class="btn btn-primary">
                                 <span>Мои работы</span>
                                 <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -399,7 +397,7 @@
                                 <span>Связаться</span>
                             </a>
                 </div>
-                        <div class="hero-stats" data-aos="fade-up" data-aos-delay="500">
+                        <div class="hero-stats">
                             <div class="stat">
                                 <div class="stat-number" data-count="20">0</div>
                                 <div class="stat-label">Проектов</div>
@@ -414,7 +412,7 @@
             </div>
         </div>
                     </div>
-                    <div class="hero-visual" data-aos="fade-left" data-aos-delay="300">
+                    <div class="hero-visual">
                         <div class="hero-image">
                             <div class="blob-animation"></div>
                             <div class="rotating-tech">
@@ -457,15 +455,15 @@
     </section>
 
         <!-- Works Section -->
-        <section id="works" class="section works-section rellax-bg" data-rellax-speed="-2">
+        <section id="works" class="section works-section">
         <div class="container">
-                <div class="section-header" data-aos="fade-up">
+                <div class="section-header">
                     <h2 class="section-title">Мои работы</h2>
                     <p class="section-subtitle">Избранные проекты из моего портфолио</p>
                 </div>
                 
                 
-                <div class="works-grid" data-aos="fade-up" data-aos-delay="300">
+                <div class="works-grid">
                     <div class="work-item" data-category="landing">
                         <div class="work-image">
                             <div class="project-preview project-1"></div>
@@ -476,7 +474,7 @@
                                 </div>
                                 <h3 class="work-title">Современный лендинг</h3>
                                 <p class="work-description">Одностраничный сайт с параллакс эффектами и плавными анимациями</p>
-                                <button class="work-link" data-project="project1">
+                                <button class="work-link" data-project="project1" aria-label="Открыть проект: Современный лендинг">
                                    
                                     <svg class="link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -496,7 +494,7 @@
                                 </div>
                                 <h3 class="work-title">Интернет-магазин</h3>
                                 <p class="work-description">Полнофункциональный онлайн-магазин с корзиной и оформлением заказов</p>
-                                <button class="work-link" data-project="project2">
+                                <button class="work-link" data-project="project2" aria-label="Открыть проект: Интернет-магазин">
                                     
                                     <svg class="link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -516,7 +514,7 @@
                                 </div>
                                 <h3 class="work-title">Система авторизации</h3>
                                 <p class="work-description">Защищенная система входа с JWT токенами и восстановлением пароля</p>
-                                <button class="work-link" data-project="project3">
+                                <button class="work-link" data-project="project3" aria-label="Открыть проект: Система авторизации">
                                     
                                     <svg class="link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -536,7 +534,7 @@
                                 </div>
                                 <h3 class="work-title">Корпоративный блог</h3>
                                 <p class="work-description">Многопользовательский блог с ролями и редактором контента</p>
-                                <button class="work-link" data-project="project4">
+                                <button class="work-link" data-project="project4" aria-label="Открыть проект: Корпоративный блог">
                                     
                                     <svg class="link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -548,7 +546,7 @@
                 
                     <div class="work-item" data-category="landing">
                         <div class="work-image">
-                            <div class="project-preview project-5"></div>
+                            <div class="project-preview project-5" aria-label="Открыть проект: Кастомная WordPress тема"></div>
                             <div class="work-overlay">
                                 <div class="work-tags">
                                     <span class="tag">WordPress</span>
@@ -576,7 +574,7 @@
                                 </div>
                                 <h3 class="work-title">Адаптивная верстка</h3>
                                 <p class="work-description">Точная pixel-perfect верстка с макета Figma с поддержкой всех устройств</p>
-                                <button class="work-link" data-project="project6">
+                                <button class="work-link" data-project="project6" aria-label="Открыть проект: Адаптивная верстка">
                                     
                                     <svg class="link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -590,15 +588,15 @@
     </section>
 
     <!-- Services Section -->
-        <section id="services" class="section services-section gsap-fade-up">
+        <section id="services" class="section services-section">
         <div class="container">
-                <div class="section-header" data-aos="fade-up">
+                <div class="section-header">
                     <h2 class="section-title">Мои услуги</h2>
                     <p class="section-subtitle">Комплексные решения для вашего бизнеса</p>
                 </div>
             
             <div class="services-grid">
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-card">
                         <div class="service-icon">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2 9.75C2 8.23122 3.23122 7 4.75 7H19.25C20.7688 7 22 8.23122 22 9.75V19.25C22 20.7688 20.7688 22 19.25 22H4.75C3.23122 22 2 20.7688 2 19.25V9.75Z" stroke="currentColor" stroke-width="1.5"/>
@@ -620,7 +618,7 @@
                         </ul>
                 </div>
                 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-card">
                         <div class="service-icon">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M3 5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V7C21 8.10457 20.1046 9 19 9H5C3.89543 9 3 8.10457 3 7V5Z" stroke="currentColor" stroke-width="1.5"/>
@@ -641,7 +639,7 @@
                         </ul>
                 </div>
                 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-card">
                         <div class="service-icon">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2 6C2 4.34315 3.34315 3 5 3H19C20.6569 3 22 4.34315 22 6V15C22 16.6569 20.6569 18 19 18H5C3.34315 18 2 16.6569 2 15V6Z" stroke="currentColor" stroke-width="1.5"/>
@@ -661,7 +659,7 @@
                         </ul>
                 </div>
                 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="service-card">
                         <div class="service-icon">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2 11.5C2 7.02944 2 4.79416 3.39708 3.39708C4.79416 2 7.02944 2 11.5 2C15.9706 2 18.2058 2 19.6029 3.39708C21 4.79416 21 7.02944 21 11.5V12.5C21 16.9706 21 19.2058 19.6029 20.6029C18.2058 22 15.9706 22 11.5 22C7.02944 22 4.79416 22 3.39708 20.6029C2 19.2058 2 16.9706 2 12.5V11.5Z" stroke="currentColor" stroke-width="1.5"/>
@@ -682,7 +680,7 @@
                         </ul>
                 </div>
                 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="500">
+                    <div class="service-card">
                         <div class="service-icon">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M13 3H8.2C7.0799 3 6.51984 3 6.09202 3.21799C5.71569 3.40973 5.40973 3.71569 5.21799 4.09202C5 4.51984 5 5.0799 5 6.2V17.8C5 18.9201 5 19.4802 5.21799 19.908C5.40973 20.2843 5.71569 20.5903 6.09202 20.782C6.51984 21 7.0799 21 8.2 21H15.8C16.9201 21 17.4802 21 17.908 20.782C18.2843 20.5903 18.5903 20.2843 18.782 19.908C19 19.4802 19 18.9201 19 17.8V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -702,7 +700,7 @@
                         </ul>
                 </div>
                 
-                    <div class="service-card" data-aos="fade-up" data-aos-delay="600">
+                    <div class="service-card">
                         <div class="service-icon">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7 8L3 12L7 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -726,10 +724,10 @@
     </section>
 
     <!-- About Section -->
-        <section id="about" class="section about-section gsap-fade-up">
+        <section id="about" class="section about-section">
         <div class="container">
             <div class="about-content glass-panel">
-                    <div class="about-text" data-aos="fade-up">
+                    <div class="about-text">
                         <div class="section-header">
                             <h2 class="section-title">О себе</h2>
                             <p class="section-subtitle">Немного о моем опыте и подходе к работе</p>
@@ -752,7 +750,7 @@
     <!-- Calculator Section -->
     <section id="calculator" class="section calculator-section">
         <div class="container">
-            <div class="calculator-content" data-aos="fade-up">
+            <div class="calculator-content">
                 <div class="calculator-header">
                     <h2 class="section-title">Калькулятор стоимости</h2>
                     <p class="section-subtitle">Рассчитайте примерную стоимость вашего проекта</p>
@@ -910,7 +908,6 @@
                                 <span>Сбросить</span>
                             </button>
                         </div>
-                        <canvas id="calcChart" width="320" height="180" style="margin:32px auto 0;display:block;"></canvas>
                     </div>
                 </div>
             </div>
@@ -922,7 +919,7 @@
         <div class="container">
             <div class="advanced-features-grid">
                 <!-- Сохранение расчетов -->
-                <div class="feature-card" data-aos="fade-up">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" stroke="currentColor" stroke-width="2"/>
@@ -942,7 +939,7 @@
                 </div>
 
                 <!-- Сравнение пакетов -->
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M9 11H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2z" stroke="currentColor" stroke-width="2"/>
@@ -963,7 +960,7 @@
                 </div>
 
                 <!-- Временная шкала проекта -->
-                <div class="feature-card feature-card-wide" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card feature-card-wide">
                     <div class="feature-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
@@ -1062,12 +1059,12 @@
     <!-- Reviews Section -->
     <section id="reviews" class="section reviews-section">
         <div class="container">
-            <div class="section-header" data-aos="fade-up">
+            <div class="section-header">
                 <h2 class="section-title">Отзывы клиентов</h2>
                 <p class="section-subtitle">Что говорят о моей работе</p>
             </div>
             
-            <div class="reviews-grid" data-aos="fade-up">
+            <div class="reviews-grid">
                 <div class="review-card">
                     <div class="review-header">
                         <div class="reviewer-info">
@@ -1079,7 +1076,7 @@
                         </svg>
                         </div>
                             <div class="reviewer-details">
-                                <h4 class="reviewer-name">Анна Петрова</h4>
+                                <h3 class="reviewer-name">Анна Петрова</h3>
                                 <p class="reviewer-position">Директор маркетингового агентства</p>
                         </div>
                         </div>
@@ -1108,7 +1105,7 @@
                         </svg>
                     </div>
                             <div class="reviewer-details">
-                                <h4 class="reviewer-name">Михаил Волков</h4>
+                                <h3 class="reviewer-name">Михаил Волков</h3>
                                 <p class="reviewer-position">Основатель IT-стартапа</p>
                             </div>
                         </div>
@@ -1137,7 +1134,7 @@
                         </svg>
                             </div>
                             <div class="reviewer-details">
-                                <h4 class="reviewer-name">Елена Сидорова</h4>
+                                <h3 class="reviewer-name">Елена Сидорова</h3>
                                 <p class="reviewer-position">Владелец интернет-магазина</p>
                             </div>
                         </div>
@@ -1166,7 +1163,7 @@
                         </svg>
                             </div>
                             <div class="reviewer-details">
-                                <h4 class="reviewer-name">Дмитрий Козлов</h4>
+                                <h3 class="reviewer-name">Дмитрий Козлов</h3>
                                 <p class="reviewer-position">Руководитель отдела продаж</p>
                             </div>
                         </div>
@@ -1195,7 +1192,7 @@
                         </svg>
                             </div>
                             <div class="reviewer-details">
-                                <h4 class="reviewer-name">Ольга Морозова</h4>
+                                <h3 class="reviewer-name">Ольга Морозова</h3>
                                 <p class="reviewer-position">Фитнес-тренер</p>
                             </div>
                         </div>
@@ -1224,7 +1221,7 @@
                         </svg>
                             </div>
                             <div class="reviewer-details">
-                                <h4 class="reviewer-name">Александр Белов</h4>
+                                <h3 class="reviewer-name">Александр Белов</h3>
                                 <p class="reviewer-position">Ресторатор</p>
                             </div>
                         </div>
@@ -1248,11 +1245,11 @@
     <!-- FAQ Section -->
     <section id="faq" class="section faq-section">
         <div class="container">
-            <div class="section-header" data-aos="fade-up">
+            <div class="section-header">
                 <h2 class="section-title">Часто задаваемые вопросы</h2>
                 <p class="section-subtitle">Ответы на популярные вопросы</p>
         </div>
-        <div class="faq-content glass-panel" data-aos="fade-up">
+        <div class="faq-content glass-panel">
             <div class="faq-item">
                 <div class="faq-question">
                     <h3>Сколько времени займет создание сайта?</h3>
@@ -1356,13 +1353,13 @@
     <!-- Contact Section -->
         <section id="contact" class="section contact-section">
         <div class="container">
-                <div class="section-header" data-aos="fade-up">
+                <div class="section-header">
                     <h2 class="section-title">Связаться со мной</h2>
                     <p class="section-subtitle">Готов обсудить ваш проект</p>
             </div>
             
             <div class="contact-content">
-                    <div class="contact-form-container" data-aos="fade-right">
+                    <div class="contact-form-container">
                         <form id="contactForm" class="contact-form" novalidate>
                             <div class="form-header">
                                 <h3 class="form-title">Расскажите о проекте</h3>
@@ -1423,7 +1420,7 @@
                         </form>
                 </div>
                 
-                    <div class="contact-info" data-aos="fade-left">
+                    <div class="contact-info">
                         <div class="contact-info-header">
                             <h3 class="contact-info-title">Контактная информация</h3>
                             <p class="contact-info-subtitle">Выберите удобный способ связи</p>
@@ -1476,8 +1473,9 @@
                                 <div class="contact-info-details">
                                     <h4 class="contact-info-label">Социальные сети</h4>
                         <div class="social-links">
-                                        <a href="https://github.com/M5rkn" class="social-link" target="_blank" rel="noopener noreferrer">GitHub</a>
-                                        <a href="https://www.instagram.com/m5rkn/" class="social-link" target="_blank" rel="noopener noreferrer">Instagram</a>
+                                        <a href="https://github.com/M5rkn" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GitHub</a>
+                                        <a href="https://t.me/Marklill" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Telegram">Telegram</a>
+                                        <a href="https://www.instagram.com/m5rkn/" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">Instagram</a>
                                     </div>
                                 </div>
                             </div>
@@ -1519,19 +1517,19 @@
     </div>
 
                 <div class="footer-socials">
-                    <a href="https://github.com/M5rkn" class="social-icon" target="_blank" rel="noopener noreferrer">
+                    <a href="https://github.com/M5rkn" class="social-icon" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5229 6.47715 22 12 22C17.5229 22 22 17.5229 22 12C22 6.47715 17.5229 2 12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M14.3333 19V17.137C14.3583 16.8275 14.3154 16.5163 14.2073 16.2242C14.0993 15.9321 13.9286 15.6657 13.7067 15.4428C15.8 15.2156 18 14.4431 18 10.8989C17.9998 9.99256 17.6418 9.12101 17 8.46461C17.3039 7.67171 17.2824 6.79528 16.94 6.01739C16.94 6.01739 16.1533 5.7902 14.3333 6.97248C12.8053 6.57298 11.1947 6.57298 9.66666 6.97248C7.84666 5.7902 7.05999 6.01739 7.05999 6.01739C6.71757 6.79528 6.69609 7.67171 6.99999 8.46461C6.35341 9.12588 5.99501 10.0053 5.99999 10.9183C5.99999 14.4366 8.19999 15.2091 10.2933 15.4622C10.074 15.6829 9.90483 15.9461 9.79686 16.2347C9.68889 16.5232 9.64453 16.8306 9.66666 17.137V19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M9.66667 17.7018C7.66667 18.3335 6 17.7018 5 16.0684" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </a>
-                    <a href="https://t.me/Marklill" class="social-icon" target="_blank" rel="noopener noreferrer">
+                    <a href="https://t.me/Marklill" class="social-icon" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.13-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z" fill="currentColor"/>
                         </svg>
                     </a>
-                    <a href="https://www.instagram.com/m5rkn/" class="social-icon" target="_blank" rel="noopener noreferrer">
+                    <a href="https://www.instagram.com/m5rkn/" class="social-icon" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16Z" stroke="currentColor" stroke-width="1.5"/>
@@ -1595,51 +1593,8 @@
     <!-- Toast notifications -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- AOS Animation Library -->
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    
     <!-- Main script -->
     <script src="script.js"></script>
-
-    <script>
-      // Parallax
-      document.addEventListener('DOMContentLoaded', function() {
-        if (window.Rellax) {
-          new Rellax('.rellax-bg');
-        }
-        if (window.gsap && window.ScrollTrigger) {
-          // Анимация секций
-          gsap.utils.toArray('.gsap-fade-up').forEach(function(el) {
-            gsap.fromTo(el, {opacity: 0, y: 60}, {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: el,
-                start: 'top 80%',
-                toggleActions: 'play none none none'
-              }
-            });
-          });
-          // Анимация кнопок 'Подробнее'
-          gsap.utils.toArray('.gsap-btn').forEach(function(btn) {
-            gsap.fromTo(btn, {opacity: 0, y: 30}, {
-              opacity: 1,
-              y: 0,
-              duration: 0.6,
-              delay: 0.2,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: btn,
-                start: 'top 90%',
-                toggleActions: 'play none none none'
-              }
-            });
-          });
-        }
-      });
-    </script>
 </body>
 
 </html> 
