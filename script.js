@@ -28,7 +28,7 @@ async function initCSRF() {
             csrfToken = data.csrfToken;
         }
     } catch (error) {
-        console.warn('CSRF token fetch failed:', error);
+        // Удалено: console.warn('CSRF token fetch failed:', error);
     }
 }
 
@@ -172,8 +172,8 @@ function showToast(type, message) {
 
 // Инициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔍 DEBUG DOM loaded, starting initialization');
-    console.log('🔍 DEBUG Token on page load:', localStorage.getItem('authToken'));
+    // Удалено: console.log('🔍 DEBUG DOM loaded, starting initialization');
+    // Удалено: console.log('🔍 DEBUG Token on page load:', localStorage.getItem('authToken'));
     
     // Убираем прелоадер сразу
     const preloader = document.getElementById('preloader');
@@ -415,9 +415,9 @@ function initCalculator() {
         // Активируем/деактивируем кнопку отправки
         if (sendToFormBtn) {
             sendToFormBtn.disabled = !selectedPackage;
-            console.log('selectedPackage:', selectedPackage);
-            console.log('selectedServices:', selectedServices);
-            console.log('sendToFormBtn.disabled:', sendToFormBtn.disabled);
+            // Удалено: console.log('selectedPackage:', selectedPackage);
+            // Удалено: console.log('selectedServices:', selectedServices);
+            // Удалено: console.log('sendToFormBtn.disabled:', sendToFormBtn.disabled);
         }
 
         // Отправляем событие для интеграции с расширенным калькулятором
@@ -447,18 +447,18 @@ function initCalculator() {
             // Проверяем, что токен не истек
             try {
                 const payload = JSON.parse(atob(token.split('.')[1]));
-                console.log('🔍 DEBUG getUserBonusDiscount - token payload:', payload);
-                console.log('🔍 DEBUG getUserBonusDiscount - current time:', Date.now());
-                console.log('🔍 DEBUG getUserBonusDiscount - token exp:', payload.exp * 1000);
+                // Удалено: console.log('🔍 DEBUG getUserBonusDiscount - token payload:', payload);
+                // Удалено: console.log('🔍 DEBUG getUserBonusDiscount - current time:', Date.now());
+                // Удалено: console.log('🔍 DEBUG getUserBonusDiscount - token exp:', payload.exp * 1000);
                 
                 if (Date.now() >= payload.exp * 1000) {
-                    console.log('🔍 DEBUG getUserBonusDiscount - token expired, removing');
+                    // Удалено: console.log('🔍 DEBUG getUserBonusDiscount - token expired, removing');
                     localStorage.removeItem('authToken');
                     return 0;
                 }
             } catch (error) {
-                console.log('🔍 DEBUG getUserBonusDiscount - token parse error:', error);
-                console.log('🔍 DEBUG getUserBonusDiscount - removing invalid token');
+                // Удалено: console.log('🔍 DEBUG getUserBonusDiscount - token parse error:', error);
+                // Удалено: console.log('🔍 DEBUG getUserBonusDiscount - removing invalid token');
                 localStorage.removeItem('authToken');
                 return 0;
             }
@@ -676,7 +676,7 @@ function initAdvancedCalculator() {
             
             return payload.userId || payload.email || payload.id || null;
         } catch (error) {
-            console.log('Ошибка декодирования токена:', error);
+            // Удалено: console.log('Ошибка декодирования токена:', error);
             return null;
         }
     }
@@ -1540,9 +1540,9 @@ function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                console.log('ServiceWorker успешно зарегистрирован:', registration.scope);
+                // Удалено: console.log('ServiceWorker успешно зарегистрирован:', registration.scope);
             }).catch(function(error) {
-                console.log('Ошибка при регистрации ServiceWorker:', error);
+                // Удалено: console.log('Ошибка при регистрации ServiceWorker:', error);
             });
         });
     }
@@ -1998,8 +1998,8 @@ function initFAQ() {
 function decodeName(name) {
     if (!name || typeof name !== 'string') return name;
     
-    console.log('🔍 DEBUG decodeName input:', name);
-    console.log('🔍 DEBUG decodeName chars:', Array.from(name).map(c => `${c}(${c.charCodeAt(0)})`).join(' '));
+    // Удалено: console.log('🔍 DEBUG decodeName input:', name);
+    // Удалено: console.log('🔍 DEBUG decodeName chars:', Array.from(name).map(c => `${c}(${c.charCodeAt(0)})`).join(' '));
     
     try {
         // Метод 1: Попытка декодирования UTF-8 из неправильно интерпретированных байтов
@@ -2009,26 +2009,26 @@ function decodeName(name) {
         }
         const decoded = new TextDecoder('utf-8').decode(bytes);
         
-        console.log('🔍 DEBUG decodeName method 1 result:', decoded);
+        // Удалено: console.log('🔍 DEBUG decodeName method 1 result:', decoded);
         
         // Проверяем, содержит ли результат кириллицу или латиницу
         if (/[\u0400-\u04FF]/.test(decoded) || /^[a-zA-Z0-9\s]+$/.test(decoded)) {
             return decoded;
         }
     } catch (e) {
-        console.log('🔍 DEBUG decodeName method 1 error:', e);
+        // Удалено: console.log('🔍 DEBUG decodeName method 1 error:', e);
     }
     
     try {
         // Метод 2: Декодирование через escape/unescape (для старых браузеров)
         const decoded = decodeURIComponent(escape(name));
-        console.log('🔍 DEBUG decodeName method 2 result:', decoded);
+        // Удалено: console.log('🔍 DEBUG decodeName method 2 result:', decoded);
         
         if (/[\u0400-\u04FF]/.test(decoded) || /^[a-zA-Z0-9\s]+$/.test(decoded)) {
             return decoded;
         }
     } catch (e) {
-        console.log('🔍 DEBUG decodeName method 2 error:', e);
+        // Удалено: console.log('🔍 DEBUG decodeName method 2 error:', e);
     }
     
     // Метод 3: Полный словарь замен для всех русских символов
@@ -2065,79 +2065,79 @@ function decodeName(name) {
         result = result.replace(new RegExp(corrupted.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), correct);
     }
     
-    console.log('🔍 DEBUG decodeName final result:', result);
+    // Удалено: console.log('🔍 DEBUG decodeName final result:', result);
     return result;
 }
 
 // Инициализация кнопки авторизации
 function initAuthButton() {
-    console.log('🔍 DEBUG initAuthButton called');
-    console.log('🔍 DEBUG Token in initAuthButton:', localStorage.getItem('authToken'));
+    // Удалено: console.log('🔍 DEBUG initAuthButton called');
+    // Удалено: console.log('🔍 DEBUG Token in initAuthButton:', localStorage.getItem('authToken'));
     
     const authLink = document.getElementById('authLink');
     const authText = document.getElementById('authText');
     const authLinkMobile = document.getElementById('authLinkMobile');
     const authTextMobile = document.getElementById('authTextMobile');
 
-    console.log('🔍 DEBUG Auth elements found:', {
-        authLink: !!authLink,
-        authText: !!authText,
-        authLinkMobile: !!authLinkMobile,
-        authTextMobile: !!authTextMobile
-    });
+    // Удалено: console.log('🔍 DEBUG Auth elements found:', {
+    //     authLink: !!authLink,
+    //     authText: !!authText,
+    //     authLinkMobile: !!authLinkMobile,
+    //     authTextMobile: !!authTextMobile
+    // });
 
     if (!authLink || !authText || !authLinkMobile || !authTextMobile) {
-        console.log('🔍 DEBUG Missing auth elements, returning');
+        // Удалено: console.log('🔍 DEBUG Missing auth elements, returning');
         return;
     }
 
     // Проверяем авторизацию при загрузке страницы
-    console.log('🔍 DEBUG Calling checkAuthStatus');
+    // Удалено: console.log('🔍 DEBUG Calling checkAuthStatus');
     
     // Добавляем небольшую задержку для гарантии загрузки localStorage
     setTimeout(() => {
-        console.log('🔍 DEBUG Delayed checkAuthStatus call');
+        // Удалено: console.log('🔍 DEBUG Delayed checkAuthStatus call');
     checkAuthStatus();
     }, 100);
 
     function checkAuthStatus() {
         const token = localStorage.getItem('authToken');
-        console.log('🔍 DEBUG checkAuthStatus - token exists:', !!token);
-        console.log('🔍 DEBUG checkAuthStatus - token value:', token ? token.substring(0, 50) + '...' : 'null');
+        // Удалено: console.log('🔍 DEBUG checkAuthStatus - token exists:', !!token);
+        // Удалено: console.log('🔍 DEBUG checkAuthStatus - token value:', token ? token.substring(0, 50) + '...' : 'null');
         
         if (!token) {
-            console.log('🔍 DEBUG No token found');
+            // Удалено: console.log('🔍 DEBUG No token found');
             updateAuthButton(false);
             return;
         }
         
         const isExpired = isTokenExpired(token);
-        console.log('🔍 DEBUG Token expired:', isExpired);
+        // Удалено: console.log('🔍 DEBUG Token expired:', isExpired);
         
         if (isExpired) {
-            console.log('🔍 DEBUG Token expired, removing');
+            // Удалено: console.log('🔍 DEBUG Token expired, removing');
             localStorage.removeItem('authToken');
             updateAuthButton(false);
             return;
         }
         
-        console.log('🔍 DEBUG Token valid, updating auth button');
+        // Удалено: console.log('🔍 DEBUG Token valid, updating auth button');
         updateAuthButton(true);
     }
 
     function updateAuthButton(isLoggedIn) {
-        console.log('🔍 DEBUG updateAuthButton called with isLoggedIn:', isLoggedIn);
+        // Удалено: console.log('🔍 DEBUG updateAuthButton called with isLoggedIn:', isLoggedIn);
         
         if (isLoggedIn) {
             const token = localStorage.getItem('authToken');
             const userInfo = getUserFromToken(token);
             
-            console.log('🔍 DEBUG userInfo from token:', userInfo);
+            // Удалено: console.log('🔍 DEBUG userInfo from token:', userInfo);
             
             if (userInfo) {
                 // Показываем аватарку пользователя
                 const firstLetter = userInfo.name.charAt(0).toUpperCase();
-                console.log('🔍 DEBUG Setting user avatar with letter:', firstLetter);
+                // Удалено: console.log('🔍 DEBUG Setting user avatar with letter:', firstLetter);
                 
                 // Обновляем боковую навигацию
                 authText.innerHTML = `<div class="user-avatar">${firstLetter}</div>`;
@@ -2149,13 +2149,13 @@ function initAuthButton() {
                 authLinkMobile.href = 'profile.html';
                 authLinkMobile.onclick = null;
                 
-                console.log('🔍 DEBUG Auth button updated for logged in user');
+                // Удалено: console.log('🔍 DEBUG Auth button updated for logged in user');
             } else {
-                console.log('🔍 DEBUG No userInfo, showing login');
+                // Удалено: console.log('🔍 DEBUG No userInfo, showing login');
                 updateAuthButton(false);
             }
         } else {
-            console.log('🔍 DEBUG Setting login state');
+            // Удалено: console.log('🔍 DEBUG Setting login state');
             authText.textContent = 'Войти';
             authTextMobile.textContent = 'Войти';
             authLink.href = 'login.html';
@@ -2168,11 +2168,11 @@ function initAuthButton() {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
             
-            console.log('🔍 DEBUG Token payload:', payload); // Отладка
+            // Удалено: console.log('🔍 DEBUG Token payload:', payload); // Отладка
             
             // Проверяем срок действия токена
             if (payload.exp && payload.exp * 1000 < Date.now()) {
-                console.log('🔍 DEBUG Token expired');
+                // Удалено: console.log('🔍 DEBUG Token expired');
                 return null;
             }
             
@@ -2190,7 +2190,7 @@ function initAuthButton() {
                 role: payload.role
             };
             
-            console.log('🔍 DEBUG Parsed user info:', userInfo); // Отладка
+            // Удалено: console.log('🔍 DEBUG Parsed user info:', userInfo); // Отладка
             
             return userInfo;
         } catch (error) {

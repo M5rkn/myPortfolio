@@ -62,7 +62,7 @@ app.use((req, res, next) => {
     if (req.path.endsWith('.html') || req.path === '/') {
         res.setHeader('Content-Security-Policy', 
             "default-src 'self'; " +
-            "script-src 'self' 'unsafe-inline' https://unpkg.com/ https://cdn.jsdelivr.net/ https://www.googletagmanager.com https://www.google-analytics.com; " +
+            "script-src 'self' 'unsafe-inline' https://unpkg.com/ https://cdn.jsdelivr.net/ https://cdnjs.cloudflare.com/ https://www.googletagmanager.com https://www.google-analytics.com; " +
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
             "font-src 'self' https://fonts.gstatic.com; " +
             "img-src 'self' data: blob: https://www.google-analytics.com; " +
