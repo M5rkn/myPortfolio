@@ -200,6 +200,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Асинхронно инициализируем CSRF и форму
     initCSRFAndForm();
+
+    // Проверка авторизации (по токену)
+    const addToCartBtn = document.getElementById('addToCartBtn');
+    const token = localStorage.getItem('authToken');
+    if (addToCartBtn) {
+        if (token) {
+            addToCartBtn.style.display = '';
+        } else {
+            addToCartBtn.style.display = 'none';
+        }
+        addToCartBtn.addEventListener('click', function() {
+            const calc = getCurrentCalculation();
+            if (!calc) {
+                alert('Сначала выберите пакет и услуги!');
+                return;
+            }
+            // Сохраняем корзину в localStorage (можно заменить на API)
+            let cart = [];
+            try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch(e){}
+            cart.push(calc);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert('Товары добавлены в корзину!');
+        });
+    }
+
+    const goToCartBtn = document.getElementById('goToCartBtn');
+    if (goToCartBtn) {
+        if (token) {
+            goToCartBtn.style.display = '';
+        } else {
+            goToCartBtn.style.display = 'none';
+        }
+    }
 });
 
 // Отдельная функция для асинхронной инициализации формы

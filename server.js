@@ -20,6 +20,10 @@ const telegramService = require('./telegramService');
 // Email integration
 const emailService = require('./emailService');
 
+// === Stripe и PayPal интеграция ===
+const Stripe = require('stripe');
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -2905,3 +2909,95 @@ if (require.main === module) {
     // Security timeout for server
     server.timeout = 30000; // 30 seconds timeout
 }
+
+app.post('/api/payment/stripe/create-session', async (req, res) => {
+    try {
+        const { amount } = req.body;
+        if (!amount || isNaN(amount) || amount < 1) {
+            return res.status(400).json({ error: 'Некорректная сумма' });
+        }
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{
+                price_data: {
+                    currency: 'eur',
+                    product_data: { name: 'Оплата услуг' },
+                    unit_amount: Math.round(amount * 100),
+                },
+                quantity: 1,
+            }],
+            mode: 'payment',
+            success_url: process.env.PAYMENT_SUCCESS_URL || 'https://yourdomain.com/success',
+            cancel_url: process.env.PAYMENT_CANCEL_URL || 'https://yourdomain.com/cancel',
+        });
+        res.json({ sessionId: session.id, url: session.url });
+    } catch (e) {
+        console.error('Stripe error:', e);
+        res.status(500).json({ error: 'Ошибка создания платежа' });
+    }
+});
+
+// Stripe webhook для уведомлений о платеже
+app.post('/api/payment/stripe/webhook', express.raw({type: 'application/json'}), async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    let event;
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    } catch (err) {
+        console.error('Webhook signature error:', err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+        // Получаем email пользователя (если есть)
+        const customerEmail = session.customer_details?.email || session.customer_email || 'Неизвестно';
+        // Получаем описание заказа (cart)
+        const cart = session.metadata && session.metadata.cart ? JSON.parse(session.metadata.cart) : [];
+        let orderText = 'Пользователь совершил покупку.\nEmail: ' + customerEmail + '\n';
+        orderText += 'Услуги:\n' + cart.map(item => {
+            let s = `- ${item.package.name} (${item.package.price} €)`;
+            if (item.services && item.services.length) {
+                s += '\n  Дополнительно: ' + item.services.map(sv => `${sv.name} (${sv.price} €)`).join(', ');
+            }
+            return s;
+        }).join('\n');
+        // Email
+        try {
+            await require('./emailService').sendOrderNotification(customerEmail, orderText);
+        } catch(e){ console.error('Email notify error:', e); }
+        // Telegram
+        try {
+            await require('./telegramService').sendOrderNotification(orderText);
+        } catch(e){ console.error('Telegram notify error:', e); }
+    }
+    res.json({received: true});
+});
+
+// Модифицирую Stripe session: сохраняю cart в metadata
+app.post('/api/payment/stripe/create-session', async (req, res) => {
+    try {
+        const { amount, cart } = req.body;
+        if (!amount || isNaN(amount) || amount < 1) {
+            return res.status(400).json({ error: 'Некорректная сумма' });
+        }
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{
+                price_data: {
+                    currency: 'eur',
+                    product_data: { name: 'Оплата услуг' },
+                    unit_amount: Math.round(amount * 100),
+                },
+                quantity: 1,
+            }],
+            mode: 'payment',
+            success_url: process.env.PAYMENT_SUCCESS_URL || 'https://yourdomain.com/success',
+            cancel_url: process.env.PAYMENT_CANCEL_URL || 'https://yourdomain.com/cancel',
+            metadata: { cart: cart ? JSON.stringify(cart) : '' },
+        });
+        res.json({ sessionId: session.id, url: session.url });
+    } catch (e) {
+        console.error('Stripe error:', e);
+        res.status(500).json({ error: 'Ошибка создания платежа' });
+    }
+});

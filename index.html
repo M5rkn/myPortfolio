@@ -285,6 +285,10 @@
                     <span class="nav-dot"></span>
                     <span class="nav-text">Калькулятор</span>
                 </a>
+                <a href="cart.html" class="side-nav-link external">
+                    <span class="nav-dot"></span>
+                    <span class="nav-text">Корзина</span>
+                </a>
                 <a href="#reviews" class="side-nav-link" data-section="reviews">
                     <span class="nav-dot"></span>
                     <span class="nav-text">Отзывы</span>
@@ -339,6 +343,7 @@
                 <a href="#works" class="mobile-nav-link">Работы</a>
                 <a href="#services" class="mobile-nav-link">Услуги</a>
                 <a href="#calculator" class="mobile-nav-link">Калькулятор</a>
+                <a href="cart.html" class="mobile-nav-link">Корзина</a>
                 <a href="#reviews" class="mobile-nav-link">Отзывы</a>
                 <a href="#faq" class="mobile-nav-link">FAQ</a>
                 <a href="#about" class="mobile-nav-link">О себе</a>
@@ -881,7 +886,7 @@
 
                 <div class="calculator-result">
                     <div class="result-card">
-                        <h3 class="result-title">Расчет стоимости</h3>
+                        <h3 class="result-title">Расчёт стоимости</h3>
                         <div class="result-breakdown" id="costBreakdown">
                             <div class="breakdown-item">
                                 <span>Выберите тип проекта</span>
@@ -897,7 +902,7 @@
                         </div>
                         <div class="result-actions">
                             <button id="sendToFormBtn" class="btn btn-primary" disabled>
-                                <span>Отправить расчет</span>
+                                <span>Отправить расчёт</span>
                                 <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M5.00003 12.0001H19M19 12.0001L13 6M19 12.0001L13 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
@@ -905,6 +910,10 @@
                             <button id="resetCalculatorBtn" class="btn btn-outline">
                                 <span>Сбросить</span>
                             </button>
+                            <button id="addToCartBtn" class="btn btn-success" style="display:none; margin-left: 8px;">
+                                <span>Добавить в корзину</span>
+                            </button>
+                            <a href="cart.html" id="goToCartBtn" class="btn btn-outline" style="display:none; margin-left: 8px;">Корзина</a>
                         </div>
                     </div>
                 </div>

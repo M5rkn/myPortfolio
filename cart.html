@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина | MyPortfolio</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Корзина</h1>
+        <div id="cartList"></div>
+        <div id="cartTotal" style="margin: 24px 0; font-size: 1.2em;"></div>
+        <div id="paymentSection" style="display:none;">
+            <h3>Выберите способ оплаты</h3>
+            <button id="payStripeBtn" class="btn btn-success">Оплатить картой</button>
+            <a href="https://www.bybit.com/ru-RU/" target="_blank" class="btn btn-outline">Оплатить через Bybit</a>
+        </div>
+    </div>
+    <script src="cart.js"></script>
+</body>
+</html> 
