@@ -506,6 +506,31 @@ function initCalculator() {
 
 // ===== УЛУЧШЕННЫЕ ФУНКЦИИ КАЛЬКУЛЯТОРА =====
 
+// Глобальная функция получения текущего расчета
+function getCurrentCalculation() {
+    const selectedPackageCard = document.querySelector('.package-card.selected');
+    if (!selectedPackageCard) return null;
+
+    const selectedPackage = {
+        name: selectedPackageCard.querySelector('.package-title').textContent,
+        price: parseInt(selectedPackageCard.dataset.price),
+        type: selectedPackageCard.dataset.package
+    };
+
+    const selectedServices = [];
+    document.querySelectorAll('.service-option input[type="checkbox"]:checked').forEach(checkbox => {
+        selectedServices.push({
+            name: checkbox.parentNode.querySelector('.service-name').textContent,
+            price: parseInt(checkbox.dataset.price),
+            type: checkbox.dataset.service
+        });
+    });
+
+    const total = selectedPackage.price + selectedServices.reduce((sum, service) => sum + service.price, 0);
+
+    return { package: selectedPackage, services: selectedServices, total };
+}
+
 // Улучшенный калькулятор с дополнительными фишками
 function initAdvancedCalculator() {
     const saveCalculationBtn = document.getElementById('saveCalculationBtn');
