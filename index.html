@@ -211,8 +211,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </head>
 
 <body>
@@ -1061,116 +1059,180 @@
                 <p class="section-subtitle">Что говорят о моей работе</p>
             </div>
             
-            <div class="reviews-swiper" data-aos="fade-up">
-              <div class="swiper reviews-swiper-inner">
-                <div class="swiper-wrapper">
-                  <div class="swiper-slide">
-                    <div class="review-card">
-                      <div class="review-header">
-                        <div class="reviewer-details">
-                          <h4 class="reviewer-name">Анна Петрова</h4>
-                          <p class="reviewer-position">Директор маркетингового агентства</p>
+            <div class="reviews-grid" data-aos="fade-up">
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="30" cy="30" r="30" fill="#E3F2FD"/>
+                            <circle cx="30" cy="22" r="8" fill="#1976D2"/>
+                            <path d="M15 45c0-8.284 6.716-15 15-15s15 6.716 15 15" fill="#1976D2"/>
+                        </svg>
+                        </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Анна Петрова</h4>
+                                <p class="reviewer-position">Директор маркетингового агентства</p>
+                        </div>
                         </div>
                         <div class="review-rating">
-                          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-                        </div>
-                      </div>
-                      <div class="review-content">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                </div>
+                    </div>
+                    <div class="review-content">
                         <p class="review-text">"Профессиональный подход и внимание к деталям. Лендинг получился именно таким, как мы хотели. Конверсия выросла на 40% после запуска!"</p>
                         <div class="review-project">Лендинг для маркетингового агентства</div>
-                      </div>
                     </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <div class="review-card">
-                      <div class="review-header">
-                        <div class="reviewer-details">
-                          <h4 class="reviewer-name">Михаил Волков</h4>
-                          <p class="reviewer-position">Основатель IT-стартапа</p>
+                        </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="30" cy="30" r="30" fill="#FFF3E0"/>
+                            <circle cx="30" cy="22" r="8" fill="#FF9800"/>
+                            <path d="M15 45c0-8.284 6.716-15 15-15s15 6.716 15 15" fill="#FF9800"/>
+                        </svg>
+                    </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Михаил Волков</h4>
+                                <p class="reviewer-position">Основатель IT-стартапа</p>
+                            </div>
                         </div>
                         <div class="review-rating">
-                          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
                         </div>
-                      </div>
-                      <div class="review-content">
+                    </div>
+                    <div class="review-content">
                         <p class="review-text">"Быстро, качественно и по приятной цене. Сайт работает безупречно, все пожелания были учтены. Рекомендую!"</p>
                         <div class="review-project">Корпоративный сайт</div>
-                      </div>
                     </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <div class="review-card">
-                      <div class="review-header">
-                        <div class="reviewer-details">
-                          <h4 class="reviewer-name">Елена Сидорова</h4>
-                          <p class="reviewer-position">Владелец интернет-магазина</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="30" cy="30" r="30" fill="#F3E5F5"/>
+                            <circle cx="30" cy="22" r="8" fill="#9C27B0"/>
+                            <path d="M15 45c0-8.284 6.716-15 15-15s15 6.716 15 15" fill="#9C27B0"/>
+                        </svg>
+                            </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Елена Сидорова</h4>
+                                <p class="reviewer-position">Владелец интернет-магазина</p>
+                            </div>
                         </div>
                         <div class="review-rating">
-                          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
                         </div>
-                      </div>
-                      <div class="review-content">
+                    </div>
+                    <div class="review-content">
                         <p class="review-text">"Отличный интернет-магазин с удобной админкой. Продажи выросли, клиенты довольны. Сопровождение на высшем уровне!"</p>
                         <div class="review-project">Интернет-магазин одежды</div>
-                      </div>
                     </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <div class="review-card">
-                      <div class="review-header">
-                        <div class="reviewer-details">
-                          <h4 class="reviewer-name">Дмитрий Козлов</h4>
-                          <p class="reviewer-position">Руководитель отдела продаж</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="30" cy="30" r="30" fill="#E8F5E8"/>
+                            <circle cx="30" cy="22" r="8" fill="#4CAF50"/>
+                            <path d="M15 45c0-8.284 6.716-15 15-15s15 6.716 15 15" fill="#4CAF50"/>
+                        </svg>
+                            </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Дмитрий Козлов</h4>
+                                <p class="reviewer-position">Руководитель отдела продаж</p>
+                            </div>
                         </div>
                         <div class="review-rating">
-                          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
                         </div>
-                      </div>
-                      <div class="review-content">
+                    </div>
+                    <div class="review-content">
                         <p class="review-text">"Современный дизайн и отличная производительность. Все сделано в срок и с учетом наших пожеланий. Спасибо за работу!"</p>
                         <div class="review-project">Корпоративный портал</div>
-                      </div>
                     </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <div class="review-card">
-                      <div class="review-header">
-                        <div class="reviewer-details">
-                          <h4 class="reviewer-name">Ольга Морозова</h4>
-                          <p class="reviewer-position">Фитнес-тренер</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="30" cy="30" r="30" fill="#FFF8E1"/>
+                            <circle cx="30" cy="22" r="8" fill="#FFC107"/>
+                            <path d="M15 45c0-8.284 6.716-15 15-15s15 6.716 15 15" fill="#FFC107"/>
+                        </svg>
+                            </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Ольга Морозова</h4>
+                                <p class="reviewer-position">Фитнес-тренер</p>
+                            </div>
                         </div>
                         <div class="review-rating">
-                          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
                         </div>
-                      </div>
-                      <div class="review-content">
+                    </div>
+                    <div class="review-content">
                         <p class="review-text">"Красивый лендинг, который привлекает клиентов. Записей на тренировки стало в разы больше. Очень довольна результатом!"</p>
                         <div class="review-project">Лендинг фитнес-услуг</div>
-                      </div>
                     </div>
-                  </div>
-                  <div class="swiper-slide">
-                    <div class="review-card">
-                      <div class="review-header">
-                        <div class="reviewer-details">
-                          <h4 class="reviewer-name">Александр Белов</h4>
-                          <p class="reviewer-position">Ресторатор</p>
+                </div>
+
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="30" cy="30" r="30" fill="#FFEBEE"/>
+                            <circle cx="30" cy="22" r="8" fill="#F44336"/>
+                            <path d="M15 45c0-8.284 6.716-15 15-15s15 6.716 15 15" fill="#F44336"/>
+                        </svg>
+                            </div>
+                            <div class="reviewer-details">
+                                <h4 class="reviewer-name">Александр Белов</h4>
+                                <p class="reviewer-position">Ресторатор</p>
+                            </div>
                         </div>
                         <div class="review-rating">
-                          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
                         </div>
-                      </div>
-                      <div class="review-content">
+                    </div>
+                    <div class="review-content">
                         <p class="review-text">"Сайт с онлайн-бронированием столиков работает идеально. Клиенты легко находят нас и делают заказы. Отличная работа!"</p>
                         <div class="review-project">Сайт ресторана</div>
-                      </div>
                     </div>
-                  </div>
                 </div>
-                <div class="swiper-pagination"></div>
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-              </div>
             </div>
         </div>
     </section>
@@ -1569,29 +1631,6 @@
           });
         }
       });
-    </script>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      new Swiper('.reviews-swiper-inner', {
-        loop: true,
-        spaceBetween: 32,
-        slidesPerView: 1,
-        autoHeight: true,
-        pagination: { el: '.swiper-pagination', clickable: true },
-        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-        effect: 'slide',
-        speed: 600,
-        autoplay: {
-          delay: 7000,
-          disableOnInteraction: false
-        },
-        breakpoints: {
-          768: { slidesPerView: 2 },
-          1200: { slidesPerView: 3 }
-        }
-      });
-    });
     </script>
 </body>
 
