@@ -206,6 +206,10 @@
             display: none !important;
         }
     </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rellax/1.12.1/rellax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 
 <body>
@@ -360,7 +364,7 @@
 
     <main class="main-content">
     <!-- Hero Section -->
-        <section id="hero" class="section hero-section active">
+        <section id="hero" class="section hero-section active rellax-bg" data-rellax-speed="-3">
             <div class="container">
             <div class="hero-content">
                     <div class="hero-text">
@@ -444,7 +448,7 @@
     </section>
 
         <!-- Works Section -->
-        <section id="works" class="section works-section">
+        <section id="works" class="section works-section rellax-bg" data-rellax-speed="-2">
         <div class="container">
                 <div class="section-header" data-aos="fade-up">
                     <h2 class="section-title">Мои работы</h2>
@@ -1595,6 +1599,31 @@
     
     <!-- Main script -->
     <script src="script.js"></script>
+
+    <script>
+      // Parallax
+      document.addEventListener('DOMContentLoaded', function() {
+        if (window.Rellax) {
+          new Rellax('.rellax-bg');
+        }
+        // GSAP ScrollTrigger
+        if (window.gsap && window.ScrollTrigger) {
+          gsap.utils.toArray('.section, .work-item').forEach(function(el) {
+            gsap.fromTo(el, {opacity: 0, y: 60}, {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top 80%',
+                toggleActions: 'play none none none'
+              }
+            });
+          });
+        }
+      });
+    </script>
 </body>
 
 </html> 

@@ -190,6 +190,16 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeInUp 0.8s cubic-bezier(0.4,0,0.2,1) forwards;
+  animation-delay: 0.1s;
+}
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .section-header {
@@ -1624,7 +1634,11 @@ button {
   border-radius: var(--radius-md);
   font-weight: 600;
   font-size: var(--font-size-sm);
-  transition: all 0.3s ease;
+  transition: 
+    background 0.3s cubic-bezier(0.4,0,0.2,1),
+    color 0.3s cubic-bezier(0.4,0,0.2,1),
+    box-shadow 0.3s cubic-bezier(0.4,0,0.2,1),
+    transform 0.2s cubic-bezier(0.4,0,0.2,1);
   cursor: pointer;
   text-decoration: none;
   border: none;
@@ -1646,8 +1660,9 @@ button {
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 24px 0 rgba(59,130,246,0.10);
+  filter: brightness(1.08);
 }
 
 .btn-secondary {
@@ -1658,7 +1673,9 @@ button {
 
 .btn-secondary:hover {
   background: rgba(59, 130, 246, 0.1);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 24px 0 rgba(59,130,246,0.10);
+  filter: brightness(1.08);
 }
 
 .btn-outline {
@@ -1680,14 +1697,14 @@ button {
   width: 18px;
   height: 18px;
   flex-shrink: 0; /* Предотвращает сжатие иконки */
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
   display: inline-flex; /* Улучшает выравнивание */
   align-items: center;
   justify-content: center;
 }
 
 .btn:hover .btn-icon {
-  transform: translateX(3px);
+  transform: translateX(3px) scale(1.15) rotate(-8deg);
 }
 
 /* Медиа-запросы */
@@ -2264,7 +2281,7 @@ button {
 
 .form-input {
   width: 100%;
-  padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) calc(var(--spacing-xl) + var(--spacing-sm));
+  padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) calc(var(--spacing-xl) + var(--spacing-md));
   background-color: rgba(30, 41, 59, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
@@ -2308,11 +2325,13 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color var(--transition-normal);
+  transition: color 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  margin-right: 8px;
 }
 
 .form-input:focus ~ .input-icon {
   color: var(--color-primary);
+  transform: scale(1.15) rotate(-8deg);
 }
 
 .textarea-icon {
@@ -2337,11 +2356,12 @@ button {
 .text-link {
   color: var(--color-primary);
   text-decoration: underline;
-  transition: color var(--transition-normal);
+  transition: color 0.3s cubic-bezier(0.4,0,0.2,1), text-decoration 0.3s;
 }
 
 .text-link:hover {
-  color: var(--color-accent);
+  color: var(--color-accent, #3b82f6);
+  text-decoration: underline;
 }
 
 .contact-info {
@@ -5353,4 +5373,13 @@ button {
   .form-title {
     font-size: 1.2rem;
   }
+}
+
+.rellax-bg {
+  will-change: transform;
+  z-index: 0;
+  position: relative;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
 }
