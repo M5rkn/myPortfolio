@@ -311,9 +311,6 @@ function initCalculator() {
     async function updateCalculation() {
         let breakdown = '';
         let total = 0;
-        let chartLabels = [];
-        let chartData = [];
-        let chartColors = [];
 
         if (selectedPackage) {
             breakdown += `
@@ -323,9 +320,6 @@ function initCalculator() {
                 </div>
             `;
             total += selectedPackage.price;
-            chartLabels.push(selectedPackage.name);
-            chartData.push(selectedPackage.price);
-            chartColors.push('#6366f1');
         } else {
             breakdown = `
                 <div class="breakdown-item">
@@ -343,9 +337,6 @@ function initCalculator() {
                 </div>
             `;
             total += service.price;
-            chartLabels.push(service.name);
-            chartData.push(service.price);
-            chartColors.push('#3b82f6');
         });
 
         // Получаем бонусную скидку пользователя
@@ -361,63 +352,14 @@ function initCalculator() {
                     <span>-${formatPrice(discountAmount)}</span>
                 </div>
             `;
-            chartLabels.push('Скидка');
-            chartData.push(-discountAmount);
-            chartColors.push('#10b981');
         }
 
         costBreakdown.innerHTML = breakdown;
         totalPrice.textContent = formatPrice(finalTotal);
 
-        // Chart.js визуализация
-        const ctx = document.getElementById('calcChart').getContext('2d');
-        if (calcChart && typeof calcChart.destroy === 'function') calcChart.destroy();
-        calcChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: chartLabels,
-                datasets: [{
-                    data: chartData,
-                    backgroundColor: chartColors,
-                    borderWidth: 2,
-                    borderColor: '#1e293b',
-                    hoverOffset: 16
-                }]
-            },
-            options: {
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            color: '#fff',
-                            font: { size: 14 }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                let value = context.parsed;
-                                return `${label}: ${value > 0 ? '+' : ''}${value} €`;
-                            }
-                        }
-                    }
-                },
-                cutout: '65%',
-                responsive: false,
-                animation: { animateRotate: true, animateScale: true },
-                layout: { padding: 8 },
-                backgroundColor: 'transparent'
-            }
-        });
-
         // Активируем/деактивируем кнопку отправки
         if (sendToFormBtn) {
             sendToFormBtn.disabled = !selectedPackage;
-            // Удалено: console.log('selectedPackage:', selectedPackage);
-            // Удалено: console.log('selectedServices:', selectedServices);
-            // Удалено: console.log('sendToFormBtn.disabled:', sendToFormBtn.disabled);
         }
 
         // Отправляем событие для интеграции с расширенным калькулятором
