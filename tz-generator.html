@@ -7,7 +7,6 @@
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com/ https://cdn.jsdelivr.net/ https://cdnjs.cloudflare.com/ https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://region1.google-analytics.com; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="X-XSS-Protection" content="1; mode=block">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), autoplay=()">
@@ -1565,31 +1564,28 @@
 
     <script>
         // Улучшенный обработчик для бургер-меню
-        document.querySelector('.burger').addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const menu = document.querySelector('.nav-menu');
-            const burger = this;
-            
-            burger.classList.toggle('active');
-            menu.classList.toggle('active');
-            
-            // Добавляем обработчик для закрытия при клике вне меню
-            function closeMenu(event) {
-                if (!menu.contains(event.target) && !burger.contains(event.target)) {
-                    menu.classList.remove('active');
-                    burger.classList.remove('active');
-                    document.removeEventListener('click', closeMenu);
+        const burger = document.querySelector('.burger');
+        if (burger) {
+            burger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const menu = document.querySelector('.nav-menu');
+                burger.classList.toggle('active');
+                menu.classList.toggle('active');
+                function closeMenu(event) {
+                    if (!menu.contains(event.target) && !burger.contains(event.target)) {
+                        menu.classList.remove('active');
+                        burger.classList.remove('active');
+                        document.removeEventListener('click', closeMenu);
+                    }
                 }
-            }
-            
-            if (menu.classList.contains('active')) {
-                setTimeout(() => {
-                    document.addEventListener('click', closeMenu);
-                }, 0);
-            }
-        }, { passive: false });
+                if (menu.classList.contains('active')) {
+                    setTimeout(() => {
+                        document.addEventListener('click', closeMenu);
+                    }, 0);
+                }
+            }, { passive: false });
+        }
     </script>
 </body>
 </html> 
