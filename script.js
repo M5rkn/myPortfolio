@@ -213,15 +213,14 @@ document.addEventListener('DOMContentLoaded', function() {
         addToCartBtn.addEventListener('click', function() {
             const calc = getCurrentCalculation();
             if (!calc) {
-                alert('Сначала выберите пакет и услуги!');
+                showToast('error', 'Сначала выберите пакет и услуги!');
                 return;
             }
-            // Сохраняем корзину в localStorage (можно заменить на API)
             let cart = [];
             try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch(e){}
             cart.push(calc);
             localStorage.setItem('cart', JSON.stringify(cart));
-            alert('Товары добавлены в корзину!');
+            showToast('success', '🛒 Вы добавили товар в корзину!');
         });
     }
 

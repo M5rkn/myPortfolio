@@ -5354,3 +5354,17 @@ button {
     font-size: 1.2rem;
   }
 }
+
+.btn-accent {
+  background: linear-gradient(90deg, #ff9800 0%, #ff5722 100%);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 16px rgba(255,152,0,0.08);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+.btn-accent:hover, .btn-accent:focus {
+  background: linear-gradient(90deg, #ffb300 0%, #ff7043 100%);
+  color: #fff;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(255,152,0,0.15);
+}
