@@ -354,6 +354,25 @@ function initCalculator() {
             sendToFormBtn.disabled = !selectedPackage;
         }
 
+        // Управляем видимостью кнопки 'Добавить в корзину'
+        const addToCartBtn = document.getElementById('addToCartBtn');
+        const goToCartBtn = document.getElementById('goToCartBtn');
+        const token = localStorage.getItem('authToken');
+        if (addToCartBtn) {
+            if (token && selectedPackage) {
+                addToCartBtn.style.display = '';
+            } else {
+                addToCartBtn.style.display = 'none';
+            }
+        }
+        if (goToCartBtn) {
+            if (token) {
+                goToCartBtn.style.display = '';
+            } else {
+                goToCartBtn.style.display = 'none';
+            }
+        }
+
         // Отправляем событие для интеграции с расширенным калькулятором
         const event = new CustomEvent('calculatorUpdated', {
             detail: {
