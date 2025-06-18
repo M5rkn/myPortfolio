@@ -200,6 +200,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Асинхронно инициализируем CSRF и форму
     initCSRFAndForm();
+
+    // ProgressBar.js для технологий
+    document.querySelectorAll('.tech-pb').forEach(function(el) {
+        var value = parseFloat(el.getAttribute('data-progress')) || 0;
+        var svg = el.querySelector('svg');
+        el.innerHTML = '';
+        var bar = new ProgressBar.Circle(el, {
+            strokeWidth: 5,
+            trailWidth: 5,
+            trailColor: '#232b3e',
+            color: 'url(#tech-gradient)',
+            easing: 'easeInOut',
+            duration: 1200,
+            from: { color: '#61dafb' },
+            to: { color: '#6366f1' },
+            step: function(state, circle) {
+                circle.path.setAttribute('stroke', 'url(#tech-gradient)');
+            }
+        });
+        // Добавляем градиент в defs
+        var defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        var grad = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        grad.setAttribute('id', 'tech-gradient');
+        grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0'); grad.setAttribute('x2', '1'); grad.setAttribute('y2', '1');
+        var stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stop1.setAttribute('offset', '0%'); stop1.setAttribute('stop-color', '#61dafb');
+        var stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stop2.setAttribute('offset', '100%'); stop2.setAttribute('stop-color', '#6366f1');
+        grad.appendChild(stop1); grad.appendChild(stop2); defs.appendChild(grad);
+        el.querySelector('svg')?.prepend(defs);
+        bar.animate(value);
+        // Помещаем иконку в центр круга
+        el.appendChild(svg);
+        svg.style.position = 'absolute';
+        svg.style.left = '50%';
+        svg.style.top = '50%';
+        svg.style.transform = 'translate(-50%, -50%)';
+        svg.style.zIndex = '2';
+        el.style.position = 'relative';
+        el.style.width = '76px';
+        el.style.height = '76px';
+    });
 });
 
 // Отдельная функция для асинхронной инициализации формы
@@ -269,6 +311,9 @@ function initCalculator() {
     async function updateCalculation() {
         let breakdown = '';
         let total = 0;
+        let chartLabels = [];
+        let chartData = [];
+        let chartColors = [];
 
         if (selectedPackage) {
             breakdown += `
@@ -278,6 +323,9 @@ function initCalculator() {
                 </div>
             `;
             total += selectedPackage.price;
+            chartLabels.push(selectedPackage.name);
+            chartData.push(selectedPackage.price);
+            chartColors.push('#6366f1');
         } else {
             breakdown = `
                 <div class="breakdown-item">
@@ -295,30 +343,81 @@ function initCalculator() {
                 </div>
             `;
             total += service.price;
+            chartLabels.push(service.name);
+            chartData.push(service.price);
+            chartColors.push('#3b82f6');
         });
 
         // Получаем бонусную скидку пользователя
         const bonusDiscount = await getUserBonusDiscount();
         let finalTotal = total;
-        
+        let discountAmount = 0;
         if (bonusDiscount > 0 && total > 0) {
-            const discountAmount = (total * bonusDiscount) / 100;
+            discountAmount = (total * bonusDiscount) / 100;
             finalTotal = total - discountAmount;
-            
             breakdown += `
                 <div class="breakdown-item bonus-discount">
                     <span>🎉 Бонусная скидка ${bonusDiscount}%</span>
                     <span>-${formatPrice(discountAmount)}</span>
                 </div>
             `;
+            chartLabels.push('Скидка');
+            chartData.push(-discountAmount);
+            chartColors.push('#10b981');
         }
 
         costBreakdown.innerHTML = breakdown;
         totalPrice.textContent = formatPrice(finalTotal);
 
+        // Chart.js визуализация
+        const ctx = document.getElementById('calcChart').getContext('2d');
+        if (calcChart && typeof calcChart.destroy === 'function') calcChart.destroy();
+        calcChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    data: chartData,
+                    backgroundColor: chartColors,
+                    borderWidth: 2,
+                    borderColor: '#1e293b',
+                    hoverOffset: 16
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            color: '#fff',
+                            font: { size: 14 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.parsed;
+                                return `${label}: ${value > 0 ? '+' : ''}${value} €`;
+                            }
+                        }
+                    }
+                },
+                cutout: '65%',
+                responsive: false,
+                animation: { animateRotate: true, animateScale: true },
+                layout: { padding: 8 },
+                backgroundColor: 'transparent'
+            }
+        });
+
         // Активируем/деактивируем кнопку отправки
         if (sendToFormBtn) {
             sendToFormBtn.disabled = !selectedPackage;
+            console.log('selectedPackage:', selectedPackage);
+            console.log('selectedServices:', selectedServices);
+            console.log('sendToFormBtn.disabled:', sendToFormBtn.disabled);
         }
 
         // Отправляем событие для интеграции с расширенным калькулятором
