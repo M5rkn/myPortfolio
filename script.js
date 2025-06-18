@@ -2281,8 +2281,10 @@ function initAuthButton() {
   function animate() {
     outerX += (mouseX - outerX) * 0.18;
     outerY += (mouseY - outerY) * 0.18;
-    outer.style.left = outerX + 'px';
-    outer.style.top = outerY + 'px';
+    if (outer) {
+      outer.style.left = outerX + 'px';
+      outer.style.top = outerY + 'px';
+    }
     requestAnimationFrame(animate);
   }
   animate();

@@ -626,8 +626,6 @@
         }
 
         function updateUserInfo(userInfo) {
-            console.log('UpdateUserInfo called with:', userInfo); // Debug log
-            
             document.getElementById('userName').textContent = userInfo.name;
             document.getElementById('userEmail').textContent = userInfo.email;
             
@@ -636,19 +634,11 @@
             document.getElementById('avatarLetter').textContent = firstLetter;
             
             // Показываем кнопку админ-панели для админов
-            console.log('Checking admin status:', { isAdmin: userInfo.isAdmin, role: userInfo.role }); // Debug log
-            
             if (userInfo.isAdmin === true || userInfo.role === 'admin') {
-                console.log('User is admin, showing admin panel button'); // Debug log
                 const adminBtn = document.getElementById('adminPanelBtn');
                 if (adminBtn) {
                     adminBtn.style.display = 'block';
-                    console.log('Admin panel button shown'); // Debug log
-                } else {
-                    console.log('Admin panel button not found'); // Debug log
                 }
-            } else {
-                console.log('User is not admin'); // Debug log
             }
         }
 
@@ -656,7 +646,6 @@
             try {
                 const token = localStorage.getItem('authToken');
                 if (!token) {
-                    console.log('No auth token found, redirecting to login');
                     window.location.href = 'login.html';
                     return;
                 }
@@ -673,7 +662,6 @@
                     updateCalculations(calculations);
                     document.getElementById('calculationsCount').textContent = calculations.length;
                 } else if (calculationsResponse.status === 401) {
-                    console.log('Token expired or invalid, redirecting to login');
                     localStorage.removeItem('authToken');
                     window.location.href = 'login.html';
                     return;
@@ -691,7 +679,6 @@
                     updateOrders(orders);
                     document.getElementById('ordersCount').textContent = orders.length;
                 } else if (ordersResponse.status === 401) {
-                    console.log('Token expired or invalid, redirecting to login');
                     localStorage.removeItem('authToken');
                     window.location.href = 'login.html';
                     return;
@@ -728,7 +715,6 @@
                         }
                     }
                 } else if (profileResponse.status === 401) {
-                    console.log('Token expired or invalid, redirecting to login');
                     localStorage.removeItem('authToken');
                     window.location.href = 'login.html';
                     return;
