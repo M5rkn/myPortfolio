@@ -1307,32 +1307,30 @@ function initMobileNav() {
 
     // Открытие/закрытие меню при клике на кнопку меню
     mobileNavToggle.addEventListener('click', function() {
-        // Проверяем, открыто ли меню
         if (mobileNav.classList.contains('active')) {
-            // Если открыто, закрываем
             mobileNav.classList.remove('active');
             document.body.style.overflow = '';
+            mobileNavToggle.style.display = 'flex';
         } else {
-            // Если закрыто, открываем
             mobileNav.classList.add('active');
             document.body.style.overflow = 'hidden';
+            mobileNavToggle.style.display = 'none';
         }
     });
 
     // Добавляем обработчик на иконку меню отдельно (на всякий случай)
     if (menuIcon) {
         menuIcon.addEventListener('click', function(e) {
-            // Проверяем, открыто ли меню
             if (mobileNav.classList.contains('active')) {
-                // Если открыто, закрываем
                 mobileNav.classList.remove('active');
                 document.body.style.overflow = '';
+                mobileNavToggle.style.display = 'flex';
             } else {
-                // Если закрыто, открываем
                 mobileNav.classList.add('active');
                 document.body.style.overflow = 'hidden';
+                mobileNavToggle.style.display = 'none';
             }
-            e.stopPropagation(); // Предотвращаем всплытие события
+            e.stopPropagation();
         });
     }
 
@@ -1340,14 +1338,15 @@ function initMobileNav() {
     mobileNavClose.addEventListener('click', function() {
         mobileNav.classList.remove('active');
         document.body.style.overflow = '';
+        mobileNavToggle.style.display = 'flex';
     });
 
     // Закрытие при клике на само меню (фон)
     mobileNav.addEventListener('click', function(e) {
-        // Если клик был на само меню, а не на его содержимое
         if (e.target === mobileNav) {
             mobileNav.classList.remove('active');
             document.body.style.overflow = '';
+            mobileNavToggle.style.display = 'flex';
         }
     });
 
@@ -1358,17 +1357,19 @@ function initMobileNav() {
             e.target !== mobileNavToggle) {
             mobileNav.classList.remove('active');
             document.body.style.overflow = '';
+            mobileNavToggle.style.display = 'flex';
         }
     });
 
     // Плавный скролл при клике
     mobileNavLinks.forEach(function(link) {
         link.addEventListener('click', function(e) {
-            // Всегда закрываем меню при клике на любой пункт
-            mobileNav.classList.remove('active');
-            document.body.style.overflow = '';
+            if (mobileNav.classList.contains('active')) {
+                mobileNav.classList.remove('active');
+                document.body.style.overflow = '';
+                mobileNavToggle.style.display = 'flex';
+            }
 
-            // Если это якорная ссылка, делаем плавный скролл
             if (this.getAttribute('href').startsWith('#')) {
                 e.preventDefault();
 
@@ -1384,7 +1385,6 @@ function initMobileNav() {
                     }, 300);
                 }
             }
-            // Для внешних ссылок просто закрываем меню и позволяем перейти по ссылке
         });
     });
 }
