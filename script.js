@@ -212,14 +212,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         addToCartBtn.addEventListener('click', function() {
             const calc = getCurrentCalculation();
-            console.log('DEBUG: addToCartBtn click, calc:', calc);
+            const userInfo = getUserFromToken(localStorage.getItem('authToken'));
             if (!calc) {
                 showToast('error', 'Сначала выберите пакет и услуги!');
                 return;
             }
+            if (!userInfo || !userInfo.userId) {
+                showToast('error', 'Ошибка авторизации. Войдите заново.');
+                return;
+            }
+            // Валидация структуры
+            if (!calc.package || !calc.package.name || !calc.package.type || typeof calc.package.price !== 'number') {
+                showToast('error', 'Ошибка структуры товара. Попробуйте еще раз.');
+                return;
+            }
+            // Получаем корзину
             let cart = [];
-            try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch(e){console.log('DEBUG: cart parse error', e);}
-            cart.push(calc);
+            try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch(e){cart = [];}
+            // Фильтруем только свои товары
+            cart = cart.filter(item => item.userId === userInfo.userId);
+            // Лимит
+            if (cart.length >= 10) {
+                showToast('error', 'В корзине максимум 10 товаров!');
+                return;
+            }
+            // Проверка на дубли (по пакету и услугам)
+            const isDuplicate = cart.some(item => {
+                return item.package.type === calc.package.type &&
+                    JSON.stringify(item.services) === JSON.stringify(calc.services);
+            });
+            if (isDuplicate) {
+                showToast('error', 'Такой товар уже есть в корзине!');
+                return;
+            }
+            // Добавляем userId/email к товару
+            const cartItem = {
+                ...calc,
+                userId: userInfo.userId,
+                email: userInfo.email
+            };
+            cart.push(cartItem);
+            // Сохраняем только свои товары
             localStorage.setItem('cart', JSON.stringify(cart));
             showToast('success', '🛒 Вы добавили товар в корзину!');
         });
@@ -2236,4 +2269,13 @@ function initAuthButton() {
             // Игнорируем ошибки кэша
         }
     }
+}
+
+// Функция для получения корзины только текущего пользователя
+function getUserCart() {
+    const userInfo = getUserFromToken(localStorage.getItem('authToken'));
+    if (!userInfo || !userInfo.userId) return [];
+    let cart = [];
+    try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch(e){cart = [];}
+    return cart.filter(item => item.userId === userInfo.userId);
 }

@@ -8,22 +8,48 @@ document.addEventListener('DOMContentLoaded', function() {
     try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch(e){}
 
     if (!cart.length) {
-        cartList.innerHTML = '<p>Корзина пуста.</p>';
+        cartList.innerHTML = `
+        <div class="cart-empty">
+            <div class="cart-empty-icon">🛒</div>
+            <div class="cart-empty-title">Ваша корзина пуста</div>
+            <div class="cart-empty-text">Добавьте товары из калькулятора или каталога.</div>
+            <a href="index.html" class="btn btn-primary cart-empty-btn"><span>На главную</span></a>
+        </div>`;
         cartTotal.textContent = '';
         paymentSection.style.display = 'none';
         return;
     }
 
     let total = 0;
-    cartList.innerHTML = cart.map((item, idx) => {
+    cartList.innerHTML = `<div class="cart-grid">` + cart.map((item, idx) => {
         let services = item.services && item.services.length
-            ? '<ul>' + item.services.map(s => `<li>${s.name} — ${s.price} €</li>`).join('') + '</ul>'
+            ? `<ul class="cart-services">` + item.services.map(s => `<li><span class="cart-service-name">${s.name}</span> <span class="cart-service-price">+${s.price} €</span></li>`).join('') + `</ul>`
             : '';
-        total += item.package.price + (item.services ? item.services.reduce((sum, s) => sum + s.price, 0) : 0);
-        return `<div class="cart-item"><b>${item.package.name}</b> — ${item.package.price} €${services}</div>`;
-    }).join('<hr>');
-    cartTotal.textContent = 'Итого: ' + total + ' €';
+        const itemTotal = item.package.price + (item.services ? item.services.reduce((sum, s) => sum + s.price, 0) : 0);
+        total += itemTotal;
+        return `
+        <div class="cart-card">
+            <div class="cart-card-header">
+                <div class="cart-package-name">${item.package.name}</div>
+                <button class="cart-remove-btn" data-idx="${idx}" title="Удалить">×</button>
+            </div>
+            <div class="cart-package-price">${item.package.price} €</div>
+            ${services}
+            <div class="cart-item-total">Итого: <b>${itemTotal} €</b></div>
+        </div>`;
+    }).join('') + `</div>`;
+    cartTotal.innerHTML = `<span class="cart-total-label">Итого:</span> <span class="cart-total-value">${total} €</span>`;
     paymentSection.style.display = '';
+
+    // Удаление товара из корзины
+    cartList.querySelectorAll('.cart-remove-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const idx = parseInt(this.dataset.idx);
+            cart.splice(idx, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            location.reload();
+        });
+    });
 
     // Stripe.js
     (function addStripeScript() {
