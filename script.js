@@ -2263,7 +2263,8 @@ function initAuthButton() {
 // Custom Cursor
 (function() {
   const cursor = document.querySelector('.custom-cursor');
-  if (!cursor) return;
+  const hoverEffect = document.querySelector('.cursor-hover-effect');
+  if (!cursor || !hoverEffect) return;
   const inner = cursor.querySelector('.cursor-inner');
   const outer = cursor.querySelector('.cursor-outer');
   let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
@@ -2275,12 +2276,14 @@ function initAuthButton() {
     mouseY = e.clientY;
     inner.style.left = mouseX + 'px';
     inner.style.top = mouseY + 'px';
+    hoverEffect.style.left = mouseX + 'px';
+    hoverEffect.style.top = mouseY + 'px';
   });
 
   // Плавное следование внешнего круга
   function animate() {
-    outerX += (mouseX - outerX) * 0.18;
-    outerY += (mouseY - outerY) * 0.18;
+    outerX += (mouseX - outerX) * 0.85;
+    outerY += (mouseY - outerY) * 0.85;
     if (outer) {
       outer.style.left = outerX + 'px';
       outer.style.top = outerY + 'px';
@@ -2293,18 +2296,21 @@ function initAuthButton() {
   const hoverElements = 'a, button, .btn, input, textarea, select, label, .work-link, .auth-link, .auth-link-mobile';
   document.body.addEventListener('pointerover', e => {
     if (e.target.closest(hoverElements)) {
-      document.body.classList.add('cursor-hover');
+      cursor.style.opacity = '0';
+      hoverEffect.classList.add('active');
     }
   });
   document.body.addEventListener('pointerout', e => {
     if (e.target.closest(hoverElements)) {
-      document.body.classList.remove('cursor-hover');
+      cursor.style.opacity = '1';
+      hoverEffect.classList.remove('active');
     }
   });
 
   // Скрытие курсора при уходе мыши
   document.addEventListener('mouseleave', () => {
     cursor.style.opacity = '0';
+    hoverEffect.classList.remove('active');
   });
   document.addEventListener('mouseenter', () => {
     cursor.style.opacity = '1';
