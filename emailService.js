@@ -262,19 +262,6 @@ class EmailService {
             }
         );
     }
-
-    async sendOrderNotification(userEmail, orderText) {
-        if (!this.isEnabled || !this.transporter) return;
-        const to = process.env.ADMIN_EMAIL || this.fromEmail;
-        const subject = 'Новый заказ на сайте';
-        const message = `Пользователь (${userEmail}) совершил заказ.\n\n${orderText}`;
-        await this.transporter.sendMail({
-            from: `"${this.fromName}" <${this.fromEmail}>`,
-            to,
-            subject,
-            text: message
-        });
-    }
 }
 
 module.exports = new EmailService();

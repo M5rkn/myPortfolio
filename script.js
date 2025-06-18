@@ -200,72 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Асинхронно инициализируем CSRF и форму
     initCSRFAndForm();
-
-    // Проверка авторизации (по токену)
-    const addToCartBtn = document.getElementById('addToCartBtn');
-    const token = localStorage.getItem('authToken');
-    if (addToCartBtn) {
-        if (token) {
-            addToCartBtn.style.display = '';
-        } else {
-            addToCartBtn.style.display = 'none';
-        }
-        addToCartBtn.addEventListener('click', function() {
-            const calc = getCurrentCalculation();
-            const userInfo = getUserFromToken(localStorage.getItem('authToken'));
-            if (!calc) {
-                showToast('error', 'Сначала выберите пакет и услуги!');
-                return;
-            }
-            if (!userInfo || !userInfo.userId) {
-                showToast('error', 'Ошибка авторизации. Войдите заново.');
-                return;
-            }
-            // Валидация структуры
-            if (!calc.package || !calc.package.name || !calc.package.type || typeof calc.package.price !== 'number') {
-                showToast('error', 'Ошибка структуры товара. Попробуйте еще раз.');
-                return;
-            }
-            // Получаем корзину
-            let cart = [];
-            try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch(e){cart = [];}
-            // Фильтруем только свои товары
-            cart = cart.filter(item => item.userId === userInfo.userId);
-            // Лимит
-            if (cart.length >= 10) {
-                showToast('error', 'В корзине максимум 10 товаров!');
-                return;
-            }
-            // Проверка на дубли (по пакету и услугам)
-            const isDuplicate = cart.some(item => {
-                return item.package.type === calc.package.type &&
-                    JSON.stringify(item.services) === JSON.stringify(calc.services);
-            });
-            if (isDuplicate) {
-                showToast('error', 'Такой товар уже есть в корзине!');
-                return;
-            }
-            // Добавляем userId/email к товару
-            const cartItem = {
-                ...calc,
-                userId: userInfo.userId,
-                email: userInfo.email
-            };
-            cart.push(cartItem);
-            // Сохраняем только свои товары
-            localStorage.setItem('cart', JSON.stringify(cart));
-            showToast('success', '🛒 Вы добавили товар в корзину!');
-        });
-    }
-
-    const goToCartBtn = document.getElementById('goToCartBtn');
-    if (goToCartBtn) {
-        if (token) {
-            goToCartBtn.style.display = '';
-        } else {
-            goToCartBtn.style.display = 'none';
-        }
-    }
 });
 
 // Отдельная функция для асинхронной инициализации формы
@@ -385,25 +319,6 @@ function initCalculator() {
         // Активируем/деактивируем кнопку отправки
         if (sendToFormBtn) {
             sendToFormBtn.disabled = !selectedPackage;
-        }
-
-        // Управляем видимостью кнопки 'Добавить в корзину'
-        const addToCartBtn = document.getElementById('addToCartBtn');
-        const goToCartBtn = document.getElementById('goToCartBtn');
-        const token = localStorage.getItem('authToken');
-        if (addToCartBtn) {
-            if (token && selectedPackage) {
-                addToCartBtn.style.display = '';
-            } else {
-                addToCartBtn.style.display = 'none';
-            }
-        }
-        if (goToCartBtn) {
-            if (token) {
-                goToCartBtn.style.display = '';
-            } else {
-                goToCartBtn.style.display = 'none';
-            }
         }
 
         // Отправляем событие для интеграции с расширенным калькулятором
@@ -538,31 +453,6 @@ function initCalculator() {
 }
 
 // ===== УЛУЧШЕННЫЕ ФУНКЦИИ КАЛЬКУЛЯТОРА =====
-
-// Глобальная функция получения текущего расчета
-function getCurrentCalculation() {
-    const selectedPackageCard = document.querySelector('.package-card.selected');
-    if (!selectedPackageCard) return null;
-
-    const selectedPackage = {
-        name: selectedPackageCard.querySelector('.package-title').textContent,
-        price: parseInt(selectedPackageCard.dataset.price),
-        type: selectedPackageCard.dataset.package
-    };
-
-    const selectedServices = [];
-    document.querySelectorAll('.service-option input[type="checkbox"]:checked').forEach(checkbox => {
-        selectedServices.push({
-            name: checkbox.parentNode.querySelector('.service-name').textContent,
-            price: parseInt(checkbox.dataset.price),
-            type: checkbox.dataset.service
-        });
-    });
-
-    const total = selectedPackage.price + selectedServices.reduce((sum, service) => sum + service.price, 0);
-
-    return { package: selectedPackage, services: selectedServices, total };
-}
 
 // Улучшенный калькулятор с дополнительными фишками
 function initAdvancedCalculator() {
@@ -2269,13 +2159,4 @@ function initAuthButton() {
             // Игнорируем ошибки кэша
         }
     }
-}
-
-// Функция для получения корзины только текущего пользователя
-function getUserCart() {
-    const userInfo = getUserFromToken(localStorage.getItem('authToken'));
-    if (!userInfo || !userInfo.userId) return [];
-    let cart = [];
-    try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch(e){cart = [];}
-    return cart.filter(item => item.userId === userInfo.userId);
 }

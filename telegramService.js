@@ -241,12 +241,6 @@ _Требуется внимание администратора._
             return null;
         }
     }
-
-    async sendOrderNotification(orderText) {
-        if (!this.isEnabled || !this.bot) return;
-        const message = `🛒 *Новый заказ на сайте*\n\n${orderText}`;
-        await this.bot.sendMessage(this.adminChatId, message, { parse_mode: 'Markdown' });
-    }
 }
 
 module.exports = new TelegramService();
