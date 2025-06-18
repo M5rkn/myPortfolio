@@ -212,12 +212,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         addToCartBtn.addEventListener('click', function() {
             const calc = getCurrentCalculation();
+            console.log('DEBUG: addToCartBtn click, calc:', calc);
             if (!calc) {
                 showToast('error', 'Сначала выберите пакет и услуги!');
                 return;
             }
             let cart = [];
-            try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch(e){}
+            try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch(e){console.log('DEBUG: cart parse error', e);}
             cart.push(calc);
             localStorage.setItem('cart', JSON.stringify(cart));
             showToast('success', '🛒 Вы добавили товар в корзину!');
