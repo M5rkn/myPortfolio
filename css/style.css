@@ -5762,3 +5762,79 @@ button {
   border: 3px solid #1976d2;
   box-shadow: 0 0 0 6px #90caf944;
 }
+
+@media (max-width: 767px) {
+  .reviews-section .section-header {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+  }
+  .reviews-swiper-inner {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .review-card {
+    padding: 10px 6px;
+    border-radius: 12px;
+    font-size: 13px;
+    margin: 10px auto 0 auto;
+    max-width: 98vw;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
+    border: 1px solid #232b3b;
+  }
+  .review-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .reviewer-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .reviewer-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 0;
+  }
+  .reviewer-position {
+    font-size: 11px;
+    color: #8a97b3;
+    margin-bottom: 0;
+  }
+  .review-rating {
+    font-size: 13px;
+    margin-left: auto;
+    margin-top: 0;
+    white-space: nowrap;
+  }
+  .review-content {
+    margin-top: 4px;
+  }
+  .review-text {
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    font-style: normal;
+    font-weight: 400;
+    color: #fff;
+    background: none;
+    border-left: none;
+    padding-left: 0;
+    quotes: none;
+    word-break: break-word;
+  }
+  .review-project {
+    font-size: 11px;
+    color: #7a8699;
+    margin-top: 2px;
+  }
+}
+
+/* Убираю кавычки и курсив для отзывов на всех экранах */
+.review-text {
+  font-style: normal !important;
+  quotes: none !important;
+}
