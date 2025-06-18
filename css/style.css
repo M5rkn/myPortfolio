@@ -5777,10 +5777,12 @@ button {
     padding: 10px 6px;
     border-radius: 12px;
     font-size: 13px;
-    margin: 10px auto 0 auto;
-    max-width: 98vw;
+    margin: 0 auto 10px auto;
+    max-width: 96vw;
+    min-width: 0;
     box-shadow: 0 2px 8px 0 rgba(0,0,0,0.10);
     border: 1px solid #232b3b;
+    overflow: hidden;
   }
   .review-header {
     display: flex;
@@ -5825,6 +5827,8 @@ button {
     padding-left: 0;
     quotes: none;
     word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
   }
   .review-project {
     font-size: 11px;
