@@ -5809,3 +5809,87 @@ button {
     font-size: 1.2rem !important;
   }
 }
+
+@media (max-width: 480px) {
+  body.admin-panel {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow-x: hidden;
+  }
+  .admin-panel-container, .dashboard-container, .panel-container {
+    padding: var(--spacing-sm) !important;
+    margin: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-sizing: border-box;
+  }
+  .admin-panel-title, .dashboard-title, .panel-title {
+    font-size: 1.5rem !important;
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+  }
+  .admin-panel-subtitle, .dashboard-subtitle {
+    font-size: 0.95rem !important;
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+  }
+  .admin-panel-stats, .dashboard-stats {
+    flex-direction: column !important;
+    gap: var(--spacing-sm) !important;
+    width: 100%;
+    margin-bottom: var(--spacing-sm);
+  }
+  .admin-panel-card, .dashboard-card, .panel-card {
+    padding: var(--spacing-sm) !important;
+    margin-bottom: var(--spacing-sm) !important;
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-md);
+    min-width: unset;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .admin-panel-card h2, .dashboard-card h2, .panel-card h2 {
+    font-size: 1.2rem !important;
+    margin-bottom: var(--spacing-xs);
+  }
+  .admin-panel-card p, .dashboard-card p, .panel-card p {
+    font-size: 0.95rem !important;
+    margin-bottom: 0;
+  }
+  .admin-panel-bot-status, .dashboard-bot-status {
+    font-size: 1rem !important;
+    padding: var(--spacing-xs) !important;
+  }
+  .admin-panel-bot, .dashboard-bot {
+    margin-bottom: var(--spacing-xs) !important;
+    padding: var(--spacing-xs) !important;
+    font-size: 1rem !important;
+  }
+  .admin-panel-section, .dashboard-section {
+    margin-bottom: var(--spacing-sm) !important;
+    padding: var(--spacing-xs) !important;
+  }
+  .admin-panel-btn, .dashboard-btn, .panel-btn, .btn {
+    font-size: 0.85rem !important;
+    padding: var(--spacing-xs) var(--spacing-sm) !important;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+@media (max-width: 375px) {
+  .admin-panel-title, .dashboard-title, .panel-title {
+    font-size: 1.1rem !important;
+  }
+  .admin-panel-card, .dashboard-card, .panel-card {
+    padding: 4px !important;
+    font-size: 0.8rem;
+  }
+  .admin-panel-card h2, .dashboard-card h2, .panel-card h2 {
+    font-size: 1rem !important;
+  }
+  .admin-panel-btn, .dashboard-btn, .panel-btn, .btn {
+    font-size: 0.7rem !important;
+    padding: 4px 6px !important;
+  }
+}
