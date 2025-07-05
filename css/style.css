@@ -5893,3 +5893,34 @@ button {
     padding: 4px 6px !important;
   }
 }
+
+@media (max-width: 480px) {
+  .admin-panel-stats, .dashboard-stats {
+    flex-direction: column !important;
+    gap: var(--spacing-sm) !important;
+    width: 100%;
+  }
+  .admin-panel-card.email, .dashboard-card.email, .panel-card.email {
+    font-size: 0.95rem !important;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    line-height: 1.2;
+  }
+  .admin-panel-actions, .dashboard-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-md);
+    width: 100%;
+  }
+  .admin-panel-actions .btn, .dashboard-actions .btn, .panel-actions .btn {
+    width: 100%;
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.95rem !important;
+    padding: var(--spacing-xs) var(--spacing-sm) !important;
+  }
+  .admin-panel-title-requests, .dashboard-title-requests {
+    margin-bottom: var(--spacing-sm) !important;
+    display: block;
+  }
+}
