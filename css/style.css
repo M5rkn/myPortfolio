@@ -5765,3 +5765,47 @@ button {
     height: 120px;
   }
 }
+
+@media (max-width: 480px) {
+  .admin-panel-title, .dashboard-title, .panel-title {
+    font-size: 2rem !important;
+    margin-bottom: var(--spacing-md);
+  }
+  .admin-panel-subtitle, .dashboard-subtitle {
+    font-size: 1rem !important;
+    margin-bottom: var(--spacing-md);
+  }
+  .admin-panel-stats, .dashboard-stats {
+    gap: var(--spacing-md);
+    flex-direction: column;
+  }
+  .admin-panel-card, .dashboard-card, .panel-card {
+    padding: var(--spacing-md) !important;
+    min-width: unset;
+    font-size: var(--font-size-base);
+  }
+  .admin-panel-card h2, .dashboard-card h2, .panel-card h2 {
+    font-size: 2rem !important;
+    margin-bottom: var(--spacing-xs);
+  }
+  .admin-panel-card p, .dashboard-card p, .panel-card p {
+    font-size: 1rem !important;
+    margin-bottom: 0;
+  }
+  .admin-panel-bot-status, .dashboard-bot-status {
+    font-size: 1.1rem !important;
+    padding: var(--spacing-sm) !important;
+  }
+}
+@media (max-width: 375px) {
+  .admin-panel-title, .dashboard-title, .panel-title {
+    font-size: 1.3rem !important;
+  }
+  .admin-panel-card, .dashboard-card, .panel-card {
+    padding: var(--spacing-sm) !important;
+    font-size: var(--font-size-sm);
+  }
+  .admin-panel-card h2, .dashboard-card h2, .panel-card h2 {
+    font-size: 1.2rem !important;
+  }
+}
