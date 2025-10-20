@@ -2664,6 +2664,12 @@ button {
   height: 20px;
 }
 
+@media (max-width: 768px) {
+  .modal-close {
+    right: calc(var(--spacing-md) + 18px); /* доп. сдвиг влево на мобильных */
+  }
+}
+
 .modal-content {
   max-height: 90vh;
   overflow-y: auto;
