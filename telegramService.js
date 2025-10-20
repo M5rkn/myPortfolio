@@ -92,7 +92,7 @@ _Для дополнительной помощи обратитесь к адм
 ⚡ Сервер: Railway
 🔄 Uptime: ${Math.floor(process.uptime() / 60)} минут
 
-_Последняя проверка: ${new Date().toLocaleString('ru-RU')}_
+_Последняя проверка: ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}_
             `;
 
             this.bot.sendMessage(chatId, statusMessage, { parse_mode: 'Markdown' });
@@ -114,7 +114,7 @@ _Последняя проверка: ${new Date().toLocaleString('ru-RU')}_
 💬 *Сообщение:*
 ${this.escapeMarkdown(contact.message)}
 
-🕐 *Время:* ${new Date(contact.createdAt).toLocaleString('ru-RU')}
+🕐 *Время:* ${new Date(contact.createdAt).toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
 🌐 *IP:* ${contact.ipAddress || 'N/A'}
 
 _Ответьте клиенту через панель администратора или напрямую по email._
@@ -150,7 +150,7 @@ _Ответьте клиенту через панель администрат�
 👁 *Просмотры проектов:*
 ${stats.projectViews.map(p => `• ${p.name}: ${p.views}`).join('\n')}
 
-🕐 *Обновлено:* ${new Date().toLocaleString('ru-RU')}
+🕐 *Обновлено:* ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
             `;
 
             await this.bot.sendMessage(this.adminChatId, message, {
@@ -175,7 +175,7 @@ ${stats.projectViews.map(p => `• ${p.name}: ${p.views}`).join('\n')}
 
 ⚠️ *Контекст:* ${context}
 📝 *Ошибка:* ${this.escapeMarkdown(error.message)}
-🕐 *Время:* ${new Date().toLocaleString('ru-RU')}
+🕐 *Время:* ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
 
 _Требуется внимание администратора._
             `;

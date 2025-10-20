@@ -1816,7 +1816,7 @@ app.post('/api/admin/contacts/:id/reply', authenticateAdmin, async (req, res) =>
 📝 *Тема:* ${telegramService.escapeMarkdown(subject)}
 💬 *Ответ:* ${telegramService.escapeMarkdown(message.substring(0, 200))}${message.length > 200 ? '...' : ''}
 
-🕐 *Время отправки:* ${new Date().toLocaleString('ru-RU')}
+🕐 *Время отправки:* ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
             `;
 
             telegramService.bot.sendMessage(
@@ -1912,7 +1912,7 @@ app.post('/api/projects/:id/view', apiLimiter, async (req, res) => {
         if (projectView) {
             // Prevent rapid increment from same IP
             const timeSinceLastView = Date.now() - new Date(projectView.lastViewed).getTime();
-            if (timeSinceLastView < 5000) { // 5 seconds cooldown
+            if (timeSinceLastView < 2000) { // 2 seconds cooldown (reduced from 5)
                 return res.json({
                     success: true,
                     views: projectView.views

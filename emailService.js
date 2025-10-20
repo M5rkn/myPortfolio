@@ -184,7 +184,7 @@ class EmailService {
         <div class="original-message">
             <strong>Ваше исходное сообщение:</strong><br>
             <em>"${this.escapeHtml(originalContact.message)}"</em><br>
-            <small>Отправлено: ${new Date(originalContact.createdAt).toLocaleString('ru-RU')}</small>
+            <small>Отправлено: ${new Date(originalContact.createdAt).toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}</small>
         </div>
         ` : ''}
         
@@ -247,7 +247,7 @@ class EmailService {
 
 Если вы получили это письмо, значит email интеграция работает корректно.
 
-Время отправки: ${new Date().toLocaleString('ru-RU')}
+Время отправки: ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
 Сервер: ${process.env.SITE_URL || 'localhost'}
         `;
 
