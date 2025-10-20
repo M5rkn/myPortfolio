@@ -197,6 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initCVDownload();
     initAuthButton();
     registerServiceWorker();
+    initProjectViews();
 
     // Асинхронно инициализируем CSRF и форму
     initCSRFAndForm();
@@ -243,6 +244,60 @@ document.addEventListener('DOMContentLoaded', function() {
         el.style.height = '76px';
     });
 });
+// Просмотры проектов: бейдж и загрузка
+function initProjectViews() {
+    const workItems = document.querySelectorAll('.works-grid .work-item');
+    if (!workItems.length) return;
+
+    // Map project DOM to backend ids
+    const mapIndexToId = (idx) => `project-${idx + 1}`; // порядок соответствует preview project-1..project-6
+
+    workItems.forEach((item, idx) => {
+        const badge = document.createElement('div');
+        badge.className = 'view-badge';
+        badge.innerHTML = `
+            <svg class="eye-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.6"/>
+            </svg>
+            <span class="view-count" data-count>—</span>
+        `;
+        item.appendChild(badge);
+
+        const projectId = mapIndexToId(idx);
+
+        // Загрузка текущего количества
+        fetch(`/api/projects/${projectId}/views`, { headers: { 'Cache-Control': 'no-cache' } })
+            .then(r => r.ok ? r.json() : Promise.reject())
+            .then(data => {
+                const countEl = badge.querySelector('[data-count]');
+                if (data && data.success) countEl.textContent = data.views;
+                else countEl.textContent = '0';
+            })
+            .catch(() => {
+                const countEl = badge.querySelector('[data-count]');
+                countEl.textContent = '0';
+            });
+
+        // Инкремент при клике на кнопку проекта, если есть
+        const btn = item.querySelector('.work-link');
+        if (btn) {
+            btn.addEventListener('click', async () => {
+                try {
+                    const res = await fetch(`/api/projects/${projectId}/view`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        const countEl = badge.querySelector('[data-count]');
+                        if (data && data.success) countEl.textContent = data.views;
+                    }
+                } catch (_) {}
+            });
+        }
+    });
+}
 
 // Отдельная функция для асинхронной инициализации формы
 async function initCSRFAndForm() {

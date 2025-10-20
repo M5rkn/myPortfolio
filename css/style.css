@@ -89,6 +89,7 @@
   --z-modal: 100;
   --z-toast: 200;
   --z-preloader: 1000;
+  --z-badge: 5;
 }
 
 /* Нормализация и базовые стили */
@@ -264,6 +265,41 @@ button {
   background-color: var(--color-bg-secondary);
   border-radius: calc(var(--radius-lg) - 1px);
   padding: var(--spacing-lg);
+}
+
+/* Бейдж просмотров на карточках работ */
+.work-item {
+  position: relative;
+}
+
+.view-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text-primary);
+  font-size: 0.85rem;
+  z-index: var(--z-badge);
+}
+
+.view-badge .eye-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.view-badge .view-count {
+  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .hidden {
