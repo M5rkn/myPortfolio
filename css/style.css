@@ -2641,7 +2641,7 @@ button {
 .modal-close {
   position: absolute;
   top: var(--spacing-md);
-  right: var(--spacing-md);
+  right: calc(var(--spacing-md) + 12px); /* смещаем левее, чтобы не задевать скролл */
   width: 40px;
   height: 40px;
   border-radius: var(--radius-full);
