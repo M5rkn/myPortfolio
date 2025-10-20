@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com/ https://cdn.jsdelivr.net/ https://cdnjs.cloudflare.com/ https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://region1.google-analytics.com; base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), autoplay=()">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
+    
+    <title>Генератор ТЗ - TechPortal</title>
+    <meta name="description" content="Бесплатный генератор технических заданий для веб-проектов">
+    
+    <!-- Иконки -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon-192.svg">
+    
+    <!-- PWA манифест -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TechPortal">
+    
+    <!-- Шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        :root {
+            /* Используем те же переменные, что и в основном сайте */
+            --color-bg-primary: #0f172a;
+            --color-bg-secondary: #1e293b;
+            --color-bg-tertiary: rgba(30, 41, 59, 0.7);
+            --color-bg-card: rgba(30, 41, 59, 0.8);
+            --color-bg-card-hover: rgba(51, 65, 85, 0.8);
+            
+            --color-text-primary: #f8fafc;
+            --color-text-secondary: #cbd5e1;
+            --color-text-tertiary: #94a3b8;
+            
+            --color-primary: #3b82f6;
+            --color-secondary: #8b5cf6;
+            --color-accent: #10b981;
+            
+            --gradient-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --gradient-secondary: linear-gradient(135deg, #8b5cf6, #ec4899);
+            --gradient-accent: linear-gradient(135deg, #10b981, #3b82f6);
+            
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            --font-size-4xl: 2.25rem;
+            --font-size-5xl: 3rem;
+            --font-size-6xl: 3.75rem;
+            
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 0.75rem;
+            --spacing-lg: 1rem;
+            --spacing-xl: 1.5rem;
+            --spacing-2xl: 2rem;
+            --spacing-3xl: 3rem;
+            --spacing-4xl: 4rem;
+            
+            --radius-sm: 0.25rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+            
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.5);
+            
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+            
+            --z-toast: 9000;
+            --z-modal: 8000;
+            --z-nav: 7000;
+            --z-dropdown: 6000;
+            --z-header: 5000;
+        }
+        
+        .tz-generator {
+            min-height: 100vh;
+            background-color: var(--color-bg-primary);
+            padding: 2rem 0;
+            position: relative;
+        }
+        
+        .tz-generator::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .tz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tz-header {
+            text-align: center;
+            margin-bottom: var(--spacing-3xl);
+            color: var(--color-text-primary);
+        }
+        
+        .tz-title {
+            font-size: var(--font-size-4xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .tz-subtitle {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+            opacity: 0.9;
+        }
+        
+        .tz-card {
+            background: var(--color-bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-2xl);
+            margin-bottom: var(--spacing-2xl);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            margin-bottom: var(--spacing-2xl);
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-full);
+            transition: width 0.3s ease;
+            width: 0%;
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .step {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all var(--transition-normal);
+        }
+        
+        .step.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .step-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-primary);
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            transition: all var(--transition-normal);
+            box-sizing: border-box;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--color-primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-xl) var(--spacing-md) var(--spacing-md);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            transition: all var(--transition-normal);
+            box-sizing: border-box;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: 
+                linear-gradient(45deg, transparent 50%, var(--color-primary) 50%),
+                linear-gradient(135deg, var(--color-primary) 50%, transparent 50%);
+            background-position: 
+                calc(100% - 20px) calc(1em + 2px),
+                calc(100% - 15px) calc(1em + 2px);
+            background-size: 
+                5px 5px,
+                5px 5px;
+            background-repeat: no-repeat;
+        }
+        
+        .form-select:focus {
+            border-color: var(--color-primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .form-check-input {
+            margin-right: var(--spacing-sm);
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--spacing-xl);
+        }
+        
+        .btn-primary, .btn-secondary {
+            padding: var(--spacing-sm) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--color-text-primary);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+        
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--color-primary);
+            color: var(--color-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .btn-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .btn:disabled,
+        .btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .btn:disabled:hover,
+        .btn.disabled:hover {
+            transform: none !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .btn-primary:disabled::before,
+        .btn-primary.disabled::before {
+            opacity: 0 !important;
+        }
+
+        .error {
+            border: 2px solid #ff4757 !important;
+            background-color: rgba(255, 71, 87, 0.1) !important;
+        }
+
+        .error-message {
+            color: #ff4757;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        
+        .result-section {
+            margin-top: var(--spacing-2xl);
+        }
+        
+        .result-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .site-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--color-bg-tertiary);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .logo {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-text-primary);
+            text-decoration: underline;
+        }
+        
+        .logo span {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @media (max-width: 768px) {
+            .tz-title {
+                font-size: var(--font-size-3xl);
+            }
+            
+            .tz-card {
+                padding: var(--spacing-xl);
+            }
+            
+            .form-actions {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tz-title {
+                font-size: var(--font-size-2xl);
+            }
+            
+            .tz-subtitle {
+                font-size: var(--font-size-base);
+            }
+        }
+
+        /* Стили прелоадера */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-content {
+            text-align: center;
+        }
+
+        .preloader-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .preloader-spinner svg {
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        .preloader-spinner circle {
+            fill: none;
+            stroke: var(--color-primary);
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 75;
+            transform-origin: 50% 50%;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .option-card {
+            background: var(--color-bg-card);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+            z-index: 0;
+        }
+
+        .option-card::after {
+            content: '';
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--color-text-secondary);
+            border-radius: 50%;
+            transition: all var(--transition-normal);
+            z-index: 2;
+        }
+
+        .option-card.active::after {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px var(--color-primary);
+        }
+
+        .option-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--color-primary);
+        }
+
+        .option-card.active {
+            border-color: var(--color-primary);
+            background: var(--color-bg-card-hover);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .option-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .option-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-xs);
+            position: relative;
+            z-index: 1;
+        }
+
+        .option-desc {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Обновляем стили для кнопок навигации */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+        }
+
+        .btn {
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--color-text-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Стили для ошибок */
+        .error {
+            border-color: var(--color-error) !important;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-bg-card);
+            color: var(--color-text-primary);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            z-index: var(--z-toast);
+            animation: slideUp 0.3s ease forwards;
+        }
+
+        .toast-error {
+            border-left: 4px solid var(--color-error);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        /* Mobile Navigation */
+        @media (max-width: 768px) {
+            html {
+                scroll-behavior: smooth;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            body {
+                overflow-x: hidden;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            /* Увеличенная область клика для бургер-меню */
+            .burger {
+                width: 44px;
+                height: 44px;
+                padding: 10px;
+                background: var(--color-bg-card);
+                border-radius: var(--radius-full);
+                box-shadow: var(--shadow-md);
+                position: relative;
+                z-index: 1002;
+            }
+
+            .burger::before {
+                content: '';
+                position: absolute;
+                top: -10px;
+                right: -10px;
+                bottom: -10px;
+                left: -10px;
+                z-index: -1;
+            }
+
+            .nav-menu {
+                padding-top: 80px;
+            }
+
+            .nav-link {
+                font-size: var(--font-size-lg);
+                padding: var(--spacing-lg);
+                margin-bottom: var(--spacing-md);
+                background: var(--color-bg-card);
+                border-radius: var(--radius-lg);
+                display: flex;
+                align-items: center;
+            transition: all 0.3s ease;
+            }
+
+            .nav-link:hover {
+                background: var(--color-bg-card-hover);
+                transform: translateX(10px);
+            }
+        }
+
+        /* Планшеты */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .site-header {
+                padding: var(--spacing-lg);
+            }
+
+            .btn-back {
+                font-size: var(--font-size-base);
+                padding: var(--spacing-md) var(--spacing-lg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Прелоадер -->
+    <div class="preloader" id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">
+                <span class="gradient-text">TP</span>
+            </div>
+            <div class="preloader-spinner">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Курсор -->
+    <div class="custom-cursor" id="customCursor"></div>
+    <div class="custom-cursor-follower" id="customCursorFollower"></div>
+
+    <!-- Линии фона -->
+    <div class="background-lines">
+        <div class="line line-1"></div>
+        <div class="line line-2"></div>
+        <div class="line line-3"></div>
+    </div>
+
+    <!-- Прогресс скролла -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Шапка сайта -->
+    <div class="site-header">
+        <a href="index.html" class="logo">
+            <span>TP</span>
+        </a>
+        <a href="index.html" class="btn btn-secondary">
+            <span>Вернуться на сайт</span>
+        </a>
+    </div>
+
+    <!-- Контент страницы -->
+    <div class="tz-generator">
+        <div class="tz-container">
+            <div class="tz-header">
+                <h1 class="tz-title">Генератор технического задания</h1>
+                <p class="tz-subtitle">Создайте профессиональное ТЗ для вашего веб-проекта за 5 минут</p>
+            </div>
+            
+            <!-- Остальное содержимое страницы -->
+            <div class="tz-card">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-status">
+                    Шаг <span id="currentStep">1</span> из <span id="totalSteps">6</span>
+                </div>
+            </div>
+            
+            <div class="tz-card">
+                <div class="step active" id="step1">
+                    <h2 class="step-title">1. Какой тип проекта планируете?</h2>
+                    <div class="option-grid">
+                        <div class="option-card" data-value="landing">
+                            <div class="option-icon">🌐</div>
+                            <div class="option-title">Лендинг</div>
+                            <div class="option-desc">Одностраничный сайт для продажи товара/услуги</div>
+                        </div>
+                        <div class="option-card" data-value="website">
+                            <div class="option-icon">📱</div>
+                            <div class="option-title">Многостраничный сайт</div>
+                            <div class="option-desc">Корпоративный сайт, блог, портфолио</div>
+                        </div>
+                        <div class="option-card" data-value="shop">
+                            <div class="option-icon">🛒</div>
+                            <div class="option-title">Интернет-магазин</div>
+                            <div class="option-desc">E-commerce с каталогом и корзиной</div>
+                        </div>
+                        <div class="option-card" data-value="app">
+                            <div class="option-icon">⚙️</div>
+                            <div class="option-title">Веб-приложение</div>
+                            <div class="option-desc">CRM, система управления, платформа</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step" id="step2">
+                    <h2 class="step-title">2. Расскажите о своем проекте</h2>
+                    <div class="form-group">
+                        <label class="form-label">Название проекта *</label>
+                        <input type="text" class="form-input" id="projectName" placeholder="Например: Интернет-магазин одежды" required minlength="3">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Описание проекта *</label>
+                        <textarea class="form-textarea" id="projectDescription" placeholder="Опишите что должен делать сайт, какие задачи решать, кто ваша аудитория..." required minlength="10"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ссылки на конкурентов (необязательно)</label>
+                        <textarea class="form-textarea" id="competitors" placeholder="Перечислите сайты конкурентов или примеры, которые вам нравятся"></textarea>
+                    </div>
+                </div>
+                
+                <div class="step" id="step3">
+                    <h2 class="step-title">3. Кто ваша целевая аудитория?</h2>
+                    <div class="form-group">
+                        <label class="form-label">Возраст аудитории *</label>
+                        <select class="form-select" id="targetAge" required>
+                            <option value="">Выберите возрастную группу</option>
+                            <option value="18-25">18-25 лет (студенты, молодые специалисты)</option>
+                            <option value="25-35">25-35 лет (молодые семьи, карьеристы)</option>
+                            <option value="35-45">35-45 лет (среднего возраста, устоявшиеся)</option>
+                            <option value="45+">45+ лет (зрелая аудитория)</option>
+                            <option value="mixed">Смешанная аудитория</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Уровень технической грамотности *</label>
+                        <select class="form-select" id="techLevel" required>
+                            <option value="">Выберите уровень</option>
+                            <option value="low">Низкий (простой интерфейс, минимум функций)</option>
+                            <option value="medium">Средний (стандартный функционал)</option>
+                            <option value="high">Высокий (сложные функции, много возможностей)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Основные потребности пользователей</label>
+                        <textarea class="form-textarea" id="userNeeds" placeholder="Что пользователи хотят получить от сайта? Какие проблемы решить?"></textarea>
+                    </div>
+                </div>
+                
+                <div class="step" id="step4">
+                    <h2 class="step-title">4. Какой функционал нужен?</h2>
+                    <p style="margin-bottom: 1rem; color: #666;">Отметьте нужные функции:</p>
+                    <div class="checkbox-group" id="functionalityList">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="responsive" value="responsive">
+                            <label for="responsive">Адаптивная верстка (мобильные)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="seo" value="seo">
+                            <label for="seo">SEO оптимизация</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="analytics" value="analytics">
+                            <label for="analytics">Счетчики аналитики</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="contact-form" value="contact-form">
+                            <label for="contact-form">Форма обратной связи</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step" id="step5">
+                    <h2 class="step-title">5. Дизайн и технические требования</h2>
+                    <div class="form-group">
+                        <label class="form-label">Стиль дизайна *</label>
+                        <select class="form-select" id="designStyle" required>
+                            <option value="">Выберите стиль</option>
+                            <option value="modern">Современный (минимализм, чистые линии)</option>
+                            <option value="corporate">Корпоративный (строгий, деловой)</option>
+                            <option value="creative">Креативный (яркий, необычный)</option>
+                            <option value="classic">Классический (традиционный, консервативный)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Цветовые предпочтения</label>
+                        <input type="text" class="form-input" id="colorPrefs" placeholder="Например: синий, белый, корпоративные цвета">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Есть ли логотип и фирменный стиль?</label>
+                        <select class="form-select" id="branding">
+                            <option value="">Выберите вариант</option>
+                            <option value="yes">Да, есть готовый фирменный стиль</option>
+                            <option value="partial">Есть логотип, но нет фирменного стиля</option>
+                            <option value="no">Нет, нужно создать с нуля</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="step" id="step6">
+                    <h2 class="step-title">6. Бюджет и временные рамки</h2>
+                    <div class="form-group">
+                        <label class="form-label">Планируемый бюджет *</label>
+                        <select class="form-select" id="budget" required>
+                            <option value="">Выберите диапазон</option>
+                            <option value="small">50€ - 150€ (простой проект)</option>
+                            <option value="medium">150€ - 400€ (средний проект)</option>
+                            <option value="large">400€ - 800€ (сложный проект)</option>
+                            <option value="enterprise">800€+ (корпоративный уровень)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Когда нужно завершить проект? *</label>
+                        <select class="form-select" id="deadline" required>
+                            <option value="">Выберите срок</option>
+                            <option value="urgent">Срочно (1-2 недели)</option>
+                            <option value="normal">Стандартно (1-2 месяца)</option>
+                            <option value="relaxed">Без спешки (2-3 месяца)</option>
+                            <option value="flexible">Гибкие сроки</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Дополнительные требования</label>
+                        <textarea class="form-textarea" id="additionalReqs" placeholder="Особые пожелания, ограничения, важные детали..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="navigation">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()" style="display: none;">Назад</button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Далее</button>
+                </div>
+            </div>
+            
+            <div class="result-section" id="resultSection">
+                <div class="tz-card">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">✅ Ваше техническое задание готово!</h2>
+                    
+                    <div class="tz-preview" id="tzPreview">
+                        <!-- Generated TZ content will be here -->
+                    </div>
+                    
+                    <div class="tz-export">
+                        <div class="export-buttons">
+                            <button class="btn btn-secondary" onclick="copyToClipboard()">📋 Копировать текст</button>
+                            <button class="btn btn-secondary" onclick="startOver()">🔄 Создать новое ТЗ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PRICING_CONFIG = {
+            projectTypes: {
+                'landing': { min: 50, max: 150, name: 'Лендинг' },
+                'website': { min: 100, max: 300, name: 'Многостраничный сайт' },
+                'shop': { min: 200, max: 500, name: 'Интернет-магазин' },
+                'app': { min: 300, max: 800, name: 'Веб-приложение' }
+            },
+            
+            features: {
+                'admin': { cost: 25, name: 'Админ-панель' },
+                'auth': { cost: 20, name: 'Авторизация' },
+                'api': { cost: 25, name: 'API интеграция' },
+                'seo': { cost: 25, name: 'SEO оптимизация' },
+                'responsive': { cost: 0, name: 'Адаптивная верстка' },
+                'analytics': { cost: 10, name: 'Системы аналитики' },
+                'contact-form': { cost: 5, name: 'Форма обратной связи' }
+            },
+            
+            budgetRanges: {
+                'small': '50€ - 150€',
+                'medium': '150€ - 400€', 
+                'large': '400€ - 800€',
+                'enterprise': '800€+'
+            },
+            
+            calculateProjectCost: function(projectType, features = []) {
+                let baseCost = this.projectTypes[projectType]?.min || 0;
+                let additionalCost = features.reduce((sum, feature) => {
+                    return sum + (this.features[feature]?.cost || 0);
+                }, 0);
+                return baseCost + additionalCost;
+            },
+            
+            getBudgetRange: function(totalCost) {
+                if (totalCost <= 150) return 'small';
+                if (totalCost <= 400) return 'medium';
+                if (totalCost <= 800) return 'large';
+                return 'enterprise';
+            }
+        };
+    </script>
+    <script>
+        // Глобальные переменные для управления шагами
+        let currentStepIndex = 1;
+        const totalSteps = 6;
+        const formData = {};
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgressBar();
+            setupOptionCards();
+            hideResultSection();
+            updateNavigation();
+            setupFieldValidation();
+        });
+
+        // Настройка валидации полей в реальном времени
+        function setupFieldValidation() {
+            // Находим все поля ввода и select
+            const allFields = document.querySelectorAll('input[required], textarea[required], select[required]');
+            
+            allFields.forEach(field => {
+                field.addEventListener('input', function() {
+                    // Убираем ошибку при начале ввода
+                    this.classList.remove('error');
+                    hideFieldError(this);
+                    
+                    // Проверяем состояние кнопки "Далее"
+                    updateNextButtonState();
+                });
+
+                field.addEventListener('change', function() {
+                    // Убираем ошибку при изменении
+                    this.classList.remove('error');
+                    hideFieldError(this);
+                    
+                    // Проверяем состояние кнопки "Далее"
+                    updateNextButtonState();
+                });
+            });
+
+            // Для чекбоксов
+            const checkboxes = document.querySelectorAll('#functionalityList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateNextButtonState();
+                });
+            });
+        }
+        
+        // Обновление состояния кнопки "Далее"
+        function updateNextButtonState() {
+            const nextBtn = document.getElementById('nextBtn');
+            const currentStep = document.getElementById(`step${currentStepIndex}`);
+            
+            if (currentStepIndex === 1) {
+                // Для первого шага проверяем выбор типа проекта
+                nextBtn.disabled = !formData.projectType;
+                if (formData.projectType) {
+                    nextBtn.classList.remove('disabled');
+                } else {
+                    nextBtn.classList.add('disabled');
+                }
+                return;
+            }
+
+            if (currentStepIndex === 4) {
+                // Для четвертого шага проверяем чекбоксы
+                const checkedBoxes = currentStep.querySelectorAll('input[type="checkbox"]:checked');
+                nextBtn.disabled = checkedBoxes.length === 0;
+                if (checkedBoxes.length > 0) {
+                    nextBtn.classList.remove('disabled');
+                } else {
+                    nextBtn.classList.add('disabled');
+                }
+                return;
+            }
+
+            // Для остальных шагов проверяем обязательные поля
+            const requiredFields = currentStep.querySelectorAll('[required]');
+            let allFilled = true;
+            
+            requiredFields.forEach(field => {
+                const value = field.value ? field.value.trim() : '';
+                if (!value) {
+                    allFilled = false;
+                }
+            });
+
+            nextBtn.disabled = !allFilled;
+            if (allFilled) {
+                nextBtn.classList.remove('disabled');
+            } else {
+                nextBtn.classList.add('disabled');
+            }
+        }
+
+        // Настройка карточек с опциями
+        function setupOptionCards() {
+            const optionCards = document.querySelectorAll('.option-card');
+            
+            optionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Убираем активный класс у всех карточек
+                    optionCards.forEach(c => c.classList.remove('active'));
+                    // Добавляем активный класс выбранной карточке
+                    this.classList.add('active');
+                    // Сохраняем выбор
+                    formData.projectType = this.dataset.value;
+                    
+                    // Активируем кнопку "Далее"
+                    const nextBtn = document.getElementById('nextBtn');
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('disabled');
+                });
+            });
+        }
+        
+        // Обновление прогресс-бара
+        function updateProgressBar() {
+            const progress = (currentStepIndex - 1) / (totalSteps - 1) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            document.getElementById('currentStep').textContent = currentStepIndex;
+            document.getElementById('totalSteps').textContent = totalSteps;
+        }
+
+        // Переход к следующему шагу
+        function nextStep() {
+            if (!validateCurrentStep()) {
+                return;
+            }
+
+            saveCurrentStepData();
+
+                if (currentStepIndex < totalSteps) {
+                // Скрываем текущий шаг
+                    document.getElementById(`step${currentStepIndex}`).classList.remove('active');
+                // Показываем следующий шаг
+                    currentStepIndex++;
+                    document.getElementById(`step${currentStepIndex}`).classList.add('active');
+                // Обновляем навигацию
+                    updateNavigation();
+                // Обновляем прогресс
+                updateProgressBar();
+                // Прокручиваем вверх
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    generateTZ();
+            }
+        }
+        
+        // Возврат к предыдущему шагу
+        function previousStep() {
+            if (currentStepIndex > 1) {
+                // Скрываем текущий шаг
+                document.getElementById(`step${currentStepIndex}`).classList.remove('active');
+                // Показываем предыдущий шаг
+                currentStepIndex--;
+                document.getElementById(`step${currentStepIndex}`).classList.add('active');
+                // Обновляем навигацию
+                updateNavigation();
+                // Обновляем прогресс
+                updateProgressBar();
+                // Прокручиваем вверх
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Обновление кнопок навигации
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // Показываем/скрываем кнопку "Назад"
+            prevBtn.style.display = currentStepIndex === 1 ? 'none' : 'block';
+            
+            // Меняем текст кнопки "Далее" на последнем шаге
+            nextBtn.textContent = currentStepIndex === totalSteps ? 'Сгенерировать ТЗ' : 'Далее';
+            
+            // Обновляем состояние кнопки "Далее"
+            updateNextButtonState();
+        }
+
+        // Валидация текущего шага
+        function validateCurrentStep() {
+            const currentStep = document.getElementById(`step${currentStepIndex}`);
+            let isValid = true;
+            let errors = [];
+
+            // Очищаем предыдущие ошибки
+            clearFieldErrors(currentStep);
+
+            // Проверка первого шага (выбор типа проекта)
+            if (currentStepIndex === 1) {
+                if (!formData.projectType) {
+                    showError('Пожалуйста, выберите тип проекта');
+                        return false;
+                    }
+                return true;
+            }
+
+            // Проверка четвертого шага (функциональность)
+            if (currentStepIndex === 4) {
+                const checkedBoxes = currentStep.querySelectorAll('input[type="checkbox"]:checked');
+                if (checkedBoxes.length === 0) {
+                    showError('Выберите хотя бы одну функцию для проекта');
+                        return false;
+                    }
+                return true;
+            }
+
+            // Проверка остальных шагов
+            const requiredFields = currentStep.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                let fieldValue = field.value ? field.value.trim() : '';
+                
+                if (!fieldValue) {
+                    field.classList.add('error');
+                    isValid = false;
+                    
+                    // Показываем сообщение об ошибке под полем
+                    showFieldError(field, 'Это поле обязательно для заполнения');
+                    
+                    // Получаем название поля для общего сообщения
+                    const label = field.parentNode.querySelector('.form-label');
+                    if (label) {
+                        errors.push(label.textContent.replace(' *', ''));
+                    }
+                } else {
+                    field.classList.remove('error');
+                    hideFieldError(field);
+                }
+            });
+
+            if (!isValid) {
+                showError(`Заполните обязательные поля: ${errors.join(', ')}`);
+            }
+
+            return isValid;
+        }
+
+        // Вспомогательные функции для работы с ошибками
+        function showFieldError(field, message) {
+            let errorMsg = field.parentNode.querySelector('.error-message');
+            if (!errorMsg) {
+                errorMsg = document.createElement('div');
+                errorMsg.className = 'error-message';
+                errorMsg.style.cssText = 'color: #ff4757; font-size: 0.85rem; margin-top: 0.25rem;';
+                field.parentNode.appendChild(errorMsg);
+            }
+            errorMsg.textContent = message;
+        }
+
+        function hideFieldError(field) {
+            const errorMsg = field.parentNode.querySelector('.error-message');
+            if (errorMsg) {
+                errorMsg.remove();
+            }
+        }
+
+        function clearFieldErrors(step) {
+            const errorMessages = step.querySelectorAll('.error-message');
+            errorMessages.forEach(msg => msg.remove());
+            
+            const errorFields = step.querySelectorAll('.error');
+            errorFields.forEach(field => field.classList.remove('error'));
+        }
+
+        // Сохранение данных текущего шага
+        function saveCurrentStepData() {
+            const currentStep = document.getElementById(`step${currentStepIndex}`);
+            
+            switch(currentStepIndex) {
+                case 2:
+                    formData.projectName = document.getElementById('projectName').value.trim();
+                    formData.projectDescription = document.getElementById('projectDescription').value.trim();
+                    formData.competitors = document.getElementById('competitors').value.trim();
+                    break;
+                case 3:
+                    formData.targetAge = document.getElementById('targetAge').value;
+                    formData.techLevel = document.getElementById('techLevel').value;
+                    formData.userNeeds = document.getElementById('userNeeds').value.trim();
+                    break;
+                case 4:
+                    formData.features = Array.from(document.querySelectorAll('#functionalityList input:checked'))
+                        .map(cb => cb.value);
+                    break;
+                case 5:
+                    formData.designStyle = document.getElementById('designStyle').value;
+                    formData.colorPrefs = document.getElementById('colorPrefs').value.trim();
+                    formData.branding = document.getElementById('branding').value;
+                    break;
+                case 6:
+                    formData.budget = document.getElementById('budget').value;
+                    formData.deadline = document.getElementById('deadline').value;
+                    formData.additionalReqs = document.getElementById('additionalReqs').value.trim();
+                    break;
+            }
+        }
+
+        // Показ ошибки
+        function showError(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast toast-error';
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Скрытие секции с результатом
+        function hideResultSection() {
+            document.getElementById('resultSection').style.display = 'none';
+        }
+
+        // Генерация технических требований на основе выбранных функций
+        function generateTechnicalRequirements(features) {
+            const technicalReqs = [];
+            
+            // Базовые требования для всех проектов
+            technicalReqs.push('Кроссбраузерная совместимость');
+            technicalReqs.push('Оптимизация скорости загрузки');
+            technicalReqs.push('Безопасность и защита данных');
+            
+            // Добавляем требования на основе выбранных функций
+            if (features.includes('responsive')) {
+                technicalReqs.push('Адаптивная верстка для всех устройств (мобильные, планшеты, десктоп)');
+            }
+            
+            if (features.includes('seo')) {
+                technicalReqs.push('SEO-оптимизация (метатеги, семантическая разметка, sitemap.xml)');
+            }
+            
+            if (features.includes('analytics')) {
+                technicalReqs.push('Интеграция с системами аналитики (Google Analytics, Яндекс.Метрика)');
+            }
+            
+            if (features.includes('contact-form')) {
+                technicalReqs.push('Защита форм от спама и валидация данных');
+            }
+            
+            // Формируем HTML
+            if (technicalReqs.length > 0) {
+                return `<ul>${technicalReqs.map(req => `<li>${req}</li>`).join('')}</ul>`;
+            } else {
+                return '<p>Базовые технические требования будут определены при разработке.</p>';
+            }
+        }
+
+        function generateTZ() {
+            // Показываем секцию с результатом
+            const resultSection = document.getElementById('resultSection');
+            resultSection.style.display = 'block';
+            
+            // Получаем элемент для превью ТЗ
+            const tzPreview = document.getElementById('tzPreview');
+            
+            // Форматируем текущую дату
+            const currentDate = new Date().toLocaleDateString('ru-RU');
+            
+            // Получаем имена для типа проекта и других опций
+            const projectTypes = {
+                'landing': 'Лендинг',
+                'website': 'Многостраничный сайт',
+                'shop': 'Интернет-магазин',
+                'app': 'Веб-приложение'
+            };
+            
+            const techLevels = {
+                'low': 'Низкий (простой интерфейс, минимум функций)',
+                'medium': 'Средний (стандартный функционал)',
+                'high': 'Высокий (сложные функции, много возможностей)'
+            };
+            
+            const designStyles = {
+                'modern': 'Современный минимализм',
+                'corporate': 'Корпоративный стиль',
+                'creative': 'Креативный дизайн',
+                'classic': 'Классический стиль'
+            };
+            
+            const brandingOptions = {
+                'yes': 'Есть готовый фирменный стиль',
+                'partial': 'Есть логотип, нужно доработать фирменный стиль',
+                'no': 'Нужно создать с нуля'
+            };
+            
+            const deadlineOptions = {
+                'urgent': 'Срочно (1-2 недели)',
+                'normal': 'Стандартно (1-2 месяца)',
+                'relaxed': 'Без спешки (2-3 месяца)',
+                'flexible': 'Гибкие сроки'
+            };
+            
+            // Формируем HTML для ТЗ
+            const tzHTML = `
+                <div class="tz-content">
+                    <div class="tz-header">
+                        <h1>Техническое задание</h1>
+                        <p class="tz-date">Дата создания: ${currentDate}</p>
+                    </div>
+
+                    <div class="tz-section">
+                        <h2>1. Общая информация</h2>
+                        <p><strong>Название проекта:</strong> ${formData.projectName}</p>
+                <p><strong>Тип проекта:</strong> ${projectTypes[formData.projectType]}</p>
+                        <p><strong>Описание проекта:</strong> ${formData.projectDescription}</p>
+                ${formData.competitors ? `<p><strong>Конкуренты/примеры:</strong> ${formData.competitors}</p>` : ''}
+                    </div>
+                
+                    <div class="tz-section">
+                        <h2>2. Целевая аудитория</h2>
+                <p><strong>Возраст:</strong> ${formData.targetAge}</p>
+                        <p><strong>Технический уровень:</strong> ${techLevels[formData.techLevel]}</p>
+                ${formData.userNeeds ? `<p><strong>Потребности пользователей:</strong> ${formData.userNeeds}</p>` : ''}
+                    </div>
+                
+                    <div class="tz-section">
+                        <h2>3. Функциональные требования</h2>
+                <ul>
+                            ${formData.features.map(feature => {
+                                const featureNames = {
+                                    'responsive': 'Адаптивная верстка',
+                                    'seo': 'SEO оптимизация',
+                                    'analytics': 'Системы аналитики',
+                                    'contact-form': 'Форма обратной связи'
+                                };
+                                return `<li>${featureNames[feature] || feature}</li>`;
+                            }).join('')}
+                </ul>
+                    </div>
+                
+                    <div class="tz-section">
+                        <h2>4. Дизайн</h2>
+                <p><strong>Стиль:</strong> ${designStyles[formData.designStyle]}</p>
+                ${formData.colorPrefs ? `<p><strong>Цветовые предпочтения:</strong> ${formData.colorPrefs}</p>` : ''}
+                        ${formData.branding ? `<p><strong>Фирменный стиль:</strong> ${brandingOptions[formData.branding]}</p>` : ''}
+                    </div>
+                
+                    <div class="tz-section">
+                        <h2>5. Технические требования</h2>
+                        ${generateTechnicalRequirements(formData.features)}
+                </div>
+
+                    <div class="tz-section">
+                        <h2>6. Сроки и бюджет</h2>
+                        <p><strong>Бюджет:</strong> ${PRICING_CONFIG.budgetRanges[formData.budget] || formData.budget}</p>
+                        <p><strong>Сроки:</strong> ${deadlineOptions[formData.deadline]}</p>
+                        ${formData.additionalReqs ? `<p><strong>Дополнительные требования:</strong> ${formData.additionalReqs}</p>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            // Добавляем стили для ТЗ
+            const tzStyles = `
+                <style>
+                    .tz-content {
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: var(--spacing-xl);
+                        background: var(--color-bg-card);
+                        border-radius: var(--radius-lg);
+                        box-shadow: var(--shadow-lg);
+                    }
+                    
+                    .tz-header {
+                        text-align: center;
+                        margin-bottom: var(--spacing-2xl);
+                        padding-bottom: var(--spacing-lg);
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                    }
+                    
+                    .tz-date {
+                        color: var(--color-text-secondary);
+                        font-size: var(--font-size-sm);
+                        margin-top: var(--spacing-sm);
+                    }
+                    
+                    .tz-section {
+                        margin-bottom: var(--spacing-2xl);
+                    }
+                    
+                    .tz-section h2 {
+                        color: var(--color-primary);
+                        font-size: var(--font-size-xl);
+                        margin-bottom: var(--spacing-lg);
+                    }
+                    
+                    .tz-section p {
+                        margin-bottom: var(--spacing-md);
+                        line-height: 1.6;
+                    }
+                    
+                    .tz-section strong {
+                        color: var(--color-text-primary);
+                        font-weight: 600;
+                    }
+                    
+                    .tz-section ul {
+                        list-style: disc;
+                        margin-left: var(--spacing-xl);
+                        margin-bottom: var(--spacing-lg);
+                    }
+                    
+                    .tz-section ul li {
+                        margin-bottom: var(--spacing-sm);
+                        line-height: 1.6;
+                    }
+                </style>
+            `;
+            
+            // Вставляем ТЗ и стили
+            tzPreview.innerHTML = tzStyles + tzHTML;
+            
+            // Прокручиваем к результату
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function copyToClipboard() {
+            const tzText = document.getElementById('tzPreview').innerText;
+            navigator.clipboard.writeText(tzText).then(() => {
+                alert('Техническое задание скопировано в буфер обмена!');
+            }).catch(() => {
+                alert('Ошибка копирования. Попробуйте выделить текст вручную.');
+            });
+        }
+        
+        function startOver() {
+            if (confirm('Вы уверены, что хотите создать новое ТЗ? Текущий прогресс будет потерян.')) {
+                location.reload();
+            }
+        }
+        
+    </script>
+
+    <script>
+        // Скрытие прелоадера
+        window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                preloader.classList.add('hidden');
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 500);
+            }
+        });
+
+        // Запасной вариант, если событие load не сработает
+        setTimeout(() => {
+            const preloader = document.getElementById('preloader');
+            if (preloader && !preloader.classList.contains('hidden')) {
+                preloader.classList.add('hidden');
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 500);
+            }
+        }, 5000);
+    </script>
+
+    <script>
+        // Улучшенный обработчик для бургер-меню
+        const burger = document.querySelector('.burger');
+        if (burger) {
+            burger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const menu = document.querySelector('.nav-menu');
+                burger.classList.toggle('active');
+                menu.classList.toggle('active');
+                function closeMenu(event) {
+                    if (!menu.contains(event.target) && !burger.contains(event.target)) {
+                        menu.classList.remove('active');
+                        burger.classList.remove('active');
+                        document.removeEventListener('click', closeMenu);
+                    }
+                }
+                if (menu.classList.contains('active')) {
+                    setTimeout(() => {
+                        document.addEventListener('click', closeMenu);
+                    }, 0);
+                }
+            }, { passive: false });
+        }
+    </script>
+</body>
+</html> 

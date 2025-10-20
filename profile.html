@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль пользователя - TechPortal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    
+    <style>
+        .profile-container {
+            min-height: 100vh;
+            background: var(--color-bg-primary);
+            padding: var(--spacing-xl) 0;
+        }
+        
+        .profile-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+        
+        .profile-header {
+            background: var(--color-bg-card);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-2xl);
+            margin-bottom: var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%; /* Круглая аватарка */
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+        }
+        
+        .profile-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%; /* Круглый эффект свечения */
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        .profile-info h1 {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text-primary);
+        }
+        
+        .profile-email {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .profile-stats {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+        
+        .stat-item {
+            background: var(--color-bg-secondary);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-md);
+            text-align: center;
+            min-width: 100px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-top: var(--spacing-xs);
+        }
+        
+        .profile-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--spacing-xl);
+        }
+        
+        .bonus-section {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            color: white;
+            text-align: center;
+        }
+        
+        .bonus-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .streak-counter {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .bonus-progress {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius-lg);
+            height: 8px;
+            margin: var(--spacing-md) 0;
+            overflow: hidden;
+        }
+        
+        .bonus-progress-fill {
+            background: white;
+            height: 100%;
+            border-radius: var(--border-radius-lg);
+            transition: width 0.3s ease;
+        }
+        
+        .bonus-discount {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-md);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .discount-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FFE66D;
+        }
+        
+        .profile-main {
+            background: var(--color-bg-card);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .profile-sidebar {
+            background: var(--color-bg-card);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        
+        .order-item {
+            background: var(--color-bg-secondary);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-lg);
+            border-left: 4px solid var(--color-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .order-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .order-title {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .order-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+        
+        .order-status {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+        }
+        
+        .status-new {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        
+        .status-progress {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+        }
+        
+        .status-completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+        
+        .saved-calculations-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .calculation-item {
+            background: var(--color-bg-secondary);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .calculation-item:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+        
+        .calculation-name {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .calculation-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--font-size-sm);
+            opacity: 0.8;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--color-bg-card);
+            border: none;
+            border-radius: var(--border-radius-full);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .back-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Мобильная адаптация профиля */
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--spacing-lg);
+            }
+            
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 2.5rem;
+            }
+            
+            .profile-info h1 {
+                font-size: 2rem;
+            }
+            
+            .profile-stats {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .profile-content {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+            
+            .profile-main,
+            .profile-sidebar {
+                padding: var(--spacing-lg);
+            }
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .back-btn svg {
+            width: 24px;
+            height: 24px;
+            color: var(--color-text-primary);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            color: var(--color-text-secondary);
+        }
+        
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: var(--spacing-lg);
+            opacity: 0.5;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 68, 68, 0.3);
+        }
+        
+        .admin-panel-btn {
+            background: linear-gradient(135deg, var(--color-primary), #4f46e5);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: var(--font-size-base);
+        }
+        
+        .admin-panel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(103, 58, 183, 0.3);
+        }
+        
+        .profile-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+        
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--spacing-lg);
+            }
+            
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 2.5rem;
+            }
+            
+            .profile-info h1 {
+                font-size: 2rem;
+            }
+            
+            .profile-stats {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .profile-content {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+            }
+            
+            .profile-wrapper {
+                padding: 0 var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="window.location.href='index.html'">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+
+    <div class="profile-container">
+        <div class="profile-wrapper">
+            <!-- Заголовок профиля -->
+            <div class="profile-header">
+                <div class="profile-avatar" id="profileAvatar">
+                    <span id="avatarLetter">U</span>
+                </div>
+                <div class="profile-info">
+                    <h1 id="userName">Пользователь</h1>
+                    <div class="profile-email" id="userEmail">user@example.com</div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="calculationsCount">0</span>
+                            <span class="stat-label">Расчетов</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="ordersCount">0</span>
+                            <span class="stat-label">Заказов</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="joinDays">0</span>
+                            <span class="stat-label">Дней с нами</span>
+                        </div>
+                    </div>
+                    <div class="profile-buttons">
+                        <button class="logout-btn" onclick="logout()">Выйти из аккаунта</button>
+                        <button class="admin-panel-btn" id="adminPanelBtn" style="display: none;" onclick="window.location.href='admin.html'">
+                            🛠️ Админ панель
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Бонусная система -->
+            <div class="bonus-section" id="bonusSection" style="display: none;">
+                <div class="bonus-title">
+                    🔥 Ежедневный стрик
+                </div>
+                <div class="streak-counter" id="streakCounter">0</div>
+                <div class="bonus-progress">
+                    <div class="bonus-progress-fill" id="bonusProgressFill" style="width: 0%;"></div>
+                </div>
+                <p id="bonusDescription">Заходите 7 дней подряд и получите скидку 15%!</p>
+                <div class="bonus-discount" id="bonusDiscount" style="display: none;">
+                    <div class="discount-value" id="discountValue">15%</div>
+                    <p>Скидка активна до <span id="discountExpiry"></span></p>
+                </div>
+            </div>
+
+            <!-- Основной контент -->
+            <div class="profile-content">
+                <div class="profile-main">
+                    <h2 class="section-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 4H18C20.2091 4 22 5.79086 22 8V16C22 18.2091 20.2091 20 18 20H6C3.79086 20 2 18.2091 2 16V8C2 5.79086 3.79086 4 6 4H8M16 4V2C16 1.44772 15.5523 1 15 1H9C8.44772 1 8 1.44772 8 2V4M16 4H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Мои заказы
+                    </h2>
+                    <div class="orders-list" id="ordersList">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <p>У вас пока нет заказов</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-sidebar">
+                    <h3 class="section-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 7H6C4.89543 7 4 7.89543 4 9V15C4 16.1046 4.89543 17 6 17H18C19.1046 17 20 16.1046 20 15V9C20 7.89543 19.1046 7 18 7H15M9 7V5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7M9 7H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Сохраненные расчеты
+                    </h3>
+                    <div class="saved-calculations-list" id="savedCalculationsList">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <p>Нет сохраненных расчетов</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Инициализация профиля пользователя
+        document.addEventListener('DOMContentLoaded', function() {
+            initUserProfile();
+        });
+
+        function initUserProfile() {
+            const token = localStorage.getItem('authToken');
+            
+            if (!token || isTokenExpired(token)) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const userInfo = getUserFromToken(token);
+            if (!userInfo) {
+                localStorage.removeItem('authToken');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Заполняем информацию о пользователе
+            updateUserInfo(userInfo);
+            
+            // Загружаем данные пользователя
+            loadUserData(userInfo.userId);
+        }
+
+        // Функция декодирования русских имен (клиентская версия)
+        function decodeName(name) {
+            if (!name || typeof name !== 'string') return name;
+            
+            // Проверяем наличие испорченной кодировки (символы типа Ð³ÐµÐ¹)
+            if (/[ÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ]/.test(name)) {
+                try {
+                    // Метод 1: latin1 -> utf8 декодирование
+                    const bytes = new Uint8Array(name.length);
+                    for (let i = 0; i < name.length; i++) {
+                        bytes[i] = name.charCodeAt(i) & 0xFF;
+                    }
+                    let decoded = new TextDecoder('utf-8').decode(bytes);
+                    
+                    // Проверяем результат на валидность
+                    if (/^[А-Яа-яЁё\w\s\-\.]+$/.test(decoded)) {
+                        return decoded;
+                    }
+                    
+                    // Метод 2: Словарь замен для основных проблемных случаев
+                    const fixMap = {
+                        'Ð³ÐµÐ¹': 'гей',
+                        'ÑÐµÑÑ': 'тест',
+                        'ÐÐ»ÐµÐºÑÐ°Ð½Ð´Ñ€': 'Александр',
+                        'ÐÐ»ÐµÐºÑÐ°Ð½Ð´Ñ€ ÐÐµÑÑ‚Ð¾Ð²': 'Александр Тестов',
+                        'ÑÐµÑÑ‚': 'тест',
+                        'Ð°Ð´Ð¼Ð¸Ð½': 'админ',
+                        'ÐÐ´Ð¼Ð¸Ð½': 'Админ'
+                    };
+                    
+                    for (const [wrong, correct] of Object.entries(fixMap)) {
+                        if (name.includes(wrong)) {
+                            return name.replace(new RegExp(wrong.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), correct);
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.warn('Ошибка декодирования имени:', error.message);
+                }
+            }
+            
+            return name;
+        }
+
+        function getUserFromToken(token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                
+                // Проверяем срок действия токена
+                if (payload.exp && payload.exp * 1000 < Date.now()) {
+                    return null;
+                }
+                
+                let userName = payload.name || payload.email?.split('@')[0];
+                
+                // Применяем декодирование имени
+                userName = decodeName(userName);
+                
+                return {
+                    userId: payload.userId,
+                    email: payload.email,
+                    name: userName,
+                    isAdmin: payload.isAdmin === true || payload.admin === true || payload.role === 'admin',
+                    role: payload.role
+                };
+            } catch (error) {
+                console.error('Error parsing token:', error);
+                return null;
+            }
+        }
+
+        function isTokenExpired(token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                return Date.now() >= payload.exp * 1000;
+            } catch (error) {
+                return true;
+            }
+        }
+
+        function updateUserInfo(userInfo) {
+            document.getElementById('userName').textContent = userInfo.name;
+            document.getElementById('userEmail').textContent = userInfo.email;
+            
+            // Устанавливаем первую букву имени для аватарки
+            const firstLetter = userInfo.name.charAt(0).toUpperCase();
+            document.getElementById('avatarLetter').textContent = firstLetter;
+            
+            // Показываем кнопку админ-панели для админов
+            if (userInfo.isAdmin === true || userInfo.role === 'admin') {
+                const adminBtn = document.getElementById('adminPanelBtn');
+                if (adminBtn) {
+                    adminBtn.style.display = 'block';
+                }
+            }
+        }
+
+        async function loadUserData(userId) {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Загружаем сохраненные расчеты
+                const calculationsResponse = await fetch(`/api/user/calculations`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (calculationsResponse.ok) {
+                    const calculations = await calculationsResponse.json();
+                    updateCalculations(calculations);
+                    document.getElementById('calculationsCount').textContent = calculations.length;
+                } else if (calculationsResponse.status === 401) {
+                    localStorage.removeItem('authToken');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Загружаем заказы пользователя
+                const ordersResponse = await fetch(`/api/user/orders`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (ordersResponse.ok) {
+                    const orders = await ordersResponse.json();
+                    updateOrders(orders);
+                    document.getElementById('ordersCount').textContent = orders.length;
+                } else if (ordersResponse.status === 401) {
+                    localStorage.removeItem('authToken');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Загружаем профиль для получения даты регистрации
+                const userInfo = getUserFromToken(token);
+                const profileEndpoint = userInfo && userInfo.isAdmin ? '/api/admin/profile' : '/api/user/profile';
+                
+                const profileResponse = await fetch(profileEndpoint, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (profileResponse.ok) {
+                    const profileData = await profileResponse.json();
+                    if (profileData.success) {
+                        document.getElementById('joinDays').textContent = profileData.stats.joinDays;
+                        
+                        // Обновляем имя пользователя с декодированием если получили от сервера
+                        if (profileData.user && profileData.user.name) {
+                            const decodedServerName = decodeName(profileData.user.name);
+                            document.getElementById('userName').textContent = decodedServerName;
+                            
+                            // Обновляем аватарку
+                            const firstLetter = decodedServerName.charAt(0).toUpperCase();
+                            document.getElementById('avatarLetter').textContent = firstLetter;
+                        }
+                        
+                        // Обновляем бонусную информацию
+                        if (profileData.bonus) {
+                            updateBonusInfo(profileData.bonus);
+                        }
+                    }
+                } else if (profileResponse.status === 401) {
+                    localStorage.removeItem('authToken');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        function updateCalculations(calculations) {
+            const container = document.getElementById('savedCalculationsList');
+            
+            if (calculations.length === 0) {
+                return; // Показываем empty state
+            }
+
+            container.innerHTML = '';
+            calculations.forEach(calc => {
+                const item = document.createElement('div');
+                item.className = 'calculation-item';
+                item.innerHTML = `
+                    <div class="calculation-name">${calc.name || 'Расчет без названия'}</div>
+                    <div class="calculation-details">
+                        <span>${new Date(calc.createdAt).toLocaleDateString('ru-RU')}</span>
+                        <span>${calc.total || 0} €</span>
+                    </div>
+                `;
+                
+                item.addEventListener('click', () => {
+                    // Переходим на страницу калькулятора с загруженным расчетом
+                    localStorage.setItem('loadCalculation', JSON.stringify(calc));
+                    window.location.href = 'index.html#calculator';
+                });
+                
+                container.appendChild(item);
+            });
+        }
+
+        function updateOrders(orders) {
+            const container = document.getElementById('ordersList');
+            
+            if (orders.length === 0) {
+                return; // Показываем empty state
+            }
+
+            container.innerHTML = '';
+            orders.forEach(order => {
+                const item = document.createElement('div');
+                item.className = 'order-item';
+                
+                const statusClass = getStatusClass(order.status || 'new');
+                const statusText = getStatusText(order.status || 'new');
+                
+                item.innerHTML = `
+                    <div class="order-title">${order.projectType || order.name || 'Новый проект'}</div>
+                    <div class="order-details">
+                        <span>${new Date(order.createdAt).toLocaleDateString('ru-RU')}</span>
+                        <span class="order-status ${statusClass}">${statusText}</span>
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'new': return 'status-new';
+                case 'in_progress': return 'status-progress';
+                case 'completed': return 'status-completed';
+                default: return 'status-new';
+            }
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'new': return 'Новый';
+                case 'in_progress': return 'В работе';
+                case 'completed': return 'Завершен';
+                default: return 'Новый';
+            }
+        }
+
+        function updateBonusInfo(bonusData) {
+            const bonusSection = document.getElementById('bonusSection');
+            const streakCounter = document.getElementById('streakCounter');
+            const bonusProgressFill = document.getElementById('bonusProgressFill');
+            const bonusDescription = document.getElementById('bonusDescription');
+            const bonusDiscount = document.getElementById('bonusDiscount');
+            const discountValue = document.getElementById('discountValue');
+            const discountExpiry = document.getElementById('discountExpiry');
+            
+            // Показываем секцию бонусов
+            bonusSection.style.display = 'block';
+            
+            // Обновляем счетчик стрика
+            streakCounter.textContent = bonusData.dailyStreak;
+            
+            // Обновляем прогресс-бар (7 дней = 100%)
+            const progressPercent = Math.min((bonusData.dailyStreak / 7) * 100, 100);
+            bonusProgressFill.style.width = `${progressPercent}%`;
+            
+            // Обновляем описание
+            if (bonusData.hasActiveBonus) {
+                bonusDescription.textContent = `🎉 Поздравляем! У вас активна скидка ${bonusData.bonusDiscount}%`;
+                bonusDiscount.style.display = 'block';
+                discountValue.textContent = `${bonusData.bonusDiscount}%`;
+                
+                if (bonusData.streakExpiry) {
+                    const expiryDate = new Date(bonusData.streakExpiry).toLocaleDateString('ru-RU');
+                    discountExpiry.textContent = expiryDate;
+                }
+            } else if (bonusData.dailyStreak >= 7) {
+                bonusDescription.textContent = '🎯 Отлично! Продолжайте заходить каждый день!';
+                bonusDiscount.style.display = 'none';
+            } else {
+                const daysLeft = bonusData.daysUntilBonus;
+                bonusDescription.textContent = `Осталось ${daysLeft} ${getDaysWord(daysLeft)} до получения скидки 15%!`;
+                bonusDiscount.style.display = 'none';
+            }
+        }
+        
+        function getDaysWord(days) {
+            if (days === 1) return 'день';
+            if (days >= 2 && days <= 4) return 'дня';
+            return 'дней';
+        }
+
+        async function logout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                try {
+                    const token = localStorage.getItem('authToken');
+                    
+                    // Если есть токен, уведомляем сервер о выходе
+                    if (token) {
+                        // Делаем запрос на сервер без ожидания ответа
+                        fetch('/api/user/logout', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        }).catch(() => {
+                            // Игнорируем ошибки - выход все равно произойдет локально
+                        });
+                    }
+                } catch (error) {
+                    // Игнорируем ошибки сети
+                }
+                
+                // Всегда очищаем локальные данные
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userInfo');
+                sessionStorage.removeItem('adminToken');
+                sessionStorage.removeItem('redirectCount');
+                sessionStorage.clear();
+                
+                // Очищаем кэши браузера
+                try {
+                    if ('caches' in window) {
+                        caches.keys().then(names => {
+                            names.forEach(name => {
+                                caches.delete(name);
+                            });
+                        });
+                    }
+                } catch (error) {
+                    // Игнорируем ошибки кэша
+                }
+                
+                // Мгновенный переход без задержки
+                window.location.replace('index.html');
+            }
+        }
+    </script>
+</body>
+</html> 
