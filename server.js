@@ -400,18 +400,38 @@ app.post('/telegram-webhook', express.json({ limit: '10mb' }), (req, res) => {
     }
 });
 
-// Secure static file serving with path traversal protection
+// Secure static file serving with path traversal protection and caching
 app.use(express.static('.', {
     dotfiles: 'deny',
     index: false,
     redirect: false,
-    setHeaders: (res, path) => {
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, filePath) => {
         // Security headers for static files
         res.setHeader('X-Content-Type-Options', 'nosniff');
-        if (path.endsWith('.js')) {
+
+        // Content-Type hints (Express sets type automatically, but we ensure common ones)
+        if (filePath.endsWith('.js')) {
             res.setHeader('Content-Type', 'application/javascript');
-        } else if (path.endsWith('.css')) {
+        } else if (filePath.endsWith('.css')) {
             res.setHeader('Content-Type', 'text/css');
+        }
+
+        // Aggressive caching for immutable assets (1 year)
+        const longCache = 'public, max-age=31536000, immutable';
+        const shortCache = 'public, max-age=300';
+
+        if (/(\.css|\.js|\.svg|\.png|\.jpg|\.jpeg|\.gif|\.webp|\.ico|\.woff2?|\.ttf)$/i.test(filePath)) {
+            res.setHeader('Cache-Control', longCache);
+        } else if (/(\.html)$/i.test(filePath)) {
+            // Never cache HTML via static (HTML served by routes below will set UTF-8)
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
+        } else {
+            // Default small cache for other assets
+            res.setHeader('Cache-Control', shortCache);
         }
     }
 }));

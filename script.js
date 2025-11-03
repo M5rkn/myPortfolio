@@ -4,20 +4,26 @@
  * Версия: 2.1
  */
 
-// Защитные функции
+// Защитные функции (без заморозки прототипов — безопаснее для совместимости)
 (function() {
     'use strict';
-
-    // Защита от prototype pollution
-    if (typeof Object.freeze === 'function') {
-        Object.freeze(Object.prototype);
-        Object.freeze(Array.prototype);
-        Object.freeze(String.prototype);
-    }
 })();
 
 let isSubmitting = false;
 let csrfToken = '';
+// Helper: выполнить задачу в режиме простоя браузера
+function runWhenIdle(cb) {
+    try {
+        if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(cb, { timeout: 2000 });
+        } else {
+            setTimeout(cb, 200);
+        }
+    } catch (_) {
+        setTimeout(cb, 200);
+    }
+}
+
 
 // Initialize CSRF token
 async function initCSRF() {
@@ -188,15 +194,18 @@ document.addEventListener('DOMContentLoaded', function() {
     initStatsCounter();
     initPortfolioFilter();
     initLazyLoading();
-    initScrollAnimations();
+    // Низкоприоритетные фичи переносим на idle для снижения TTI
+    runWhenIdle(() => {
+        try { initAdvancedCalculator(); } catch (_) {}
+        try { initChatbot(); } catch (_) {}
+        try { initScrollAnimations(); } catch (_) {}
+        try { registerServiceWorker(); } catch (_) {}
+    });
     initCalculator();
-    initAdvancedCalculator();
-    initChatbot();
     initModal();
     initFAQ();
     initCVDownload();
     initAuthButton();
-    registerServiceWorker();
     initProjectViews();
 
     // Асинхронно инициализируем CSRF и форму
@@ -1180,7 +1189,7 @@ function initCustomCursor() {
             mouseY = e.clientY;
         };
 
-        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mousemove', mouseMoveHandler, { passive: true });
 
         const updateCursor = () => {
             cursorX += (mouseX - cursorX) * 0.2;
@@ -1399,7 +1408,7 @@ function initScrollProgress() {
         scrollProgress.style.width = scrolled + '%';
     }
 
-    window.addEventListener('scroll', updateScrollProgress);
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
     updateScrollProgress(); // Инициализация
 }
 
@@ -2275,7 +2284,7 @@ function initAuthButton() {
     inner.style.top = mouseY + 'px';
     hoverEffect.style.left = mouseX + 'px';
     hoverEffect.style.top = mouseY + 'px';
-  });
+  }, { passive: true });
 
   // Плавное следование внешнего круга
   function animate() {
