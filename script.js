@@ -191,16 +191,36 @@ document.addEventListener('DOMContentLoaded', function() {
     initSideNav();
     initMobileNav();
     initScrollProgress();
-    initStatsCounter();
+    initScrollIndicator();
     initPortfolioFilter();
     initLazyLoading();
     // Низкоприоритетные фичи переносим на idle для снижения TTI
     runWhenIdle(() => {
         try { initAdvancedCalculator(); } catch (_) {}
         try { initChatbot(); } catch (_) {}
-        try { initScrollAnimations(); } catch (_) {}
         try { registerServiceWorker(); } catch (_) {}
     });
+    // GSAP анимации инициализируем после загрузки GSAP
+    if (typeof gsap !== 'undefined') {
+        try { 
+            initScrollAnimations(); 
+            initHeroParallax();
+        } catch (_) {}
+    } else {
+        // Если GSAP не загружен, ждем его загрузки
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (typeof gsap !== 'undefined') {
+                    try { 
+                        initScrollAnimations(); 
+                        initHeroParallax();
+                    } catch (_) {}
+                }
+            }, 100);
+        });
+    }
+    // Анимация счетчика статистики
+    initStatsCounter();
     initCalculator();
     initModal();
     initFAQ();
@@ -334,10 +354,20 @@ function initCalculator() {
     packageCards.forEach(card => {
         card.addEventListener('click', () => {
             // Убираем выделение с других карточек
-            packageCards.forEach(c => c.classList.remove('selected'));
+            packageCards.forEach(c => {
+                c.classList.remove('selected');
+                if (typeof gsap !== 'undefined') {
+                    gsap.to(c, { scale: 1, duration: 0.3 });
+                }
+            });
 
             // Выделяем текущую карточку
             card.classList.add('selected');
+            
+            // Анимация выбора
+            if (typeof gsap !== 'undefined') {
+                gsap.to(card, { scale: 1.05, duration: 0.3, yoyo: true, repeat: 1 });
+            }
 
             // Сохраняем выбранный пакет
             selectedPackage = {
@@ -346,6 +376,7 @@ function initCalculator() {
                 type: card.dataset.package
             };
 
+            updateProgress();
             updateCalculation();
         });
     });
@@ -356,6 +387,7 @@ function initCalculator() {
             const serviceName = checkbox.parentNode.querySelector('.service-name').textContent;
             const servicePrice = parseInt(checkbox.dataset.price);
             const serviceType = checkbox.dataset.service;
+            const serviceOption = checkbox.closest('.service-option');
 
             if (checkbox.checked) {
                 selectedServices.push({
@@ -363,13 +395,62 @@ function initCalculator() {
                     price: servicePrice,
                     type: serviceType
                 });
+                // Анимация выбора
+                if (typeof gsap !== 'undefined' && serviceOption) {
+                    gsap.fromTo(serviceOption, 
+                        { scale: 1 },
+                        { scale: 1.02, duration: 0.2, yoyo: true, repeat: 1 }
+                    );
+                }
             } else {
                 selectedServices = selectedServices.filter(service => service.type !== serviceType);
             }
 
+            updateProgress();
             updateCalculation();
         });
     });
+    
+    // Функция обновления прогресса
+    function updateProgress() {
+        const progressFill = document.getElementById('calculatorProgress');
+        const progressSteps = document.querySelectorAll('.progress-step');
+        
+        if (!progressFill) return;
+        
+        let progress = 0;
+        let currentStep = 1;
+        
+        if (selectedPackage) {
+            progress = 33;
+            currentStep = 2;
+        }
+        
+        if (selectedServices.length > 0) {
+            progress = 66;
+            currentStep = 3;
+        }
+        
+        if (selectedPackage && selectedServices.length > 0) {
+            progress = 100;
+        }
+        
+        // Анимация прогресс-бара
+        if (typeof gsap !== 'undefined') {
+            gsap.to(progressFill, { width: progress + '%', duration: 0.5, ease: 'power2.out' });
+        } else {
+            progressFill.style.width = progress + '%';
+        }
+        
+        // Обновление шагов
+        progressSteps.forEach((step, index) => {
+            if (index + 1 <= currentStep) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active');
+            }
+        });
+    }
 
     // Функция обновления расчета
     async function updateCalculation() {
@@ -1396,6 +1477,30 @@ function initMobileNav() {
 }
 
 // Индикатор прогресса скролла
+// Инициализация кнопки скролла
+function initScrollIndicator() {
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    if (!scrollIndicator) return;
+
+    scrollIndicator.addEventListener('click', function() {
+        const worksSection = document.getElementById('works');
+        if (worksSection) {
+            worksSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+
+    // Анимация появления при скролле
+    if (typeof gsap !== 'undefined') {
+        gsap.fromTo(scrollIndicator,
+            { opacity: 0, y: -20 },
+            { opacity: 0.7, y: 0, duration: 1, delay: 1, ease: 'power2.out' }
+        );
+    }
+}
+
 function initScrollProgress() {
     const scrollProgress = document.getElementById('scrollProgress');
 
@@ -1413,48 +1518,73 @@ function initScrollProgress() {
 }
 
 // Счетчик статистики
+// Анимация цифр в статистике с поддержкой GSAP
 function initStatsCounter() {
-    const stats = document.querySelectorAll('.stat-number');
+    const stats = document.querySelectorAll('.stat-number[data-count]');
 
     if (!stats.length) return;
 
-    const observer = new IntersectionObserver(function(entries) {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const el = entry.target;
-                const targetValue = parseInt(el.getAttribute('data-count'));
-                const duration = 2000; // 2 секунды
-                const frameDuration = 1000 / 60; // 60fps
-                const totalFrames = Math.round(duration / frameDuration);
-                let frame = 0;
-                let currentValue = 0;
-
-                const animate = () => {
-                    frame++;
-                    const progress = frame / totalFrames;
-                    const easedProgress = progress < 0.5
-                        ? 4 * progress * progress * progress
-                        : 1 - Math.pow(-2 * progress + 2, 3) / 2; // Кубическая функция сглаживания
-
-                    currentValue = Math.round(easedProgress * targetValue);
-                    el.textContent = currentValue;
-
-                    if (frame < totalFrames) {
-                        requestAnimationFrame(animate);
-                    } else {
-                        el.textContent = targetValue;
-                    }
-                };
-
-                requestAnimationFrame(animate);
-                observer.unobserve(el);
-            }
+    // Используем GSAP если доступен
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+        
+        stats.forEach(stat => {
+            const target = parseInt(stat.getAttribute('data-count')) || 0;
+            
+            ScrollTrigger.create({
+                trigger: stat.closest('.stat') || stat,
+                start: 'top 80%',
+                once: true,
+                onEnter: () => {
+                    gsap.to({ value: 0 }, {
+                        value: target,
+                        duration: 2,
+                        ease: 'power2.out',
+                        onUpdate: function() {
+                            stat.textContent = Math.round(this.targets()[0].value);
+                        }
+                    });
+                }
+            });
         });
-    }, { threshold: 0.5 });
+    } else {
+        // Fallback на IntersectionObserver с улучшенной анимацией
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const targetValue = parseInt(el.getAttribute('data-count')) || 0;
+                    const duration = 2000;
+                    const frameDuration = 1000 / 60;
+                    const totalFrames = Math.round(duration / frameDuration);
+                    let frame = 0;
+                    let currentValue = 0;
 
-    stats.forEach(stat => {
-        observer.observe(stat);
-    });
+                    const animate = () => {
+                        frame++;
+                        const progress = frame / totalFrames;
+                        const easedProgress = progress < 0.5
+                            ? 4 * progress * progress * progress
+                            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+                        currentValue = Math.round(easedProgress * targetValue);
+                        el.textContent = currentValue;
+
+                        if (frame < totalFrames) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            el.textContent = targetValue;
+                        }
+                    };
+
+                    requestAnimationFrame(animate);
+                    observer.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        stats.forEach(stat => observer.observe(stat));
+    }
 }
 
 // Фильтрация портфолио
@@ -1516,30 +1646,176 @@ function initLazyLoading() {
 }
 
 // Анимации при скролле
+// GSAP анимации при скролле
 function initScrollAnimations() {
-    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+    // Проверяем наличие GSAP
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+        // Fallback на IntersectionObserver если GSAP не загружен
+        const animatedElements = document.querySelectorAll('.animate-on-scroll');
+        if (!animatedElements.length) return;
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '50px' });
+        animatedElements.forEach(el => observer.observe(el));
+        return;
+    }
 
-    if (!animatedElements.length) return;
+    // Регистрируем ScrollTrigger плагин
+    gsap.registerPlugin(ScrollTrigger);
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate');
-                observer.unobserve(entry.target);
+    // Анимация появления секций
+    gsap.utils.toArray('.section').forEach((section, index) => {
+        gsap.fromTo(section, 
+            {
+                opacity: 0,
+                y: 60
+            },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top 80%',
+                    end: 'bottom 20%',
+                    toggleActions: 'play none none none'
+                }
             }
-        });
-    }, {
-        threshold: 0.1,
-        rootMargin: '50px'
+        );
     });
 
-    animatedElements.forEach(el => observer.observe(el));
+    // Анимация карточек работ
+    gsap.utils.toArray('.work-item').forEach((item, index) => {
+        gsap.fromTo(item,
+            {
+                opacity: 0,
+                y: 50,
+                scale: 0.9
+            },
+            {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: 0.8,
+                ease: 'back.out(1.2)',
+                delay: index * 0.1,
+                scrollTrigger: {
+                    trigger: item,
+                    start: 'top 85%',
+                    toggleActions: 'play none none none'
+                }
+            }
+        );
+    });
 
-    // Очистка при уничтожении
-    return function cleanup() {
-        animatedElements.forEach(el => observer.unobserve(el));
-    };
+    // Анимация карточек услуг
+    gsap.utils.toArray('.service-card').forEach((card, index) => {
+        gsap.fromTo(card,
+            {
+                opacity: 0,
+                x: -30
+            },
+            {
+                opacity: 1,
+                x: 0,
+                duration: 0.7,
+                ease: 'power2.out',
+                delay: index * 0.1,
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play none none none'
+                }
+            }
+        );
+    });
+
+    // Анимация отзывов
+    gsap.utils.toArray('.review-card').forEach((card, index) => {
+        gsap.fromTo(card,
+            {
+                opacity: 0,
+                y: 40
+            },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: 'power2.out',
+                delay: index * 0.15,
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 85%',
+                    toggleActions: 'play none none none'
+                }
+            }
+        );
+    });
 }
+
+// Параллакс эффект для hero секции
+function initHeroParallax() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    
+    gsap.registerPlugin(ScrollTrigger);
+    
+    const heroSection = document.querySelector('.hero-section');
+    const heroVisual = document.querySelector('.hero-visual');
+    const blobAnimation = document.querySelector('.blob-animation');
+    const rotatingTech = document.querySelector('.rotating-tech');
+    
+    if (!heroSection) return;
+
+    // Параллакс для визуального блока
+    if (heroVisual) {
+        gsap.to(heroVisual, {
+            y: -100,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: heroSection,
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true
+            }
+        });
+    }
+
+    // Параллакс для blob анимации
+    if (blobAnimation) {
+        gsap.to(blobAnimation, {
+            y: -50,
+            scale: 1.1,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: heroSection,
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true
+            }
+        });
+    }
+
+    // Параллакс для вращающихся технологий
+    if (rotatingTech) {
+        gsap.to(rotatingTech, {
+            rotation: 360,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: heroSection,
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true
+            }
+        });
+    }
+}
+
 
 // Регистрация Service Worker
 function registerServiceWorker() {
@@ -1615,44 +1891,90 @@ function initModal() {
                 // Заполнение модального окна
                 document.getElementById('modalTitle').textContent = projectData.title;
                 document.getElementById('modalDescription').textContent = projectData.description;
-                document.getElementById('modalAbout').textContent = projectData.about;
+                document.getElementById('modalAbout').textContent = projectData.about || projectData.description;
+                document.getElementById('modalTask').textContent = projectData.task || 'Создание современного веб-приложения с использованием передовых технологий.';
 
                 // Очистка тегов
                 document.getElementById('modalTags').innerHTML = '';
 
                 // Добавление тегов
-                projectData.tags.forEach(function(tag) {
-                    const tagElement = document.createElement('span');
-                    tagElement.className = 'tag';
-                    tagElement.textContent = tag;
-                    document.getElementById('modalTags').appendChild(tagElement);
-                });
+                if (projectData.tags && projectData.tags.length > 0) {
+                    projectData.tags.forEach(function(tag) {
+                        const tagElement = document.createElement('span');
+                        tagElement.className = 'tag';
+                        tagElement.textContent = tag;
+                        document.getElementById('modalTags').appendChild(tagElement);
+                    });
+                }
 
                 // Очистка стека технологий
                 document.getElementById('modalTechStack').innerHTML = '';
 
                 // Добавление стека технологий
-                projectData.techStack.forEach(function(tech) {
-                    const techElement = document.createElement('span');
-                    techElement.className = 'tag';
-                    techElement.textContent = tech;
-                    document.getElementById('modalTechStack').appendChild(techElement);
-                });
+                if (projectData.techStack && projectData.techStack.length > 0) {
+                    projectData.techStack.forEach(function(tech) {
+                        const techElement = document.createElement('span');
+                        techElement.className = 'tag';
+                        techElement.textContent = tech;
+                        document.getElementById('modalTechStack').appendChild(techElement);
+                    });
+                }
 
-                // Очистка особенностей
-                document.getElementById('modalFeatures').innerHTML = '';
+                // Очистка результатов
+                document.getElementById('modalResult').innerHTML = '';
 
-                // Добавление особенностей
-                projectData.features.forEach(function(feature) {
-                    const featureElement = document.createElement('li');
-                    featureElement.textContent = feature;
-                    document.getElementById('modalFeatures').appendChild(featureElement);
-                });
+                // Добавление результатов
+                if (projectData.result && projectData.result.length > 0) {
+                    projectData.result.forEach(function(result) {
+                        const resultElement = document.createElement('li');
+                        resultElement.textContent = result;
+                        document.getElementById('modalResult').appendChild(resultElement);
+                    });
+                } else if (projectData.features && projectData.features.length > 0) {
+                    // Fallback на features если result не указан
+                    projectData.features.forEach(function(feature) {
+                        const featureElement = document.createElement('li');
+                        featureElement.textContent = feature;
+                        document.getElementById('modalResult').appendChild(featureElement);
+                    });
+                }
+
+                // Очистка ссылок
+                document.getElementById('modalLinks').innerHTML = '';
+
+                // Добавление ссылок
+                if (projectData.liveLink && projectData.liveLink !== '#') {
+                    const liveLinkElement = document.createElement('a');
+                    liveLinkElement.href = projectData.liveLink;
+                    liveLinkElement.target = '_blank';
+                    liveLinkElement.rel = 'noopener noreferrer';
+                    liveLinkElement.className = 'btn btn-primary';
+                    liveLinkElement.innerHTML = '<span>Посмотреть проект</span><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                    document.getElementById('modalLinks').appendChild(liveLinkElement);
+                }
+
+                if (projectData.githubLink && projectData.githubLink !== '#') {
+                    const githubLinkElement = document.createElement('a');
+                    githubLinkElement.href = projectData.githubLink;
+                    githubLinkElement.target = '_blank';
+                    githubLinkElement.rel = 'noopener noreferrer';
+                    githubLinkElement.className = 'btn btn-secondary';
+                    githubLinkElement.innerHTML = '<span>GitHub</span><svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                    document.getElementById('modalLinks').appendChild(githubLinkElement);
+                }
 
                 // Установка изображения
-                document.getElementById('modalImage').style.backgroundImage = 'url(' + projectData.image + ')';
+                if (projectData.image) {
+                    document.getElementById('modalImage').style.backgroundImage = 'url(' + projectData.image + ')';
+                }
 
-
+                // Анимация открытия модального окна с GSAP
+                if (typeof gsap !== 'undefined') {
+                    gsap.fromTo(modal.querySelector('.modal-container'),
+                        { opacity: 0, scale: 0.9, y: 50 },
+                        { opacity: 1, scale: 1, y: 0, duration: 0.4, ease: 'back.out(1.2)' }
+                    );
+                }
 
                 // Открытие модального окна
                 modal.classList.add('active');
@@ -1761,6 +2083,7 @@ function getProjectData(projectId) {
         project1: {
             title: 'Современный лендинг',
             description: 'Одностраничный сайт с параллакс эффектами и плавными анимациями',
+            task: 'Создать современный одностраничный лендинг для IT-компании с интерактивными анимациями, параллакс эффектами и высокой производительностью.',
             about: 'Лендинг для IT-компании с современным дизайном, плавными анимациями и высокой скоростью загрузки. Адаптирован для всех устройств и оптимизирован для SEO.',
             tags: ['React', 'GSAP'],
             techStack: ['React', 'GSAP', 'Styled Components', 'Webpack', 'HTML5', 'CSS3'],
@@ -1771,6 +2094,12 @@ function getProjectData(projectId) {
                 'Оптимизированная производительность',
                 'Высокая конверсия'
             ],
+            result: [
+                'Увеличение конверсии на 40%',
+                'Время загрузки менее 2 секунд',
+                '100% адаптивность для всех устройств',
+                'SEO-оптимизация: топ-3 в поисковой выдаче'
+            ],
             image: '/images/project-placeholder.jpg',
             liveLink: '#',
             githubLink: '#'
@@ -1778,6 +2107,7 @@ function getProjectData(projectId) {
         project2: {
             title: 'Интернет-магазин',
             description: 'Полнофункциональный онлайн-магазин с корзиной и оформлением заказов',
+            task: 'Разработать полнофункциональный интернет-магазин с системой управления товарами, корзиной, оплатой и административной панелью.',
             about: 'Современный интернет-магазин с функциями добавления товаров в корзину, оформления заказов, онлайн-оплаты и личным кабинетом пользователя.',
             tags: ['Node.js', 'MongoDB'],
             techStack: ['Node.js', 'Express', 'MongoDB', 'React', 'Redux', 'Stripe API'],
@@ -1788,6 +2118,12 @@ function getProjectData(projectId) {
                 'Личный кабинет пользователя',
                 'Административная панель'
             ],
+            result: [
+                'Увеличение продаж на 60%',
+                'Безопасная обработка платежей',
+                'Удобная админ-панель для управления',
+                'Масштабируемая архитектура'
+            ],
             image: '/images/project-placeholder.jpg',
             liveLink: '#',
             githubLink: '#'
@@ -1795,6 +2131,7 @@ function getProjectData(projectId) {
         project3: {
             title: 'Система авторизации',
             description: 'Защищенная система входа с JWT токенами и восстановлением пароля',
+            task: 'Разработать безопасную систему аутентификации с поддержкой JWT токенов, социальных сетей и двухфакторной аутентификации.',
             about: 'Надежная система авторизации с JWT токенами, социальными сетями, двухфакторной аутентификацией и восстановлением пароля.',
             tags: ['React', 'Firebase'],
             techStack: ['React', 'Firebase Auth', 'JWT', 'Node.js', 'Express'],
@@ -1805,6 +2142,12 @@ function getProjectData(projectId) {
                 'Двухфакторная аутентификация',
                 'Восстановление пароля'
             ],
+            result: [
+                'Безопасная аутентификация пользователей',
+                'Поддержка OAuth провайдеров',
+                'Защита от CSRF и XSS атак',
+                'Удобный UX для пользователей'
+            ],
             image: '/images/project-placeholder.jpg',
             liveLink: '#',
             githubLink: '#'
@@ -1812,6 +2155,7 @@ function getProjectData(projectId) {
         project4: {
             title: 'Корпоративный блог',
             description: 'Многопользовательский блог с ролями и редактором контента',
+            task: 'Создать корпоративный блог с системой управления контентом, ролями пользователей и модерацией.',
             about: 'Полнофункциональный корпоративный блог с системой ролей, богатым редактором контента и модерацией комментариев.',
             tags: ['React', 'Node.js'],
             techStack: ['React', 'Node.js', 'MongoDB', 'Redux'],
@@ -1822,6 +2166,12 @@ function getProjectData(projectId) {
                 'Комментарии и модерация',
                 'Статистика просмотров'
             ],
+            result: [
+                'Увеличение вовлеченности на 50%',
+                'Удобная система управления контентом',
+                'Модерация комментариев в реальном времени',
+                'Аналитика и статистика'
+            ],
             image: '/images/project-placeholder.jpg',
             liveLink: '#',
             githubLink: '#'
@@ -1829,6 +2179,7 @@ function getProjectData(projectId) {
         project5: {
             title: 'Кастомная WordPress тема',
             description: 'Уникальная тема с нестандартными блоками и интеграциями',
+            task: 'Разработать кастомную WordPress тему с гибким конструктором блоков и интеграцией с WooCommerce.',
             about: 'Кастомная WordPress тема с использованием Advanced Custom Fields и собственных типов записей для создания гибкого и расширяемого сайта.',
             tags: ['WordPress', 'Custom Theme'],
             techStack: ['WordPress', 'JavaScript', 'ACF Pro', 'SCSS', 'Gulp'],
@@ -1839,6 +2190,12 @@ function getProjectData(projectId) {
                 'Оптимизация загрузки',
                 'Кастомная админка'
             ],
+            result: [
+                'Уникальный дизайн без ограничений',
+                'Быстрая загрузка страниц',
+                'Удобное управление контентом',
+                'SEO-оптимизация из коробки'
+            ],
             image: '/images/project-placeholder.jpg',
             liveLink: '#',
             githubLink: '#'
@@ -1846,6 +2203,7 @@ function getProjectData(projectId) {
         project6: {
             title: 'Адаптивная верстка',
             description: 'Точная pixel-perfect верстка с макета Figma с поддержкой всех устройств',
+            task: 'Выполнить pixel-perfect верстку по макету Figma с полной адаптацией для всех устройств.',
             about: 'Pixel-perfect верстка по дизайну из Figma с адаптацией для всех типов устройств, анимациями и соблюдением стандартов доступности.',
             tags: ['Figma', 'HTML/CSS'],
             techStack: ['HTML5', 'CSS3', 'SCSS', 'JavaScript', 'Gulp', 'Figma'],
@@ -1855,6 +2213,12 @@ function getProjectData(projectId) {
                 'Кроссбраузерная совместимость',
                 'Оптимизация изображений',
                 'Соблюдение стандартов доступности'
+            ],
+            result: [
+                '100% соответствие макету',
+                'Работа на всех устройствах',
+                'Высокая производительность',
+                'Соответствие стандартам WCAG'
             ],
             image: '/images/project-placeholder.jpg',
             liveLink: '#',

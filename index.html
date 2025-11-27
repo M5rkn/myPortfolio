@@ -211,7 +211,9 @@
         }
     </style>
 
-    <!-- Удалены скрипты Rellax, GSAP, ScrollTrigger, Chart.js -->
+    <!-- GSAP библиотека для анимаций -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
 </head>
 
@@ -686,25 +688,64 @@
     <!-- About Section -->
         <section id="about" class="section about-section">
         <div class="container">
-            <div class="about-content glass-panel">
-                    <div class="about-text">
-                        <div class="section-header">
-                            <h2 class="section-title">О себе</h2>
-                            <p class="section-subtitle">Немного о моем опыте и подходе к работе</p>
+            <div class="section-header">
+                <h2 class="section-title">О себе</h2>
+                <p class="section-subtitle">Немного о моем опыте и подходе к работе</p>
+            </div>
+            <div class="about-content">
+                <div class="about-card glass-panel">
+                    <div class="about-card-header">
+                        <div class="about-avatar">
+                            <div class="avatar-gradient"></div>
+                            <span class="avatar-text">TP</span>
                         </div>
-                        <div class="about-description">
-                            <p>Я веб-разработчик, специализирующийся на создании современных и функциональных веб-приложений. Мой подход сочетает технические навыки с пониманием бизнес-потребностей клиентов.</p>
-                            <p>В работе использую современный стек технологий:</p>
-                            <ul class="skills-list">
-                                <li>Frontend: React, Vue.js, JavaScript/TypeScript</li>
-                                <li>Backend: Node.js, Express, MongoDB</li>
-                                <li>UI/UX: Figma, Adobe XD</li>
-                                <li>DevOps: Git, Docker, CI/CD</li>
-                            </ul>
+                        <div class="about-header-info">
+                            <h3 class="about-name">Веб-разработчик</h3>
+                            <p class="about-role">Full Stack Developer</p>
+                        </div>
+                    </div>
+                    <div class="about-description">
+                        <p>Я веб-разработчик, специализирующийся на создании современных и функциональных веб-приложений. Мой подход сочетает технические навыки с пониманием бизнес-потребностей клиентов.</p>
+                    </div>
+                    <div class="about-skills">
+                        <h4 class="skills-title">Технологический стек</h4>
+                        <div class="skills-grid">
+                            <div class="skill-category">
+                                <span class="skill-category-title">Frontend</span>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">React</span>
+                                    <span class="skill-tag">Vue.js</span>
+                                    <span class="skill-tag">TypeScript</span>
+                                </div>
+                            </div>
+                            <div class="skill-category">
+                                <span class="skill-category-title">Backend</span>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">Node.js</span>
+                                    <span class="skill-tag">Express</span>
+                                    <span class="skill-tag">MongoDB</span>
+                                </div>
+                            </div>
+                            <div class="skill-category">
+                                <span class="skill-category-title">UI/UX</span>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">Figma</span>
+                                    <span class="skill-tag">Adobe XD</span>
+                                </div>
+                            </div>
+                            <div class="skill-category">
+                                <span class="skill-category-title">DevOps</span>
+                                <div class="skill-tags">
+                                    <span class="skill-tag">Git</span>
+                                    <span class="skill-tag">Docker</span>
+                                    <span class="skill-tag">CI/CD</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Calculator Section -->
@@ -714,6 +755,16 @@
                 <div class="calculator-header">
                     <h2 class="section-title">Калькулятор стоимости</h2>
                     <p class="section-subtitle">Рассчитайте примерную стоимость вашего проекта</p>
+                    <div class="calculator-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="calculatorProgress"></div>
+                        </div>
+                        <div class="progress-steps">
+                            <span class="progress-step active" data-step="1">Тип проекта</span>
+                            <span class="progress-step" data-step="2">Доп. услуги</span>
+                            <span class="progress-step" data-step="3">Итог</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="calculator-main">
@@ -1530,6 +1581,11 @@
                 
                 <div class="modal-details">
                     <div class="modal-section">
+                        <h3 class="modal-section-title">Задача</h3>
+                        <p class="modal-text" id="modalTask"></p>
+                    </div>
+                    
+                    <div class="modal-section">
                         <h3 class="modal-section-title">О проекте</h3>
                         <p class="modal-text" id="modalAbout"></p>
                     </div>
@@ -1537,14 +1593,17 @@
                     <div class="modal-section">
                         <h3 class="modal-section-title">Технологии</h3>
                         <div class="modal-tech-stack" id="modalTechStack"></div>
-                </div>
+                    </div>
                 
                     <div class="modal-section">
-                        <h3 class="modal-section-title">Особенности</h3>
-                        <ul class="modal-features-list" id="modalFeatures"></ul>
-                </div>
-                
-
+                        <h3 class="modal-section-title">Результат</h3>
+                        <ul class="modal-features-list" id="modalResult"></ul>
+                    </div>
+                    
+                    <div class="modal-section">
+                        <h3 class="modal-section-title">Ссылки</h3>
+                        <div class="modal-links" id="modalLinks"></div>
+                    </div>
                 </div>
             </div>
         </div>
