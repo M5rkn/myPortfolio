@@ -973,7 +973,7 @@
                 sendBtn.textContent = 'Отправляем...';
                 
                 try {
-                    const response = await fetch(`/api/admin/contacts/${contact._id}/reply`, {
+                    const response = await fetch(`/api/admin/contacts/${contact.id}/reply`, {
                         method: 'POST',
                         headers: getAuthHeaders(),
                         body: JSON.stringify({ subject, message })
@@ -1114,7 +1114,7 @@
             contacts.forEach(contact => {
                 const contactDiv = document.createElement('div');
                 contactDiv.className = 'contact-item' + (!contact.isRead ? ' unread' : '');
-                contactDiv.setAttribute('data-contact-id', contact._id);
+                contactDiv.setAttribute('data-contact-id', contact.id);
                 
                 // Header
                 const headerDiv = document.createElement('div');
@@ -1154,7 +1154,7 @@
                     readBtn.className = 'btn btn-read';
                     readBtn.textContent = 'Отметить прочитанным';
                     readBtn.setAttribute('data-action', 'read');
-                    readBtn.setAttribute('data-contact-id', contact._id);
+                    readBtn.setAttribute('data-contact-id', contact.id);
                     actionsDiv.appendChild(readBtn);
                 } else {
                     const readSpan = document.createElement('span');
@@ -1168,14 +1168,14 @@
                 replyBtn.style.cssText = 'background: #2196F3; color: white;';
                 replyBtn.textContent = 'Ответить';
                 replyBtn.setAttribute('data-action', 'reply');
-                replyBtn.setAttribute('data-contact-id', contact._id);
+                replyBtn.setAttribute('data-contact-id', contact.id);
                 actionsDiv.appendChild(replyBtn);
                 
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'btn btn-delete';
                 deleteBtn.textContent = 'Удалить';
                 deleteBtn.setAttribute('data-action', 'delete');
-                deleteBtn.setAttribute('data-contact-id', contact._id);
+                deleteBtn.setAttribute('data-contact-id', contact.id);
                 actionsDiv.appendChild(deleteBtn);
                 
                 contactDiv.appendChild(headerDiv);
@@ -1202,7 +1202,7 @@
                 clearTimeout(timeoutId);
 
                 if (response.ok) {
-                    const contact = contacts.find(c => c._id === contactId);
+                    const contact = contacts.find(c => c.id === contactId);
                     if (contact) {
                         contact.isRead = true;
                         updateStats();
@@ -1239,7 +1239,7 @@
                 clearTimeout(timeoutId);
 
                 if (response.ok) {
-                    contacts = contacts.filter(c => c._id !== contactId);
+                    contacts = contacts.filter(c => c.id !== contactId);
                     updateStats();
                     renderContacts();
                     return true;
@@ -1286,7 +1286,7 @@
                     target.textContent = 'Обновляем...';
                     await markAsRead(contactId);
                 } else if (action === 'reply') {
-                    const contact = contacts.find(c => c._id === contactId);
+                    const contact = contacts.find(c => c.id === contactId);
                     if (contact) {
                         showReplyModal(contact);
                     }

@@ -821,14 +821,14 @@ function initAdvancedCalculator() {
                 }
 
                 savedCalculations.innerHTML = userCalcs.map(calc => `
-                    <div class="saved-item" data-calc-id="${calc._id}">
+                    <div class="saved-item" data-calc-id="${calc.id}">
                         <div class="saved-item-header">
                             <span class="saved-item-name">${calc.name}</span>
                             <span class="saved-item-price">${formatPrice(calc.total)}</span>
                         </div>
                         <div class="saved-item-date">${new Date(calc.createdAt).toLocaleDateString('ru-RU')}</div>
                         <div class="saved-item-actions">
-                            <button class="delete-btn" data-delete-id="${calc._id}">Удалить</button>
+                            <button class="delete-btn" data-delete-id="${calc.id}">Удалить</button>
                         </div>
                     </div>
                 `).join('');
