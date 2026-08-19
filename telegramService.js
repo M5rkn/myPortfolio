@@ -112,10 +112,10 @@ _Последняя проверка: ${new Date().toLocaleString('ru-RU', { tim
 👤 *Имя:* ${this.escapeMarkdown(contact.name)}
 📧 *Email:* ${this.escapeMarkdown(contact.email)}
 💬 *Сообщение:*
-${this.escapeMarkdown(contact.message)}
+${contact.message}
 
-🕐 *Время:* ${new Date(contact.createdAt).toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
-🌐 *IP:* ${contact.ipAddress || 'N/A'}
+🕐 *Время:* ${new Date(contact.created_at || contact.createdAt).toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
+🌐 *IP:* ${contact.ip_address || contact.ipAddress || 'N/A'}
 
 _Ответьте клиенту через панель администратора или напрямую по email._
             `;
