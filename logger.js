@@ -28,33 +28,32 @@ const format = winston.format.combine(
     winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
 );
 
+const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+
 // Создаем транспорты
 const transports = [
-    // Логи в консоль
     new winston.transports.Console({
         format: format,
         level: process.env.NODE_ENV === 'production' ? 'warn' : 'debug'
-    }),
-
-    // Логи ошибок в файл
-    new winston.transports.File({
-        filename: 'logs/error.log',
-        level: 'error',
-        format: winston.format.combine(
-            winston.format.timestamp(),
-            winston.format.json()
-        )
-    }),
-
-    // Все логи в файл
-    new winston.transports.File({
-        filename: 'logs/combined.log',
-        format: winston.format.combine(
-            winston.format.timestamp(),
-            winston.format.json()
-        )
     })
 ];
+
+// Файловые логи только вне serverless-окружений
+if (!isServerless) {
+    const fs = require('fs');
+    fs.mkdirSync('logs', { recursive: true });
+    transports.push(
+        new winston.transports.File({
+            filename: 'logs/error.log',
+            level: 'error',
+            format: winston.format.combine(winston.format.timestamp(), winston.format.json())
+        }),
+        new winston.transports.File({
+            filename: 'logs/combined.log',
+            format: winston.format.combine(winston.format.timestamp(), winston.format.json())
+        })
+    );
+}
 
 // Создаем logger
 const logger = winston.createLogger({
