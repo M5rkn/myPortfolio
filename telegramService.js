@@ -88,8 +88,8 @@ _Для дополнительной помощи обратитесь к адм
             const statusMessage = `
 ✅ *Статус сайта: Активен*
 
-🌐 Сайт: ${process.env.SITE_URL || 'https://techportal.up.railway.app'}
-⚡ Сервер: Railway
+🌐 Сайт: ${process.env.SITE_URL || 'https://my-portfolio-mark-182d.vercel.app'}
+⚡ Сервер: Vercel
 🔄 Uptime: ${Math.floor(process.uptime() / 60)} минут
 
 _Последняя проверка: ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}_

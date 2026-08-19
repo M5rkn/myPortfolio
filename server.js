@@ -944,7 +944,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.get('/sitemap.xml', (req, res) => {
-    const baseUrl = process.env.SITE_URL || 'https://my-portfolio-eta-ruddy-38.vercel.app';
+    const baseUrl = process.env.SITE_URL || 'https://my-portfolio-mark-182d.vercel.app';
     const currentDate = new Date().toISOString().split('T')[0];
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -959,7 +959,7 @@ app.get('/sitemap.xml', (req, res) => {
 });
 
 app.get('/robots.txt', (req, res) => {
-    const baseUrl = process.env.SITE_URL || 'https://my-portfolio-eta-ruddy-38.vercel.app';
+    const baseUrl = process.env.SITE_URL || 'https://my-portfolio-mark-182d.vercel.app';
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.setHeader('Cache-Control', 'public, max-age=86400');
     res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /login\nDisallow: /api/\n\nSitemap: ${baseUrl}/sitemap.xml`);
