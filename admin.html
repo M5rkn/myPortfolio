@@ -1288,7 +1288,7 @@
                     target.textContent = 'Обновляем...';
                     await markAsRead(contactId);
                 } else if (action === 'reply') {
-                    const contact = contacts.find(c => c.id === contactId);
+                    const contact = contacts.find(c => Number(c.id) === Number(contactId));
                     if (contact) {
                         showReplyModal(contact);
                     }
