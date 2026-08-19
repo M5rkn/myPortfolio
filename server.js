@@ -296,7 +296,7 @@ app.post('/telegram-webhook', express.json({ limit: '10mb' }), (req, res) => {
     }
 });
 
-app.use(express.static('.', {
+app.use(express.static(path.join(__dirname), {
     dotfiles: 'deny',
     index: false,
     redirect: false,
