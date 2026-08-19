@@ -13,6 +13,12 @@ const logger = require('./logger');
 const { sql, initDB } = require('./db');
 require('dotenv').config();
 
+// Инициализируем БД при загрузке модуля (работает и на Vercel, и локально)
+let dbReady = false;
+const dbInitPromise = initDB()
+    .then(() => { dbReady = true; })
+    .catch(err => console.error('❌ DB init error:', err.message));
+
 const telegramService = require('./telegramService');
 const emailService = require('./emailService');
 
@@ -54,7 +60,7 @@ app.use((req, res, next) => {
             "font-src 'self' https://fonts.gstatic.com; " +
             "img-src 'self' data: blob: https://www.google-analytics.com; " +
             "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com; " +
-            "base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'self';"
+            "base-uri 'self'; form-action 'self'; object-src 'none'; media-src 'self'; manifest-src 'self';"
         );
     }
     next();
@@ -135,8 +141,13 @@ app.use(cors({
 app.use(express.json({ limit: '10kb', strict: true, type: 'application/json' }));
 app.use(express.urlencoded({ extended: false, limit: '10kb', parameterLimit: 100 }));
 
-app.use('/api', (req, res, next) => {
+app.use('/api', async (req, res, next) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    if (!dbReady) {
+        try { await dbInitPromise; } catch (e) {
+            return res.status(503).json({ success: false, message: 'База данных недоступна' });
+        }
+    }
     next();
 });
 
