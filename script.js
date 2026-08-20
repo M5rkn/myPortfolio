@@ -2506,7 +2506,7 @@ function initAuthButton() {
             
             if (userInfo) {
                 // Показываем аватарку пользователя
-                const firstLetter = userInfo.name.charAt(0).toUpperCase();
+                const firstLetter = (userInfo.name || userInfo.email || '?').charAt(0).toUpperCase();
                 // Удалено: console.log('🔍 DEBUG Setting user avatar with letter:', firstLetter);
                 
                 // Обновляем боковую навигацию
@@ -2536,7 +2536,8 @@ function initAuthButton() {
     
     function getUserFromToken(token) {
         try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
+            const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+            const payload = JSON.parse(atob(base64));
             
             // Удалено: console.log('🔍 DEBUG Token payload:', payload); // Отладка
             
@@ -2571,7 +2572,8 @@ function initAuthButton() {
 
     function isTokenExpired(token) {
         try {
-            const payload = JSON.parse(atob(token.split('.')[1]));
+            const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+            const payload = JSON.parse(atob(base64));
             return Date.now() >= payload.exp * 1000;
         } catch (error) {
             return true;

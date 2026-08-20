@@ -591,7 +591,8 @@
 
         function getUserFromToken(token) {
             try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
+                const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+                const payload = JSON.parse(atob(base64));
                 
                 // Проверяем срок действия токена
                 if (payload.exp && payload.exp * 1000 < Date.now()) {
@@ -618,7 +619,8 @@
 
         function isTokenExpired(token) {
             try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
+                const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+                const payload = JSON.parse(atob(base64));
                 return Date.now() >= payload.exp * 1000;
             } catch (error) {
                 return true;
@@ -630,7 +632,7 @@
             document.getElementById('userEmail').textContent = userInfo.email;
             
             // Устанавливаем первую букву имени для аватарки
-            const firstLetter = userInfo.name.charAt(0).toUpperCase();
+            const firstLetter = (userInfo.name || userInfo.email || '?').charAt(0).toUpperCase();
             document.getElementById('avatarLetter').textContent = firstLetter;
             
             // Показываем кнопку админ-панели для админов

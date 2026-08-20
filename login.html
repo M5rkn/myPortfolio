@@ -1205,7 +1205,8 @@
         // Helper function to get user info from token
         function getUserFromToken(token) {
             try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
+                const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+                const payload = JSON.parse(atob(base64));
                 console.log('Token payload:', payload); // Отладка
                 
                 let userName = payload.name || payload.email?.split('@')[0];
